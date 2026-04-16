@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
@@ -12,29 +13,33 @@ import ProductsPage from "./pages/admin/ProductsPage";
 import FinancialPage from "./pages/admin/FinancialPage";
 import ClientsPage from "./pages/admin/ClientsPage";
 import ReportsPage from "./pages/admin/ReportsPage";
+import SiteManagementPage from "./pages/admin/SiteManagementPage";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route element={<AdminLayout />}>
-            <Route path="/admin/dashboard" element={<PDVPage />} />
-            <Route path="/admin/products" element={<ProductsPage />} />
-            <Route path="/admin/financial" element={<FinancialPage />} />
-            <Route path="/admin/clients" element={<ClientsPage />} />
-            <Route path="/admin/reports" element={<ReportsPage />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route element={<AdminLayout />}>
+              <Route path="/admin/dashboard" element={<PDVPage />} />
+              <Route path="/admin/products" element={<ProductsPage />} />
+              <Route path="/admin/financial" element={<FinancialPage />} />
+              <Route path="/admin/clients" element={<ClientsPage />} />
+              <Route path="/admin/reports" element={<ReportsPage />} />
+              <Route path="/admin/site" element={<SiteManagementPage />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

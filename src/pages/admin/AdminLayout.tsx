@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
 import {
   ShoppingCart, DollarSign, Package, Users, BarChart3,
-  LogOut, Menu, X, Home
+  LogOut, Menu, X, Home, Globe
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -12,6 +12,7 @@ const sidebarItems = [
   { label: 'Financeiro', icon: DollarSign, path: '/admin/financial' },
   { label: 'Clientes', icon: Users, path: '/admin/clients' },
   { label: 'Relatórios', icon: BarChart3, path: '/admin/reports' },
+  { label: 'Site Público', icon: Globe, path: '/admin/site' },
 ];
 
 const AdminLayout = () => {
@@ -32,7 +33,6 @@ const AdminLayout = () => {
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-transform duration-200 lg:relative lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
@@ -78,12 +78,10 @@ const AdminLayout = () => {
         </div>
       </aside>
 
-      {/* Overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col min-h-screen">
         <header className="h-14 border-b border-border flex items-center px-4 gap-4">
           <button className="lg:hidden" onClick={() => setSidebarOpen(true)}>

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { mockProducts, getWhatsAppLink } from '@/data/products';
+import { formatBRL } from '@/lib/brl';
 import { useToast } from '@/hooks/use-toast';
 
 interface CartItem {
@@ -55,14 +56,13 @@ const PDVPage = () => {
       toast({ title: 'Adicione itens ao carrinho', variant: 'destructive' });
       return;
     }
-    toast({ title: 'Venda registrada com sucesso!', description: `Total: R$ ${total.toFixed(2)}` });
+    toast({ title: 'Venda registrada com sucesso!', description: `Total: ${formatBRL(total)}` });
     setCart([]);
     setClientName('');
   };
 
   return (
     <div className="grid lg:grid-cols-3 gap-6">
-      {/* Product Search */}
       <div className="lg:col-span-2 space-y-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -87,33 +87,26 @@ const PDVPage = () => {
                   <p className="font-medium truncate">{p.name}</p>
                   <p className="text-xs text-muted-foreground">{p.brand} · Estoque: {p.stock}</p>
                 </div>
-                <span className="text-primary font-bold whitespace-nowrap">
-                  R$ {p.sellPrice.toFixed(2)}
-                </span>
+                <span className="text-primary font-bold whitespace-nowrap">{formatBRL(p.sellPrice)}</span>
               </button>
             ))}
           </div>
         )}
 
-        {/* Cart items */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg font-serif">Itens da Venda</CardTitle>
           </CardHeader>
           <CardContent>
             {cart.length === 0 ? (
-              <p className="text-muted-foreground text-sm text-center py-8">
-                Busque e adicione produtos acima
-              </p>
+              <p className="text-muted-foreground text-sm text-center py-8">Busque e adicione produtos acima</p>
             ) : (
               <div className="space-y-3">
                 {cart.map(item => (
                   <div key={item.productId} className="flex items-center gap-3 bg-secondary/30 rounded-lg p-3">
                     <div className="flex-1 min-w-0">
                       <p className="font-medium truncate">{item.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        R$ {item.price.toFixed(2)} × {item.qty}
-                      </p>
+                      <p className="text-sm text-muted-foreground">{formatBRL(item.price)} × {item.qty}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => updateQty(item.productId, -1)}>
@@ -127,9 +120,7 @@ const PDVPage = () => {
                         <Trash2 className="w-3 h-3" />
                       </Button>
                     </div>
-                    <span className="font-bold text-primary whitespace-nowrap">
-                      R$ {(item.price * item.qty).toFixed(2)}
-                    </span>
+                    <span className="font-bold text-primary whitespace-nowrap">{formatBRL(item.price * item.qty)}</span>
                   </div>
                 ))}
               </div>
@@ -138,7 +129,6 @@ const PDVPage = () => {
         </Card>
       </div>
 
-      {/* Summary */}
       <div className="space-y-4">
         <Card>
           <CardHeader>
@@ -158,12 +148,9 @@ const PDVPage = () => {
             </div>
             <div className="flex justify-between text-xl font-bold border-t border-border pt-4">
               <span>Total:</span>
-              <span className="text-primary">R$ {total.toFixed(2)}</span>
+              <span className="text-primary">{formatBRL(total)}</span>
             </div>
-            <Button
-              className="w-full bg-gradient-gold text-primary-foreground font-semibold"
-              onClick={finalizeSale}
-            >
+            <Button className="w-full bg-gradient-gold text-primary-foreground font-semibold" onClick={finalizeSale}>
               Finalizar Venda
             </Button>
             <div className="grid grid-cols-2 gap-2">

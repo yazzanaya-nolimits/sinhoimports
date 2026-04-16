@@ -30,24 +30,24 @@ const Footer = () => {
                 href={INSTAGRAM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors"
+                className="group w-12 h-12 rounded-xl bg-secondary flex items-center justify-center hover:bg-primary/20 transition-all duration-300 hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] hover:scale-110"
               >
-                <Instagram className="w-5 h-5" />
+                <Instagram className="w-5 h-5 group-hover:text-primary transition-colors" />
               </a>
               <a
                 href={getWhatsAppLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors"
+                className="group w-12 h-12 rounded-xl bg-secondary flex items-center justify-center hover:bg-green-500/20 transition-all duration-300 hover:shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:scale-110"
               >
-                <MessageCircle className="w-5 h-5" />
+                <MessageCircle className="w-5 h-5 group-hover:text-green-400 transition-colors" />
               </a>
             </div>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Sinho Imports. Todos os direitos reservados.</p>
+        <div className="mt-12 pt-8 border-t border-border flex flex-col items-center gap-4 text-sm text-muted-foreground">
+          <p className="text-center">© 2026 Sinho Imports. Todos os direitos reservados.</p>
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="flex items-center gap-1 hover:text-primary transition-colors"
