@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { formatBRL } from '@/lib/brl';
 import { useToast } from '@/hooks/use-toast';
 
 interface Transaction {
@@ -37,11 +38,8 @@ const FinancialPage = () => {
       return;
     }
     setTransactions(prev => [{
-      id: String(Date.now()),
-      type: form.type,
-      value: Number(form.value),
-      description: form.description,
-      date: form.date,
+      id: String(Date.now()), type: form.type,
+      value: Number(form.value), description: form.description, date: form.date,
     }, ...prev]);
     setForm({ type: 'entrada', value: '', description: '', date: '' });
     toast({ title: 'Transação adicionada!' });
@@ -66,7 +64,6 @@ const FinancialPage = () => {
     <div className="space-y-6">
       <h1 className="text-2xl font-serif font-bold">Financeiro</h1>
 
-      {/* Summary Cards */}
       <div className="grid sm:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
@@ -75,7 +72,7 @@ const FinancialPage = () => {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Entradas</p>
-              <p className="text-xl font-bold text-green-500">R$ {totalEntradas.toFixed(2)}</p>
+              <p className="text-xl font-bold text-green-500">{formatBRL(totalEntradas)}</p>
             </div>
           </CardContent>
         </Card>
@@ -86,7 +83,7 @@ const FinancialPage = () => {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Saídas</p>
-              <p className="text-xl font-bold text-red-500">R$ {totalSaidas.toFixed(2)}</p>
+              <p className="text-xl font-bold text-red-500">{formatBRL(totalSaidas)}</p>
             </div>
           </CardContent>
         </Card>
@@ -97,13 +94,12 @@ const FinancialPage = () => {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Saldo</p>
-              <p className="text-xl font-bold text-primary">R$ {saldo.toFixed(2)}</p>
+              <p className="text-xl font-bold text-primary">{formatBRL(saldo)}</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Charts */}
       <div className="grid md:grid-cols-2 gap-6">
         <Card>
           <CardHeader><CardTitle className="text-lg font-serif">Entradas vs Saídas</CardTitle></CardHeader>
@@ -113,7 +109,7 @@ const FinancialPage = () => {
                 <Pie data={pieData} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
                   {pieData.map((_, i) => <Cell key={i} fill={COLORS[i]} />)}
                 </Pie>
-                <Tooltip formatter={(value: number) => `R$ ${value.toFixed(2)}`} />
+                <Tooltip formatter={(value: number) => formatBRL(value)} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -125,7 +121,7 @@ const FinancialPage = () => {
               <BarChart data={barData}>
                 <XAxis dataKey="name" stroke="hsl(0,0%,55%)" fontSize={12} />
                 <YAxis stroke="hsl(0,0%,55%)" fontSize={12} />
-                <Tooltip formatter={(value: number) => `R$ ${value.toFixed(2)}`} />
+                <Tooltip formatter={(value: number) => formatBRL(value)} />
                 <Bar dataKey="valor" fill="hsl(43, 72%, 55%)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -133,28 +129,17 @@ const FinancialPage = () => {
         </Card>
       </div>
 
-      {/* Add transaction */}
       <Card>
         <CardHeader><CardTitle className="text-lg font-serif">Nova Transação</CardTitle></CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-3 items-end">
             <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant={form.type === 'entrada' ? 'default' : 'outline'}
+              <Button size="sm" variant={form.type === 'entrada' ? 'default' : 'outline'}
                 className={form.type === 'entrada' ? 'bg-green-600' : ''}
-                onClick={() => setForm(f => ({ ...f, type: 'entrada' }))}
-              >
-                Entrada
-              </Button>
-              <Button
-                size="sm"
-                variant={form.type === 'saida' ? 'default' : 'outline'}
+                onClick={() => setForm(f => ({ ...f, type: 'entrada' }))}>Entrada</Button>
+              <Button size="sm" variant={form.type === 'saida' ? 'default' : 'outline'}
                 className={form.type === 'saida' ? 'bg-red-600' : ''}
-                onClick={() => setForm(f => ({ ...f, type: 'saida' }))}
-              >
-                Saída
-              </Button>
+                onClick={() => setForm(f => ({ ...f, type: 'saida' }))}>Saída</Button>
             </div>
             <Input type="number" placeholder="Valor" value={form.value} onChange={e => setForm(f => ({ ...f, value: e.target.value }))} className="w-32" />
             <Input placeholder="Descrição" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className="flex-1 min-w-[150px]" maxLength={200} />
@@ -166,7 +151,6 @@ const FinancialPage = () => {
         </CardContent>
       </Card>
 
-      {/* Transactions table */}
       <Card>
         <CardContent className="p-0">
           <Table>
@@ -191,7 +175,7 @@ const FinancialPage = () => {
                   </TableCell>
                   <TableCell>{t.description}</TableCell>
                   <TableCell className={`text-right font-bold ${t.type === 'entrada' ? 'text-green-500' : 'text-red-500'}`}>
-                    {t.type === 'entrada' ? '+' : '-'} R$ {t.value.toFixed(2)}
+                    {t.type === 'entrada' ? '+' : '-'} {formatBRL(t.value)}
                   </TableCell>
                 </TableRow>
               ))}
