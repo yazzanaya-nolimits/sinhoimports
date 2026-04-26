@@ -9,6 +9,14 @@ export interface Product {
   image: string;
   description: string;
   featured?: boolean;
+  
+  // New fields for Supabase integration
+  status?: 'ativo' | 'inativo';
+  highlightImage?: string;
+  couponCode?: string;
+  couponType?: 'percentual' | 'fixo';
+  couponValue?: number;
+  couponExpiry?: string;
 }
 
 export const BRANDS = [
