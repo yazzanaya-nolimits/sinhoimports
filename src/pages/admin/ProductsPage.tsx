@@ -27,6 +27,7 @@ const ProductsPage = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'created_desc' | 'nome_asc' | 'valor_asc' | 'valor_desc'>('created_desc');
   const [isUploading, setIsUploading] = useState(false);
 
   const [form, setForm] = useState({
@@ -119,10 +120,29 @@ const ProductsPage = () => {
     }
   };
 
-  const filtered = dbProducts.filter(p => {
-    const matchSearch = !search || p.nome.toLowerCase().includes(search.toLowerCase());
-    return matchSearch;
-  });
+  const filtered = dbProducts
+    .filter(p => !search || p.nome.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'nome_asc':
+          return a.nome.localeCompare(b.nome);
+        case 'valor_asc':
+          return a.valor - b.valor;
+        case 'valor_desc':
+          return b.valor - a.valor;
+        default:
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+    });
+
+  // Preview em tempo real no formulário
+  const previewDiscount = (() => {
+    if (!form.cupom_codigo || !form.cupom_valor) return null;
+    const valor = Number(form.valor) || 0;
+    const desc = Number(form.cupom_valor);
+    if (form.cupom_tipo === 'percentual') return Math.max(0, valor * (1 - desc / 100));
+    return Math.max(0, valor - desc);
+  })();
 
   return (
     <div className="space-y-6">
