@@ -14,7 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      produtos: {
+        Row: {
+          created_at: string
+          cupom_codigo: string | null
+          cupom_tipo: string | null
+          cupom_validade: string | null
+          cupom_valor: number | null
+          descricao: string | null
+          foto_url: string | null
+          id: string
+          imagem_destaque_url: string | null
+          nome: string
+          status: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          created_at?: string
+          cupom_codigo?: string | null
+          cupom_tipo?: string | null
+          cupom_validade?: string | null
+          cupom_valor?: number | null
+          descricao?: string | null
+          foto_url?: string | null
+          id?: string
+          imagem_destaque_url?: string | null
+          nome: string
+          status?: string
+          updated_at?: string
+          valor?: number
+        }
+        Update: {
+          created_at?: string
+          cupom_codigo?: string | null
+          cupom_tipo?: string | null
+          cupom_validade?: string | null
+          cupom_valor?: number | null
+          descricao?: string | null
+          foto_url?: string | null
+          id?: string
+          imagem_destaque_url?: string | null
+          nome?: string
+          status?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
