@@ -13,10 +13,10 @@ export function useSupabaseProducts() {
       const { data, error } = await supabase
         .from('produtos')
         .select('*')
-        .order('nome', { ascending: true });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts((data || []) as DatabaseProduct[]);
     } catch (error: any) {
       console.error('Error fetching products:', error.message);
     } finally {
@@ -107,13 +107,22 @@ export function useSupabaseProducts() {
 
   const uploadFile = async (file: File, bucket: string = 'produtos') => {
     try {
+      const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowed.includes(file.type)) {
+        toast({
+          title: 'Formato não suportado',
+          description: 'Use JPG, PNG ou WebP.',
+          variant: 'destructive',
+        });
+        return null;
+      }
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
+      const filePath = fileName;
 
       const { error: uploadError } = await supabase.storage
         .from(bucket)
-        .upload(filePath, file);
+        .upload(filePath, file, { cacheControl: '3600', upsert: false });
 
       if (uploadError) throw uploadError;
 
