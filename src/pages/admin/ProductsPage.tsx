@@ -184,90 +184,145 @@ const ProductsPage = () => {
       </div>
 
       {showForm && (
-        <Card className="border-primary/20 bg-card/50 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="text-lg font-serif flex justify-between">
-              {editId ? 'Editar Produto' : 'Novo Produto'}
-              <Button size="icon" variant="ghost" onClick={resetForm}><X className="w-4 h-4" /></Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Nome do Produto *</Label>
-                  <Input placeholder="Ex: Raghba Lattafa" value={form.nome} onChange={e => setForm(f => ({ ...f, nome: e.target.value }))} />
+        <div className="grid lg:grid-cols-[1fr_320px] gap-6">
+          <Card className="border-primary/20 bg-card/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-lg font-serif flex justify-between">
+                {editId ? 'Editar Produto' : 'Novo Produto'}
+                <Button size="icon" variant="ghost" onClick={resetForm}><X className="w-4 h-4" /></Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Nome do Produto *</Label>
+                    <Input placeholder="Ex: Raghba Lattafa" value={form.nome} onChange={e => setForm(f => ({ ...f, nome: e.target.value }))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Valor (R$) *</Label>
+                    <Input type="number" step="0.01" value={form.valor} onChange={e => setForm(f => ({ ...f, valor: e.target.value }))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Descrição Curta</Label>
+                    <Textarea placeholder="Detalhes do produto..." value={form.descricao} onChange={e => setForm(f => ({ ...f, descricao: e.target.value }))} rows={3} />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch id="status" checked={form.status === 'ativo'} onCheckedChange={checked => setForm(f => ({ ...f, status: checked ? 'ativo' : 'inativo' }))} />
+                    <Label htmlFor="status">Produto Ativo na Loja</Label>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label>Valor (R$) *</Label>
-                  <Input type="number" step="0.01" value={form.valor} onChange={e => setForm(f => ({ ...f, valor: e.target.value }))} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Descrição Curta</Label>
-                  <Textarea placeholder="Detalhes do produto..." value={form.descricao} onChange={e => setForm(f => ({ ...f, descricao: e.target.value }))} rows={3} />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch id="status" checked={form.status === 'ativo'} onCheckedChange={checked => setForm(f => ({ ...f, status: checked ? 'ativo' : 'inativo' }))} />
-                  <Label htmlFor="status">Produto Ativo na Loja</Label>
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Foto do Produto</Label>
+                      <div className="flex flex-col gap-2">
+                        <Button variant="outline" size="sm" className="w-full" onClick={() => photoInputRef.current?.click()} disabled={isUploading}>
+                          {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+                          Upload Foto
+                        </Button>
+                        <input type="file" ref={photoInputRef} className="hidden" accept="image/jpeg,image/png,image/webp" onChange={e => handleFileUpload(e, 'foto_url')} />
+                        {form.foto_url && <img src={form.foto_url} alt="Preview" className="w-20 h-20 object-cover rounded border" />}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Banner/Destaque</Label>
+                      <div className="flex flex-col gap-2">
+                        <Button variant="outline" size="sm" className="w-full" onClick={() => bannerInputRef.current?.click()} disabled={isUploading}>
+                          {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+                          Upload Banner
+                        </Button>
+                        <input type="file" ref={bannerInputRef} className="hidden" accept="image/jpeg,image/png,image/webp" onChange={e => handleFileUpload(e, 'imagem_destaque_url')} />
+                        {form.imagem_destaque_url && <img src={form.imagem_destaque_url} alt="Preview" className="w-20 h-20 object-cover rounded border" />}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 border border-dashed rounded-lg space-y-4 bg-secondary/10">
+                    <div className="flex items-center gap-2 text-primary">
+                      <Tag className="w-4 h-4" />
+                      <span className="font-semibold text-sm uppercase">Configurar Cupom</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input placeholder="Código (ex: PROMO10)" value={form.cupom_codigo} onChange={e => setForm(f => ({ ...f, cupom_codigo: e.target.value.toUpperCase() }))} />
+                      <Select value={form.cupom_tipo} onValueChange={v => setForm(f => ({ ...f, cupom_tipo: v as any }))}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="percentual">Percentual (%)</SelectItem>
+                          <SelectItem value="fixo">Valor Fixo (R$)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input type="number" placeholder="Valor Desconto" value={form.cupom_valor} onChange={e => setForm(f => ({ ...f, cupom_valor: e.target.value }))} />
+                      <Input type="date" value={form.cupom_validade} onChange={e => setForm(f => ({ ...f, cupom_validade: e.target.value }))} />
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Foto do Produto</Label>
-                    <div className="flex flex-col gap-2">
-                      <Button variant="outline" size="sm" className="w-full" onClick={() => photoInputRef.current?.click()} disabled={isUploading}>
-                        {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-                        Upload Foto
-                      </Button>
-                      <input type="file" ref={photoInputRef} className="hidden" accept="image/*" onChange={e => handleFileUpload(e, 'foto_url')} />
-                      {form.foto_url && <img src={form.foto_url} alt="Preview" className="w-20 h-20 object-cover rounded border" />}
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Banner/Destaque</Label>
-                    <div className="flex flex-col gap-2">
-                      <Button variant="outline" size="sm" className="w-full" onClick={() => bannerInputRef.current?.click()} disabled={isUploading}>
-                        {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-                        Upload Banner
-                      </Button>
-                      <input type="file" ref={bannerInputRef} className="hidden" accept="image/*" onChange={e => handleFileUpload(e, 'imagem_destaque_url')} />
-                      {form.imagem_destaque_url && <img src={form.imagem_destaque_url} alt="Preview" className="w-20 h-20 object-cover rounded border" />}
-                    </div>
-                  </div>
-                </div>
+              <div className="mt-8 flex justify-end gap-3">
+                <Button variant="outline" onClick={resetForm}>Cancelar</Button>
+                <Button className="bg-gradient-gold text-primary-foreground min-w-[120px]" onClick={handleSave} disabled={isUploading}>
+                  <Save className="mr-2 h-4 w-4" /> Guardar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
-                <div className="p-4 border border-dashed rounded-lg space-y-4 bg-secondary/10">
-                  <div className="flex items-center gap-2 text-primary">
-                    <Tag className="w-4 h-4" />
-                    <span className="font-semibold text-sm uppercase">Configurar Cupom</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Input placeholder="Código (ex: PROMO10)" value={form.cupom_codigo} onChange={e => setForm(f => ({ ...f, cupom_codigo: e.target.value.toUpperCase() }))} />
-                    <Select value={form.cupom_tipo} onValueChange={v => setForm(f => ({ ...f, cupom_tipo: v as any }))}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="percentual">Percentual (%)</SelectItem>
-                        <SelectItem value="fixo">Valor Fixo (R$)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Input type="number" placeholder="Valor Desconto" value={form.cupom_valor} onChange={e => setForm(f => ({ ...f, cupom_valor: e.target.value }))} />
-                    <Input type="date" value={form.cupom_validade} onChange={e => setForm(f => ({ ...f, cupom_validade: e.target.value }))} />
+          {/* Preview em tempo real — espelha o card da homepage */}
+          <Card className="border-primary/30 bg-card/50 backdrop-blur-sm h-fit sticky top-4">
+            <CardHeader>
+              <CardTitle className="text-sm font-serif uppercase tracking-widest text-muted-foreground">
+                Preview ao vivo
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-xl border border-border overflow-hidden bg-card">
+                <div className="relative aspect-square bg-muted">
+                  {form.foto_url ? (
+                    <img src={form.foto_url} alt={form.nome || 'Produto'} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
+                      Faça upload da foto
+                    </div>
+                  )}
+                  {form.cupom_codigo && form.cupom_valor && (
+                    <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground font-bold shadow-lg">
+                      {form.cupom_tipo === 'percentual'
+                        ? `${form.cupom_valor}% OFF`
+                        : `${formatBRL(Number(form.cupom_valor))} OFF`}
+                    </Badge>
+                  )}
+                  {form.status === 'inativo' && (
+                    <div className="absolute inset-0 bg-background/70 flex items-center justify-center">
+                      <Badge variant="secondary">Inativo — não aparecerá no site</Badge>
+                    </div>
+                  )}
+                </div>
+                <div className="p-4 space-y-2">
+                  <h3 className="font-serif font-semibold text-lg line-clamp-1">
+                    {form.nome || 'Nome do produto'}
+                  </h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5rem]">
+                    {form.descricao || 'Descrição curta aparece aqui...'}
+                  </p>
+                  <div className="pt-2 space-y-0.5">
+                    {previewDiscount !== null && previewDiscount < Number(form.valor) && (
+                      <p className="text-xs text-muted-foreground line-through">
+                        {formatBRL(Number(form.valor) || 0)}
+                      </p>
+                    )}
+                    <p className={`text-xl font-bold ${previewDiscount !== null && previewDiscount < Number(form.valor) ? 'text-green-500' : 'text-primary'}`}>
+                      {formatBRL(previewDiscount !== null ? previewDiscount : (Number(form.valor) || 0))}
+                    </p>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="mt-8 flex justify-end gap-3">
-              <Button variant="outline" onClick={resetForm}>Cancelar</Button>
-              <Button className="bg-gradient-gold text-primary-foreground min-w-[120px]" onClick={handleSave} disabled={isUploading}>
-                <Save className="mr-2 h-4 w-4" /> Guardar
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       )}
+
 
       {/* Listagem */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
