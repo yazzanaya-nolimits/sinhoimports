@@ -155,6 +155,34 @@ const ProductsPage = () => {
         </div>
       </div>
 
+      {/* Toolbar: busca + ordenação */}
+      <div className="flex flex-wrap gap-3 items-center">
+        <div className="relative flex-1 min-w-[220px] max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar por nome..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="pl-10 bg-card"
+          />
+        </div>
+        <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+          <SelectTrigger className="w-[200px] bg-card">
+            <Filter className="w-4 h-4 mr-2" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="created_desc">Mais recentes</SelectItem>
+            <SelectItem value="nome_asc">Nome (A-Z)</SelectItem>
+            <SelectItem value="valor_asc">Menor preço</SelectItem>
+            <SelectItem value="valor_desc">Maior preço</SelectItem>
+          </SelectContent>
+        </Select>
+        <span className="text-xs text-muted-foreground ml-auto">
+          {filtered.length} {filtered.length === 1 ? 'produto' : 'produtos'}
+        </span>
+      </div>
+
       {showForm && (
         <Card className="border-primary/20 bg-card/50 backdrop-blur-sm">
           <CardHeader>
