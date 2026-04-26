@@ -13,10 +13,10 @@ export function useSupabaseProducts() {
       const { data, error } = await supabase
         .from('produtos')
         .select('*')
-        .order('nome', { ascending: true });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts((data || []) as DatabaseProduct[]);
     } catch (error: any) {
       console.error('Error fetching products:', error.message);
     } finally {
@@ -49,13 +49,29 @@ export function useSupabaseProducts() {
 
   const saveProduct = async (product: Partial<DatabaseProduct>) => {
     try {
+      if (!product.nome || product.valor === undefined || product.valor === null) {
+        throw new Error('Nome e valor são obrigatórios.');
+      }
+      const insertPayload = {
+        nome: product.nome,
+        descricao: product.descricao ?? null,
+        valor: Number(product.valor),
+        foto_url: product.foto_url ?? null,
+        imagem_destaque_url: product.imagem_destaque_url ?? null,
+        cupom_codigo: product.cupom_codigo ?? null,
+        cupom_tipo: product.cupom_tipo ?? null,
+        cupom_valor: product.cupom_valor ?? null,
+        cupom_validade: product.cupom_validade ?? null,
+        status: product.status ?? 'ativo',
+      };
+
       const { data, error } = product.id
         ? await supabase
             .from('produtos')
-            .update({ ...product, updated_at: new Date().toISOString() })
+            .update({ ...insertPayload, updated_at: new Date().toISOString() })
             .eq('id', product.id)
             .select()
-        : await supabase.from('produtos').insert([product]).select();
+        : await supabase.from('produtos').insert(insertPayload).select();
 
       if (error) throw error;
       toast({ title: 'Sucesso', description: 'Produto salvo e publicado com sucesso!' });
@@ -107,13 +123,22 @@ export function useSupabaseProducts() {
 
   const uploadFile = async (file: File, bucket: string = 'produtos') => {
     try {
+      const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowed.includes(file.type)) {
+        toast({
+          title: 'Formato não suportado',
+          description: 'Use JPG, PNG ou WebP.',
+          variant: 'destructive',
+        });
+        return null;
+      }
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
+      const filePath = fileName;
 
       const { error: uploadError } = await supabase.storage
         .from(bucket)
-        .upload(filePath, file);
+        .upload(filePath, file, { cacheControl: '3600', upsert: false });
 
       if (uploadError) throw uploadError;
 
