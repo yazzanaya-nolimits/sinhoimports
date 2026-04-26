@@ -1,55 +1,103 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { ChevronLeft, ChevronRight, MessageCircle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { mockProducts, getWhatsAppLink } from '@/data/products';
-import { formatBRL } from '@/lib/brl';
+import { getWhatsAppLink } from '@/data/products';
+import heroPerfume from '@/assets/hero-perfume.jpg';
+import heroWatch from '@/assets/hero-watch.jpg';
+import heroMultimedia from '@/assets/hero-multimedia.jpg';
 
-const featured = mockProducts.filter(p => p.featured);
+const defaultSlides = [
+  { image: heroPerfume, label: 'Perfumes Árabes', caption: 'Fragrâncias originais importadas' },
+  { image: heroWatch, label: 'Relógios de Luxo', caption: 'Rolex, Bulgari, Invicta' },
+  { image: heroMultimedia, label: 'Multimídia Auto', caption: 'Tecnologia premium para seu carro' },
+];
 
 const HeroSection = () => {
   const [current, setCurrent] = useState(0);
   const heroTitle = localStorage.getItem('sinho_hero_title') || 'Luxo Original para Todo Brasil';
-  const heroDesc = localStorage.getItem('sinho_hero_desc') || 'Perfumes árabes originais, relógios de luxo e acessórios premium. Qualidade garantida com envio para todo o país.';
+  const heroDesc =
+    localStorage.getItem('sinho_hero_desc') ||
+    'Perfumes árabes originais, relógios de luxo e acessórios premium. Qualidade garantida com envio para todo o país.';
 
-  useEffect(() => {
-    const timer = setInterval(() => setCurrent(i => (i + 1) % featured.length), 4000);
-    return () => clearInterval(timer);
+  const slides = useMemo(() => {
+    try {
+      const stored = localStorage.getItem('sinho_hero_images');
+      if (stored) {
+        const parsed = JSON.parse(stored) as string[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((url, i) => ({
+            image: url,
+            label: defaultSlides[i % defaultSlides.length].label,
+            caption: defaultSlides[i % defaultSlides.length].caption,
+          }));
+        }
+      }
+    } catch {}
+    return defaultSlides;
   }, []);
 
-  const product = featured[current];
+  useEffect(() => {
+    const timer = setInterval(() => setCurrent(i => (i + 1) % slides.length), 5000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
+  const slide = slides[current];
   const [titleLine1, ...rest] = heroTitle.split(' para ');
   const titleLine2 = rest.length > 0 ? 'para ' + rest.join(' para ') : '';
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-secondary/30" />
-      <div className="absolute inset-0 opacity-20">
-        <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-all duration-1000" />
+      {/* Background image with crossfade */}
+      <div className="absolute inset-0">
+        {slides.map((s, i) => (
+          <div
+            key={i}
+            className={`absolute inset-0 transition-opacity duration-[1500ms] ease-in-out ${
+              i === current ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <img
+              src={s.image}
+              alt={s.label}
+              className="w-full h-full object-cover scale-105"
+              loading={i === 0 ? 'eager' : 'lazy'}
+            />
+          </div>
+        ))}
       </div>
-      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-transparent" />
+
+      {/* Gradient overlays for readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" />
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8">
-            <div className="inline-block">
-              <span className="text-xs tracking-[0.3em] uppercase text-primary/80 border border-primary/30 px-4 py-1.5 rounded-full">
-                Importação Premium
+          <div className="space-y-8 animate-fade-in">
+            <div className="inline-flex items-center gap-2 border border-primary/40 px-4 py-1.5 rounded-full bg-background/40 backdrop-blur-sm">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <span className="text-xs tracking-[0.3em] uppercase text-primary/90">
+                {slide.label}
               </span>
             </div>
             <h1 className="text-5xl md:text-7xl font-serif font-bold leading-tight">
               {titleLine1}
-              {titleLine2 && <><br /><span className="text-gradient-gold">{titleLine2}</span></>}
+              {titleLine2 && (
+                <>
+                  <br />
+                  <span className="text-gradient-gold">{titleLine2}</span>
+                </>
+              )}
             </h1>
             <p className="text-lg text-muted-foreground max-w-md leading-relaxed">{heroDesc}</p>
             <div className="flex flex-wrap gap-4">
               <Button
                 size="lg"
-                className="bg-gradient-gold text-primary-foreground font-semibold px-8 hover:opacity-90 transition-opacity"
+                className="bg-gradient-gold text-primary-foreground font-semibold px-8 hover:opacity-90 transition-opacity shadow-gold"
                 onClick={() => document.getElementById('produtos')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Ver Produtos
               </Button>
-              <Button size="lg" variant="outline" className="border-primary/30 text-primary hover:bg-primary/10" asChild>
+              <Button size="lg" variant="outline" className="border-primary/40 text-primary hover:bg-primary/10" asChild>
                 <a href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer">
                   <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp
                 </a>
@@ -58,13 +106,24 @@ const HeroSection = () => {
           </div>
 
           <div className="relative hidden lg:block">
-            <div className="relative w-96 h-96 mx-auto">
-              <div className="absolute inset-0 rounded-full bg-gradient-gold opacity-10 blur-3xl" />
-              <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-2xl shadow-gold transition-all duration-700" />
-              <div className="absolute bottom-4 left-4 right-4 bg-background/80 backdrop-blur-sm rounded-xl p-4 border border-primary/20">
-                <p className="text-sm text-muted-foreground">{product.brand}</p>
-                <p className="font-serif font-semibold text-lg">{product.name}</p>
-                <p className="text-primary font-bold">{formatBRL(product.sellPrice)}</p>
+            <div className="relative w-[28rem] h-[28rem] mx-auto">
+              <div className="absolute inset-0 rounded-full bg-gradient-gold opacity-20 blur-3xl animate-pulse" />
+              <div className="absolute inset-4 rounded-3xl overflow-hidden border border-primary/30 shadow-gold">
+                {slides.map((s, i) => (
+                  <img
+                    key={i}
+                    src={s.image}
+                    alt={s.label}
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ${
+                      i === current ? 'opacity-100' : 'opacity-0'
+                    }`}
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+              <div className="absolute -bottom-2 left-6 right-6 bg-background/85 backdrop-blur-md rounded-xl p-4 border border-primary/30 shadow-xl">
+                <p className="text-xs tracking-widest uppercase text-primary/80">{slide.label}</p>
+                <p className="font-serif font-semibold text-lg mt-1">{slide.caption}</p>
               </div>
             </div>
           </div>
@@ -72,18 +131,30 @@ const HeroSection = () => {
       </div>
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-        {featured.map((_, i) => (
-          <button key={i} onClick={() => setCurrent(i)}
-            className={`w-2 h-2 rounded-full transition-all ${i === current ? 'w-8 bg-primary' : 'bg-muted-foreground/40'}`} />
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            aria-label={`Slide ${i + 1}`}
+            className={`h-2 rounded-full transition-all ${
+              i === current ? 'w-10 bg-primary shadow-[0_0_10px_hsl(var(--primary))]' : 'w-2 bg-muted-foreground/40'
+            }`}
+          />
         ))}
       </div>
 
-      <button onClick={() => setCurrent(i => (i - 1 + featured.length) % featured.length)}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/50 hover:bg-background/80 transition-colors">
+      <button
+        onClick={() => setCurrent(i => (i - 1 + slides.length) % slides.length)}
+        aria-label="Slide anterior"
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/50 hover:bg-background/80 border border-primary/20 transition-colors"
+      >
         <ChevronLeft className="w-6 h-6" />
       </button>
-      <button onClick={() => setCurrent(i => (i + 1) % featured.length)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/50 hover:bg-background/80 transition-colors">
+      <button
+        onClick={() => setCurrent(i => (i + 1) % slides.length)}
+        aria-label="Próximo slide"
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/50 hover:bg-background/80 border border-primary/20 transition-colors"
+      >
         <ChevronRight className="w-6 h-6" />
       </button>
     </section>
