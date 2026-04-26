@@ -49,13 +49,29 @@ export function useSupabaseProducts() {
 
   const saveProduct = async (product: Partial<DatabaseProduct>) => {
     try {
+      if (!product.nome || product.valor === undefined || product.valor === null) {
+        throw new Error('Nome e valor são obrigatórios.');
+      }
+      const insertPayload = {
+        nome: product.nome,
+        descricao: product.descricao ?? null,
+        valor: Number(product.valor),
+        foto_url: product.foto_url ?? null,
+        imagem_destaque_url: product.imagem_destaque_url ?? null,
+        cupom_codigo: product.cupom_codigo ?? null,
+        cupom_tipo: product.cupom_tipo ?? null,
+        cupom_valor: product.cupom_valor ?? null,
+        cupom_validade: product.cupom_validade ?? null,
+        status: product.status ?? 'ativo',
+      };
+
       const { data, error } = product.id
         ? await supabase
             .from('produtos')
-            .update({ ...product, updated_at: new Date().toISOString() })
+            .update({ ...insertPayload, updated_at: new Date().toISOString() })
             .eq('id', product.id)
             .select()
-        : await supabase.from('produtos').insert([product]).select();
+        : await supabase.from('produtos').insert(insertPayload).select();
 
       if (error) throw error;
       toast({ title: 'Sucesso', description: 'Produto salvo e publicado com sucesso!' });
