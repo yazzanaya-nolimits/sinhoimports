@@ -1,34 +1,63 @@
-import { useState, useRef } from 'react';
-import { Plus, Download, Edit2, Save, X, Upload, Search, Filter } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Plus, Download, Edit2, Save, X, Upload, Search, Filter, Trash2, Eye, EyeOff, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { mockProducts, BRANDS, CATEGORIES, type Product } from '@/data/products';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { BRANDS, CATEGORIES, type Product } from '@/data/products';
 import { formatBRL } from '@/lib/brl';
 import { useToast } from '@/hooks/use-toast';
-
-const generateSKU = (category: string, brand: string) => {
-  const cat = category.substring(0, 3).toUpperCase();
-  const br = brand.substring(0, 3).toUpperCase();
-  const num = String(Date.now()).slice(-5);
-  return `${cat}-${br}-${num}`;
-};
+import { useSupabaseProducts } from '@/hooks/useSupabaseProducts';
+import { type DatabaseProduct } from '@/lib/supabase';
+import { Badge } from '@/components/ui/badge';
 
 const ProductsPage = () => {
   const { toast } = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
+  
+  const { products: dbProducts, saveProduct, deleteProduct, toggleStatus, uploadFile, loading } = useSupabaseProducts();
+  
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [isUploading, setIsUploading] = useState(false);
+
   const [form, setForm] = useState({
-    name: '', brand: BRANDS[0], category: 'perfume' as Product['category'],
-    buyPrice: '', sellPrice: '', stock: '', image: '', description: '', sku: '',
+    nome: '',
+    descricao: '',
+    valor: '',
+    foto_url: '',
+    imagem_destaque_url: '',
+    cupom_codigo: '',
+    cupom_tipo: 'percentual' as 'percentual' | 'fixo',
+    cupom_valor: '',
+    cupom_validade: '',
+    status: 'ativo' as 'ativo' | 'inativo'
   });
+
+  const resetForm = () => {
+    setForm({
+      nome: '',
+      descricao: '',
+      valor: '',
+      foto_url: '',
+      imagem_destaque_url: '',
+      cupom_codigo: '',
+      cupom_tipo: 'percentual',
+      cupom_valor: '',
+      cupom_validade: '',
+      status: 'ativo'
+    });
+    setShowForm(false);
+    setEditId(null);
+  };
 
   const resetForm = () => {
     setForm({ name: '', brand: BRANDS[0], category: 'perfume', buyPrice: '', sellPrice: '', stock: '', image: '', description: '', sku: '' });
