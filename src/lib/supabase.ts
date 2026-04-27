@@ -1,6 +1,11 @@
 // Re-exporta o client oficial do Lovable Cloud para manter os imports antigos.
 export { supabase } from '@/integrations/supabase/client';
 
+export type ProductVariation = {
+  tamanho: string;
+  valor?: number | null;
+};
+
 export type DatabaseProduct = {
   id: string;
   nome: string;
@@ -13,6 +18,13 @@ export type DatabaseProduct = {
   cupom_valor: number | null;
   cupom_validade: string | null;
   status: 'ativo' | 'inativo';
+  ingredientes: string | null;
+  modo_uso: string | null;
+  informacoes_gerais: string | null;
+  variacoes: ProductVariation[];
+  aceita_pix: boolean;
+  aceita_cartao: boolean;
+  max_parcelas: number;
   created_at: string;
   updated_at: string;
 };
