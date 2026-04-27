@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { MessageCircle, Search, Tag, Loader2, X } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { MessageCircle, Search, Tag, Loader2, X, LayoutGrid, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -18,9 +19,20 @@ const ProductsSection = () => {
   const [selectedProduct, setSelectedProduct] = useState<DatabaseProduct | null>(null);
   const { toast } = useToast();
 
-  const filtered = products.filter(p => 
-    p.status === 'ativo' && 
-    p.nome.toLowerCase().includes(search.toLowerCase())
+  const ativos = products.filter(p => p.status === 'ativo');
+
+  // Destaques: prioriza marcados como destaque; se houver mais de 6, pega os 6 mais recentes
+  const destaques = useMemo(() => {
+    const comDestaque = ativos.filter(p => p.destaque);
+    const base = comDestaque.length > 0 ? comDestaque : ativos;
+    return [...base]
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 6);
+  }, [ativos]);
+
+  const filtered = (search
+    ? ativos.filter(p => p.nome.toLowerCase().includes(search.toLowerCase()))
+    : destaques
   );
 
   const handleApplyCoupon = () => {
