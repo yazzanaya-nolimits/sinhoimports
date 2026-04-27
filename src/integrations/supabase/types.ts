@@ -119,6 +119,101 @@ export type Database = {
         }
         Relationships: []
       }
+      estoque_movimentacoes: {
+        Row: {
+          created_at: string
+          id: string
+          motivo: string | null
+          produto_id: string | null
+          produto_nome: string
+          quantidade: number
+          tipo: string
+          valor_unitario: number
+          venda_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          motivo?: string | null
+          produto_id?: string | null
+          produto_nome: string
+          quantidade: number
+          tipo: string
+          valor_unitario?: number
+          venda_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          motivo?: string | null
+          produto_id?: string | null
+          produto_nome?: string
+          quantidade?: number
+          tipo?: string
+          valor_unitario?: number
+          venda_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estoque_movimentacoes_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estoque_movimentacoes_venda_id_fkey"
+            columns: ["venda_id"]
+            isOneToOne: false
+            referencedRelation: "vendas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financeiro_lancamentos: {
+        Row: {
+          categoria: string
+          created_at: string
+          descricao: string
+          forma_pagamento: string | null
+          id: string
+          status: string
+          tipo: string
+          valor: number
+          venda_id: string | null
+        }
+        Insert: {
+          categoria?: string
+          created_at?: string
+          descricao: string
+          forma_pagamento?: string | null
+          id?: string
+          status?: string
+          tipo: string
+          valor?: number
+          venda_id?: string | null
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          descricao?: string
+          forma_pagamento?: string | null
+          id?: string
+          status?: string
+          tipo?: string
+          valor?: number
+          venda_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financeiro_lancamentos_venda_id_fkey"
+            columns: ["venda_id"]
+            isOneToOne: false
+            referencedRelation: "vendas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       imagens_site: {
         Row: {
           created_at: string
@@ -153,17 +248,24 @@ export type Database = {
           cupom_validade: string | null
           cupom_valor: number | null
           descricao: string | null
+          estoque_status: string
           foto_url: string | null
           id: string
           imagem_destaque_url: string | null
           informacoes_gerais: string | null
           ingredientes: string | null
+          lucro_valor: number
+          margem_percentual: number
           max_parcelas: number
           modo_uso: string | null
           nome: string
+          quantidade: number
+          quantidade_minima: number
           status: string
+          tipo: string | null
           updated_at: string
           valor: number
+          valor_compra: number
           variacoes: Json
         }
         Insert: {
@@ -175,17 +277,24 @@ export type Database = {
           cupom_validade?: string | null
           cupom_valor?: number | null
           descricao?: string | null
+          estoque_status?: string
           foto_url?: string | null
           id?: string
           imagem_destaque_url?: string | null
           informacoes_gerais?: string | null
           ingredientes?: string | null
+          lucro_valor?: number
+          margem_percentual?: number
           max_parcelas?: number
           modo_uso?: string | null
           nome: string
+          quantidade?: number
+          quantidade_minima?: number
           status?: string
+          tipo?: string | null
           updated_at?: string
           valor?: number
+          valor_compra?: number
           variacoes?: Json
         }
         Update: {
@@ -197,27 +306,124 @@ export type Database = {
           cupom_validade?: string | null
           cupom_valor?: number | null
           descricao?: string | null
+          estoque_status?: string
           foto_url?: string | null
           id?: string
           imagem_destaque_url?: string | null
           informacoes_gerais?: string | null
           ingredientes?: string | null
+          lucro_valor?: number
+          margem_percentual?: number
           max_parcelas?: number
           modo_uso?: string | null
           nome?: string
+          quantidade?: number
+          quantidade_minima?: number
           status?: string
+          tipo?: string | null
           updated_at?: string
           valor?: number
+          valor_compra?: number
           variacoes?: Json
         }
         Relationships: []
+      }
+      vendas: {
+        Row: {
+          cliente_nome: string | null
+          created_at: string
+          cupom_codigo: string | null
+          desconto_aplicado: number
+          forma_pagamento: string
+          id: string
+          observacao: string | null
+          parcelas: number
+          produto_id: string | null
+          produto_nome: string
+          quantidade: number
+          status: string
+          updated_at: string
+          valor_total: number
+          valor_unitario: number
+          variacao: string | null
+        }
+        Insert: {
+          cliente_nome?: string | null
+          created_at?: string
+          cupom_codigo?: string | null
+          desconto_aplicado?: number
+          forma_pagamento?: string
+          id?: string
+          observacao?: string | null
+          parcelas?: number
+          produto_id?: string | null
+          produto_nome: string
+          quantidade: number
+          status?: string
+          updated_at?: string
+          valor_total?: number
+          valor_unitario?: number
+          variacao?: string | null
+        }
+        Update: {
+          cliente_nome?: string | null
+          created_at?: string
+          cupom_codigo?: string | null
+          desconto_aplicado?: number
+          forma_pagamento?: string
+          id?: string
+          observacao?: string | null
+          parcelas?: number
+          produto_id?: string | null
+          produto_nome?: string
+          quantidade?: number
+          status?: string
+          updated_at?: string
+          valor_total?: number
+          valor_unitario?: number
+          variacao?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendas_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cancelar_venda: { Args: { p_venda_id: string }; Returns: boolean }
+      confirmar_venda: {
+        Args: {
+          p_cliente_nome?: string
+          p_cupom?: string
+          p_desconto?: number
+          p_forma_pagamento?: string
+          p_observacao?: string
+          p_parcelas?: number
+          p_produto_id: string
+          p_quantidade: number
+          p_valor_unitario: number
+          p_variacao?: string
+        }
+        Returns: string
+      }
+      registrar_entrada_estoque: {
+        Args: {
+          p_gerar_despesa?: boolean
+          p_motivo?: string
+          p_produto_id: string
+          p_quantidade: number
+          p_valor_unitario?: number
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

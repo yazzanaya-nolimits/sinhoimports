@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,12 +8,11 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminLayout from "./pages/admin/AdminLayout";
+import DashboardPage from "./pages/admin/DashboardPage";
 import PDVPage from "./pages/admin/PDVPage";
+import VendasHistoricoPage from "./pages/admin/VendasHistoricoPage";
 import ProductsPage from "./pages/admin/ProductsPage";
 import FinancialPage from "./pages/admin/FinancialPage";
-import ClientsPage from "./pages/admin/ClientsPage";
-import ReportsPage from "./pages/admin/ReportsPage";
-import SiteManagementPage from "./pages/admin/SiteManagementPage";
 import CrmPage from "./pages/admin/CrmPage";
 import EstoquePage from "./pages/admin/EstoquePage";
 import SiteImagesPage from "./pages/admin/SiteImagesPage";
@@ -32,14 +31,13 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/admin" element={<AdminLogin />} />
             <Route element={<AdminLayout />}>
-              <Route path="/admin/dashboard" element={<PDVPage />} />
-              <Route path="/admin/products" element={<ProductsPage />} />
-              <Route path="/admin/financial" element={<FinancialPage />} />
-              <Route path="/admin/clients" element={<ClientsPage />} />
-              <Route path="/admin/reports" element={<ReportsPage />} />
-              <Route path="/admin/site" element={<SiteManagementPage />} />
-              <Route path="/admin/crm" element={<CrmPage />} />
+              <Route path="/admin/dashboard" element={<DashboardPage />} />
+              <Route path="/admin/pdv" element={<PDVPage />} />
+              <Route path="/admin/vendas" element={<VendasHistoricoPage />} />
               <Route path="/admin/estoque" element={<EstoquePage />} />
+              <Route path="/admin/financial" element={<FinancialPage />} />
+              <Route path="/admin/crm" element={<CrmPage />} />
+              <Route path="/admin/products" element={<ProductsPage />} />
               <Route path="/admin/site-imagens" element={<SiteImagesPage />} />
               <Route path="/admin/banner" element={<BannerPage />} />
             </Route>
