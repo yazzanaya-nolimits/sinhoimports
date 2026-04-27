@@ -184,8 +184,35 @@ const DashboardPage = () => {
   );
 };
 
+const KpiCard = ({
+  label, value, sub, icon: Icon, variant,
+}: {
+  label: string; value: string; sub?: string; icon: any;
+  variant: 'gold' | 'electric' | 'danger';
+}) => {
+  const styles = {
+    gold: { card: 'card-luxury', icon: 'text-primary', value: 'text-gradient-gold', glow: 'bg-primary/10' },
+    electric: { card: 'card-tech', icon: 'text-electric', value: 'text-gradient-electric', glow: 'bg-electric/10' },
+    danger: { card: 'card-luxury border-destructive/40', icon: 'text-destructive', value: 'text-destructive', glow: 'bg-destructive/10' },
+  }[variant];
+  return (
+    <Card className={styles.card}>
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</p>
+          <div className={`w-8 h-8 rounded-lg ${styles.glow} flex items-center justify-center`}>
+            <Icon className={`w-4 h-4 ${styles.icon}`} />
+          </div>
+        </div>
+        <p className={`text-2xl font-bold ${styles.value}`}>{value}</p>
+        {sub && <p className="text-xs text-muted-foreground mt-1">{sub}</p>}
+      </CardContent>
+    </Card>
+  );
+};
+
 const QuickLink = ({ to, icon: Icon, label }: { to: string; icon: any; label: string }) => (
-  <Button asChild variant="outline" className="h-auto py-3 justify-start gap-2">
+  <Button asChild variant="outline" className="h-auto py-3 justify-start gap-2 border-border/60 hover:border-electric/50 hover:bg-electric/5 transition-all">
     <Link to={to}>
       <Icon className="w-4 h-4 text-primary" />
       <span className="text-sm">{label}</span>
