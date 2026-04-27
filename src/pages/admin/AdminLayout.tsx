@@ -93,10 +93,10 @@ const AdminLayout = () => {
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="p-6 border-b border-sidebar-border flex items-center justify-between">
+        <div className="p-6 border-b border-sidebar-border flex items-center justify-between relative z-10">
           <div>
-            <h2 className="text-xl font-serif font-bold text-gradient-gold leading-none">Sinho</h2>
-            <p className="text-[10px] tracking-[0.25em] text-electric uppercase mt-1">Admin · PDV</p>
+            <h2 className="text-xl font-serif font-bold text-theme-gradient leading-none">Sinho</h2>
+            <p className="text-[10px] tracking-[0.25em] uppercase mt-1 opacity-80">Admin · PDV</p>
           </div>
           <button className="lg:hidden text-muted-foreground hover:text-foreground" onClick={() => setSidebarOpen(false)}>
             <X className="w-5 h-5" />
