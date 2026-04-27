@@ -16,6 +16,8 @@ import ReportsPage from "./pages/admin/ReportsPage";
 import SiteManagementPage from "./pages/admin/SiteManagementPage";
 import CrmPage from "./pages/admin/CrmPage";
 import EstoquePage from "./pages/admin/EstoquePage";
+import SiteImagesPage from "./pages/admin/SiteImagesPage";
+import BannerPage from "./pages/admin/BannerPage";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +40,8 @@ const App = () => (
               <Route path="/admin/site" element={<SiteManagementPage />} />
               <Route path="/admin/crm" element={<CrmPage />} />
               <Route path="/admin/estoque" element={<EstoquePage />} />
+              <Route path="/admin/site-imagens" element={<SiteImagesPage />} />
+              <Route path="/admin/banner" element={<BannerPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

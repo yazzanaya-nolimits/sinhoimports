@@ -16,7 +16,11 @@ export function useSupabaseProducts() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProducts((data || []) as DatabaseProduct[]);
+      const normalized = (data || []).map((p: Record<string, unknown>) => ({
+        ...p,
+        variacoes: Array.isArray(p.variacoes) ? p.variacoes : [],
+      }));
+      setProducts(normalized as unknown as DatabaseProduct[]);
     } catch (error: any) {
       console.error('Error fetching products:', error.message);
     } finally {
@@ -63,6 +67,13 @@ export function useSupabaseProducts() {
         cupom_valor: product.cupom_valor ?? null,
         cupom_validade: product.cupom_validade ?? null,
         status: product.status ?? 'ativo',
+        ingredientes: product.ingredientes ?? null,
+        modo_uso: product.modo_uso ?? null,
+        informacoes_gerais: product.informacoes_gerais ?? null,
+        variacoes: (product.variacoes ?? []) as unknown as never,
+        aceita_pix: product.aceita_pix ?? true,
+        aceita_cartao: product.aceita_cartao ?? true,
+        max_parcelas: product.max_parcelas ?? 12,
       };
 
       const { data, error } = product.id

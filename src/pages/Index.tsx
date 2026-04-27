@@ -6,12 +6,14 @@ import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import ContactSection from '@/components/landing/ContactSection';
 import Footer from '@/components/landing/Footer';
 import ExitIntentPopup from '@/components/ExitIntentPopup';
+import PromoBanner from '@/components/landing/PromoBanner';
 import { MessageCircle } from 'lucide-react';
 import { getWhatsAppLink } from '@/data/products';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      <PromoBanner />
       <Navbar />
       <main>
         <HeroSection />

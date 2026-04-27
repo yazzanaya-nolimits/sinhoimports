@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { MessageCircle, Search, Tag, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,12 +7,15 @@ import { useSupabaseProducts } from '@/hooks/useSupabaseProducts';
 import { formatBRL } from '@/lib/brl';
 import { getWhatsAppLink } from '@/data/products';
 import { useToast } from '@/hooks/use-toast';
+import ProductModal from './ProductModal';
+import { type DatabaseProduct } from '@/lib/supabase';
 
 const ProductsSection = () => {
   const { products, loading } = useSupabaseProducts();
   const [search, setSearch] = useState('');
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number; type: 'percentual' | 'fixo' } | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<DatabaseProduct | null>(null);
   const { toast } = useToast();
 
   const filtered = products.filter(p => 
@@ -114,7 +117,8 @@ const ProductsSection = () => {
               return (
                 <div
                   key={product.id}
-                  className="group bg-card rounded-xl border border-border overflow-hidden hover:border-primary/40 hover:shadow-gold transition-all duration-300 flex flex-col"
+                  onClick={() => setSelectedProduct(product)}
+                  className="group bg-card rounded-xl border border-border overflow-hidden hover:border-primary/40 hover:shadow-gold transition-all duration-300 flex flex-col cursor-pointer"
                   style={{ animationDelay: `${i * 100}ms` }}
                 >
                   <div className="relative overflow-hidden aspect-square">
@@ -128,12 +132,10 @@ const ProductsSection = () => {
                       <Button
                         size="sm"
                         className="w-full bg-gradient-gold text-primary-foreground"
-                        asChild
+                        onClick={(e) => { e.stopPropagation(); setSelectedProduct(product); }}
                       >
-                        <a href={getWhatsAppLink(product.nome)} target="_blank" rel="noopener noreferrer">
-                          <MessageCircle className="mr-2 h-4 w-4" />
-                          Comprar via WhatsApp
-                        </a>
+                        <MessageCircle className="mr-2 h-4 w-4" />
+                        Ver detalhes
                       </Button>
                     </div>
                     
@@ -160,7 +162,13 @@ const ProductsSection = () => {
                         <span className={`text-xl font-bold ${hasDiscount ? 'text-green-500' : 'text-primary'}`}>
                           {formatBRL(discountedPrice)}
                         </span>
-                        <Button size="sm" variant="ghost" className="text-primary hover:text-primary hover:bg-primary/10" asChild>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-primary hover:text-primary hover:bg-primary/10"
+                          asChild
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <a href={getWhatsAppLink(product.nome)} target="_blank" rel="noopener noreferrer">
                             <MessageCircle className="h-5 w-5" />
                           </a>
@@ -178,6 +186,16 @@ const ProductsSection = () => {
           <p className="text-center text-muted-foreground py-12">Nenhum produto ativo encontrado.</p>
         )}
       </div>
+
+      <ProductModal
+        product={selectedProduct}
+        discountedPrice={
+          selectedProduct
+            ? calculateDiscountedPrice(selectedProduct.valor, selectedProduct.cupom_codigo)
+            : undefined
+        }
+        onClose={() => setSelectedProduct(null)}
+      />
     </section>
   );
 };

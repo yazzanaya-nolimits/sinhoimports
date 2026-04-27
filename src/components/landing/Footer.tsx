@@ -1,4 +1,4 @@
-import { Instagram, Send, ChevronUp, MessageCircleMore, Mail } from 'lucide-react';
+import { Instagram, ChevronUp, MessageCircleMore } from 'lucide-react';
 import { INSTAGRAM_URL, getWhatsAppLink } from '@/data/products';
 
 const socialIconClass =
@@ -50,22 +50,6 @@ const Footer = () => {
                 className={socialIconClass + ' hover:bg-green-500/15 hover:shadow-[0_0_25px_rgba(34,197,94,0.55)] hover:border-green-400/60'}
               >
                 <MessageCircleMore className="w-5 h-5 text-foreground/80 group-hover:text-green-400 transition-colors" />
-              </a>
-              <a
-                href="https://t.me/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Telegram"
-                className={socialIconClass + ' hover:bg-sky-500/15 hover:shadow-[0_0_25px_rgba(56,189,248,0.55)] hover:border-sky-400/60'}
-              >
-                <Send className="w-5 h-5 text-foreground/80 group-hover:text-sky-400 transition-colors" />
-              </a>
-              <a
-                href="mailto:contato@sinhoimports.com"
-                aria-label="E-mail"
-                className={socialIconClass + ' hover:bg-primary/15 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:border-primary/50'}
-              >
-                <Mail className="w-5 h-5 text-foreground/80 group-hover:text-primary transition-colors" />
               </a>
             </div>
             <p className="text-xs text-muted-foreground/80 pt-2">
