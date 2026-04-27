@@ -16,7 +16,11 @@ export function useSupabaseProducts() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProducts((data || []) as DatabaseProduct[]);
+      const normalized = (data || []).map((p: Record<string, unknown>) => ({
+        ...p,
+        variacoes: Array.isArray(p.variacoes) ? p.variacoes : [],
+      }));
+      setProducts(normalized as unknown as DatabaseProduct[]);
     } catch (error: any) {
       console.error('Error fetching products:', error.message);
     } finally {
