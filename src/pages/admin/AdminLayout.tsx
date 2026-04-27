@@ -102,7 +102,7 @@ const AdminLayout = () => {
             <X className="w-5 h-5" />
           </button>
         </div>
-        <nav className="p-3 space-y-1">
+        <nav className="p-3 space-y-1 relative z-10">
           {visibleItems.map(item => {
             const active = location.pathname === item.path;
             const showBadge = item.alert === 'estoque' && estoqueAlerts > 0;
@@ -111,13 +111,11 @@ const AdminLayout = () => {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                className={`group flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all duration-200 relative ${
-                  active
-                    ? 'nav-active font-medium'
-                    : 'text-muted-foreground hover:bg-sidebar-accent hover:text-foreground'
+                className={`nav-item group flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all duration-200 relative ${
+                  active ? 'is-active font-medium' : 'opacity-80 hover:opacity-100'
                 }`}
               >
-                <item.icon className={`w-[18px] h-[18px] transition-colors ${active ? 'text-electric' : 'group-hover:text-primary'}`} />
+                <item.icon className="w-[18px] h-[18px]" />
                 <span className="flex-1">{t(item.labelKey)}</span>
                 {showBadge && (
                   <Badge className="h-5 px-1.5 text-[10px] bg-destructive text-destructive-foreground pulse-glow border-0">
