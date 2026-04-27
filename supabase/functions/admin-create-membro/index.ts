@@ -10,7 +10,6 @@ const corsHeaders = {
 type Body = {
   nome: string;
   username: string;
-  email: string;
   senha: string;
   permissoes: Record<string, string>;
 };
@@ -32,8 +31,15 @@ Deno.serve(async (req) => {
     const admin = createClient(supabaseUrl, serviceKey);
 
     const body = (await req.json()) as Body;
-    if (!body?.nome || !body?.username || !body?.email || !body?.senha) {
+    if (!body?.nome || !body?.username || !body?.senha) {
       return new Response(JSON.stringify({ error: 'Campos obrigatórios faltando' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const username = String(body.username).toLowerCase().replace(/[^a-z0-9_.-]/g, '');
+    if (username.length < 3) {
+      return new Response(JSON.stringify({ error: 'Usuário deve ter ao menos 3 caracteres (a-z, 0-9, _ . -)' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -44,6 +50,8 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+    // E-mail sintético interno (Supabase Auth exige email; usuário nunca vê isso)
+    const syntheticEmail = `${username}@sinho.local`;
 
     // Verifica autorização: precisa estar logado e ter configuracoes=total OU ser o primeiro membro
     const { data: countData } = await admin.from('membros').select('id', { count: 'exact', head: true });
@@ -80,12 +88,12 @@ Deno.serve(async (req) => {
       permissoes.dashboard = 'ver';
     }
 
-    // 1) Cria usuário no Auth (já confirmado)
+    // 1) Cria usuário no Auth (já confirmado) usando email sintético
     const { data: created, error: createErr } = await admin.auth.admin.createUser({
-      email: body.email,
+      email: syntheticEmail,
       password: body.senha,
       email_confirm: true,
-      user_metadata: { nome: body.nome, username: body.username },
+      user_metadata: { nome: body.nome, username },
     });
     if (createErr || !created.user) {
       return new Response(JSON.stringify({ error: createErr?.message ?? 'Falha ao criar usuário' }), {
@@ -97,8 +105,8 @@ Deno.serve(async (req) => {
     const { error: insErr } = await admin.from('membros').insert({
       user_id: created.user.id,
       nome: body.nome,
-      username: body.username,
-      email: body.email,
+      username,
+      email: syntheticEmail,
       permissoes,
       status: 'ativo',
     });

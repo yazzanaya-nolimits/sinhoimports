@@ -14,7 +14,7 @@ const AdminLogin = () => {
   const { toast } = useToast();
   const { signIn, user, membro, loading: authLoading } = useAuth();
 
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [senha, setSenha] = useState('');
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -30,9 +30,9 @@ const AdminLogin = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !senha) return;
+    if (!username.trim() || !senha) return;
     setLoading(true);
-    const { error } = await signIn(email.trim(), senha);
+    const { error } = await signIn(username.trim(), senha);
     setLoading(false);
     if (error) {
       toast({ title: error, variant: 'destructive' });
@@ -93,16 +93,16 @@ const AdminLogin = () => {
           {!showPinFallback ? (
             <form onSubmit={handleLogin} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-xs uppercase tracking-wider text-muted-foreground">
-                  Usuário (e-mail)
+                <Label htmlFor="username" className="text-xs uppercase tracking-wider text-muted-foreground">
+                  Nome de usuário
                 </Label>
                 <Input
-                  id="email"
-                  type="email"
+                  id="username"
+                  type="text"
                   autoComplete="username"
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Digite seu usuário"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   className="h-12 bg-background/60 border-border focus-visible:border-primary focus-visible:ring-primary/30"
                   required
                 />
