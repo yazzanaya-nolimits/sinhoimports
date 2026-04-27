@@ -24,14 +24,13 @@ type FormState = {
   user_id?: string;
   nome: string;
   username: string;
-  email: string;
   senha: string;
   permissoes: Record<Modulo, string>;
   status: 'ativo' | 'inativo';
 };
 
 const empty = (): FormState => ({
-  nome: '', username: '', email: '', senha: '',
+  nome: '', username: '', senha: '',
   permissoes: defaultPermissoes(), status: 'ativo',
 });
 
@@ -70,7 +69,7 @@ const ConfiguracoesPage = () => {
   const openEdit = (m: Membro) => {
     setForm({
       id: m.id, user_id: m.user_id,
-      nome: m.nome, username: m.username, email: m.email, senha: '',
+      nome: m.nome, username: m.username, senha: '',
       permissoes: { ...defaultPermissoes(), ...m.permissoes },
       status: m.status,
     });
@@ -78,8 +77,8 @@ const ConfiguracoesPage = () => {
   };
 
   const save = async () => {
-    if (!form.nome.trim() || !form.username.trim() || !form.email.trim()) {
-      toast({ title: 'Preencha todos os campos obrigatórios', variant: 'destructive' });
+    if (!form.nome.trim() || !form.username.trim()) {
+      toast({ title: 'Preencha nome e usuário', variant: 'destructive' });
       return;
     }
     if (!editing && form.senha.length < 6) {
@@ -90,7 +89,7 @@ const ConfiguracoesPage = () => {
     try {
       if (editing && form.id) {
         const { error } = await supabase.from('membros').update({
-          nome: form.nome, username: form.username, email: form.email,
+          nome: form.nome, username: form.username,
           permissoes: form.permissoes, status: form.status,
         }).eq('id', form.id);
         if (error) throw new Error(error.message);
@@ -98,7 +97,7 @@ const ConfiguracoesPage = () => {
       } else {
         const { data, error } = await supabase.functions.invoke('admin-create-membro', {
           body: {
-            nome: form.nome, username: form.username, email: form.email,
+            nome: form.nome, username: form.username,
             senha: form.senha, permissoes: form.permissoes,
           },
         });
@@ -231,7 +230,6 @@ const ConfiguracoesPage = () => {
                 <TableRow>
                   <TableHead>{t('common.name')}</TableHead>
                   <TableHead>{t('settings.users.username')}</TableHead>
-                  <TableHead>{t('settings.users.email')}</TableHead>
                   <TableHead>{t('common.status')}</TableHead>
                   <TableHead className="text-right">{t('common.actions')}</TableHead>
                 </TableRow>
