@@ -87,23 +87,22 @@ const AdminLayout = () => {
   const visibleItems = sidebarItems.filter((it) => hasPermission(it.modulo, it.levels));
 
   return (
-    <div className="min-h-screen flex" style={{ background: 'var(--gradient-surface)' }}>
+    <div className="min-h-screen flex bg-background text-foreground">
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-sidebar border-r border-sidebar-border transform transition-transform duration-200 lg:relative lg:translate-x-0 ${
+        className={`sidebar-themed fixed inset-y-0 left-0 z-50 w-64 border-r border-sidebar-border transform transition-transform duration-200 lg:relative lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
-        style={{ background: 'linear-gradient(180deg, hsl(0 0% 6%), hsl(0 0% 4%))' }}
       >
-        <div className="p-6 border-b border-sidebar-border flex items-center justify-between">
+        <div className="p-6 border-b border-sidebar-border flex items-center justify-between relative z-10">
           <div>
-            <h2 className="text-xl font-serif font-bold text-gradient-gold leading-none">Sinho</h2>
-            <p className="text-[10px] tracking-[0.25em] text-electric uppercase mt-1">Admin · PDV</p>
+            <h2 className="text-xl font-serif font-bold text-theme-gradient leading-none">Sinho</h2>
+            <p className="text-[10px] tracking-[0.25em] uppercase mt-1 opacity-80">Admin · PDV</p>
           </div>
           <button className="lg:hidden text-muted-foreground hover:text-foreground" onClick={() => setSidebarOpen(false)}>
             <X className="w-5 h-5" />
           </button>
         </div>
-        <nav className="p-3 space-y-1">
+        <nav className="p-3 space-y-1 relative z-10">
           {visibleItems.map(item => {
             const active = location.pathname === item.path;
             const showBadge = item.alert === 'estoque' && estoqueAlerts > 0;
@@ -112,13 +111,11 @@ const AdminLayout = () => {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                className={`group flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all duration-200 relative ${
-                  active
-                    ? 'nav-active font-medium'
-                    : 'text-muted-foreground hover:bg-sidebar-accent hover:text-foreground'
+                className={`nav-item group flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all duration-200 relative ${
+                  active ? 'is-active font-medium' : 'opacity-80 hover:opacity-100'
                 }`}
               >
-                <item.icon className={`w-[18px] h-[18px] transition-colors ${active ? 'text-electric' : 'group-hover:text-primary'}`} />
+                <item.icon className="w-[18px] h-[18px]" />
                 <span className="flex-1">{t(item.labelKey)}</span>
                 {showBadge && (
                   <Badge className="h-5 px-1.5 text-[10px] bg-destructive text-destructive-foreground pulse-glow border-0">
@@ -129,10 +126,10 @@ const AdminLayout = () => {
             );
           })}
         </nav>
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-sidebar-border space-y-2 bg-sidebar/80 backdrop-blur">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-sidebar-border space-y-2 backdrop-blur z-10" style={{ background: 'rgba(0,0,0,0.18)' }}>
           {(membro || isPinFallback) && (
             <div className="px-2 pb-1">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wider">{t('common.loggedAs')}</p>
+              <p className="text-[11px] uppercase tracking-wider opacity-70">{t('common.loggedAs')}</p>
               <p className="text-sm font-medium truncate">
                 {membro?.nome ?? 'Admin Master (PIN)'}
               </p>
@@ -140,7 +137,7 @@ const AdminLayout = () => {
           )}
           <Link
             to="/"
-            className="flex items-center gap-3 px-4 py-2 rounded-lg text-sm text-muted-foreground hover:bg-sidebar-accent hover:text-primary transition-colors"
+            className="nav-item flex items-center gap-3 px-4 py-2 rounded-lg text-sm opacity-80 hover:opacity-100 transition-colors"
           >
             <Home className="w-4 h-4" /> {t('common.seeSite')}
           </Link>
