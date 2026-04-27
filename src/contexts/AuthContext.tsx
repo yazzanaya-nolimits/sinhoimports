@@ -11,7 +11,7 @@ export type Membro = {
   user_id: string;
   nome: string;
   username: string;
-  email: string;
+  email?: string;
   permissoes: Record<Modulo, string>;
   tema: string;
   idioma: string;
