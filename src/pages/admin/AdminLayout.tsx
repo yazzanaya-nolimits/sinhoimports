@@ -1,23 +1,34 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
 import {
-  ShoppingCart, DollarSign, Package, Users, LayoutDashboard,
-  LogOut, Menu, X, Home, Kanban, Boxes, Image, Megaphone, History,
+  ShoppingCart, DollarSign, Package, LayoutDashboard,
+  LogOut, Menu, X, Home, Kanban, Boxes, Image, Megaphone, History, Settings,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth, type Modulo } from '@/contexts/AuthContext';
 
-const sidebarItems = [
-  { label: 'Dashboard Geral', icon: LayoutDashboard, path: '/admin/dashboard' },
-  { label: 'PDV — Vendas', icon: ShoppingCart, path: '/admin/pdv' },
-  { label: 'Histórico de Vendas', icon: History, path: '/admin/vendas' },
-  { label: 'Estoque', icon: Boxes, path: '/admin/estoque', alert: 'estoque' as const },
-  { label: 'Financeiro', icon: DollarSign, path: '/admin/financial' },
-  { label: 'CRM Comercial', icon: Kanban, path: '/admin/crm' },
-  { label: 'Catálogo do Site', icon: Package, path: '/admin/products' },
-  { label: 'Imagens do Site', icon: Image, path: '/admin/site-imagens' },
-  { label: 'Banner Promocional', icon: Megaphone, path: '/admin/banner' },
+type NavItem = {
+  label: string;
+  icon: typeof LayoutDashboard;
+  path: string;
+  modulo: Modulo;
+  levels?: string[];
+  alert?: 'estoque';
+};
+
+const sidebarItems: NavItem[] = [
+  { label: 'Dashboard Geral', icon: LayoutDashboard, path: '/admin/dashboard', modulo: 'dashboard' },
+  { label: 'PDV — Vendas', icon: ShoppingCart, path: '/admin/pdv', modulo: 'pdv' },
+  { label: 'Histórico de Vendas', icon: History, path: '/admin/vendas', modulo: 'pdv' },
+  { label: 'Estoque', icon: Boxes, path: '/admin/estoque', modulo: 'estoque', alert: 'estoque' },
+  { label: 'Financeiro', icon: DollarSign, path: '/admin/financial', modulo: 'financeiro' },
+  { label: 'CRM Comercial', icon: Kanban, path: '/admin/crm', modulo: 'crm' },
+  { label: 'Catálogo do Site', icon: Package, path: '/admin/products', modulo: 'catalogo' },
+  { label: 'Imagens do Site', icon: Image, path: '/admin/site-imagens', modulo: 'catalogo' },
+  { label: 'Banner Promocional', icon: Megaphone, path: '/admin/banner', modulo: 'catalogo' },
+  { label: 'Configurações', icon: Settings, path: '/admin/configuracoes', modulo: 'configuracoes', levels: ['total'] },
 ];
 
 const AdminLayout = () => {
@@ -26,12 +37,20 @@ const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [estoqueAlerts, setEstoqueAlerts] = useState(0);
   const [now, setNow] = useState(new Date());
+  const { user, membro, isPinFallback, hasPermission, signOut, loading } = useAuth();
 
+  // Cleanup defensivo: garante que nenhum padding-top antigo do PromoBanner permaneça
   useEffect(() => {
-    if (localStorage.getItem('sinho_admin') !== 'true') {
+    document.body.style.paddingTop = '';
+  }, []);
+
+  // Auth gate: precisa estar logado (Auth) OU ter PIN fallback
+  useEffect(() => {
+    if (loading) return;
+    if (!user && !isPinFallback) {
       navigate('/admin');
     }
-  }, [navigate]);
+  }, [user, isPinFallback, loading, navigate]);
 
   // Realtime de alertas de estoque
   useEffect(() => {
@@ -55,10 +74,12 @@ const AdminLayout = () => {
     return () => clearInterval(t);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('sinho_admin');
+  const handleLogout = async () => {
+    await signOut();
     navigate('/admin');
   };
+
+  const visibleItems = sidebarItems.filter((it) => hasPermission(it.modulo, it.levels));
 
   return (
     <div className="min-h-screen flex" style={{ background: 'var(--gradient-surface)' }}>
@@ -78,7 +99,7 @@ const AdminLayout = () => {
           </button>
         </div>
         <nav className="p-3 space-y-1">
-          {sidebarItems.map(item => {
+          {visibleItems.map(item => {
             const active = location.pathname === item.path;
             const showBadge = item.alert === 'estoque' && estoqueAlerts > 0;
             return (
@@ -103,7 +124,15 @@ const AdminLayout = () => {
             );
           })}
         </nav>
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-sidebar-border space-y-1 bg-sidebar/80 backdrop-blur">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-sidebar-border space-y-2 bg-sidebar/80 backdrop-blur">
+          {(membro || isPinFallback) && (
+            <div className="px-2 pb-1">
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Logado como</p>
+              <p className="text-sm font-medium truncate">
+                {membro?.nome ?? 'Admin Master (PIN)'}
+              </p>
+            </div>
+          )}
           <Link
             to="/"
             className="flex items-center gap-3 px-4 py-2 rounded-lg text-sm text-muted-foreground hover:bg-sidebar-accent hover:text-primary transition-colors"
