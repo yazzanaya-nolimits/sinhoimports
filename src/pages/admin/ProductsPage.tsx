@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { formatBRL } from '@/lib/brl';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseProducts } from '@/hooks/useSupabaseProducts';
-import { type DatabaseProduct, type ProductVariation } from '@/lib/supabase';
+import { type DatabaseProduct, type ProductVariation, PRODUTO_CATEGORIAS } from '@/lib/supabase';
 
 type FormState = {
   nome: string;
@@ -34,6 +34,8 @@ type FormState = {
   aceita_pix: boolean;
   aceita_cartao: boolean;
   max_parcelas: number;
+  categoria: string;
+  destaque: boolean;
 };
 
 const emptyForm: FormState = {
@@ -43,6 +45,7 @@ const emptyForm: FormState = {
   ingredientes: '', modo_uso: '', informacoes_gerais: '',
   variacoes: [],
   aceita_pix: true, aceita_cartao: true, max_parcelas: 12,
+  categoria: 'outros', destaque: false,
 };
 
 const ProductsPage = () => {
@@ -84,6 +87,8 @@ const ProductsPage = () => {
       aceita_pix: form.aceita_pix,
       aceita_cartao: form.aceita_cartao,
       max_parcelas: form.max_parcelas,
+      categoria: form.categoria,
+      destaque: form.destaque,
     };
     if (editId) payload.id = editId;
     const result = await saveProduct(payload);
@@ -102,6 +107,8 @@ const ProductsPage = () => {
       variacoes: Array.isArray(p.variacoes) ? p.variacoes : [],
       aceita_pix: p.aceita_pix ?? true, aceita_cartao: p.aceita_cartao ?? true,
       max_parcelas: p.max_parcelas ?? 12,
+      categoria: p.categoria ?? 'outros',
+      destaque: p.destaque ?? false,
     });
     setEditId(p.id);
     setShowForm(true);
