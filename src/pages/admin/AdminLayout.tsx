@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
 import {
   ShoppingCart, DollarSign, Package, Users, BarChart3,
-  LogOut, Menu, X, Home, Globe, Kanban, Boxes
+  LogOut, Menu, X, Home, Globe, Kanban, Boxes, Image, Megaphone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -11,6 +11,8 @@ const sidebarItems = [
   { label: 'Produtos', icon: Package, path: '/admin/products' },
   { label: 'Estoque', icon: Boxes, path: '/admin/estoque' },
   { label: 'CRM Comercial', icon: Kanban, path: '/admin/crm' },
+  { label: 'Imagens do Site', icon: Image, path: '/admin/site-imagens' },
+  { label: 'Banner Promocional', icon: Megaphone, path: '/admin/banner' },
   { label: 'Financeiro', icon: DollarSign, path: '/admin/financial' },
   { label: 'Clientes', icon: Users, path: '/admin/clients' },
   { label: 'Relatórios', icon: BarChart3, path: '/admin/reports' },
