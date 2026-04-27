@@ -126,10 +126,10 @@ const AdminLayout = () => {
             );
           })}
         </nav>
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-sidebar-border space-y-2 bg-sidebar/80 backdrop-blur">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-sidebar-border space-y-2 backdrop-blur z-10" style={{ background: 'rgba(0,0,0,0.18)' }}>
           {(membro || isPinFallback) && (
             <div className="px-2 pb-1">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wider">{t('common.loggedAs')}</p>
+              <p className="text-[11px] uppercase tracking-wider opacity-70">{t('common.loggedAs')}</p>
               <p className="text-sm font-medium truncate">
                 {membro?.nome ?? 'Admin Master (PIN)'}
               </p>
@@ -137,7 +137,7 @@ const AdminLayout = () => {
           )}
           <Link
             to="/"
-            className="flex items-center gap-3 px-4 py-2 rounded-lg text-sm text-muted-foreground hover:bg-sidebar-accent hover:text-primary transition-colors"
+            className="nav-item flex items-center gap-3 px-4 py-2 rounded-lg text-sm opacity-80 hover:opacity-100 transition-colors"
           >
             <Home className="w-4 h-4" /> {t('common.seeSite')}
           </Link>
