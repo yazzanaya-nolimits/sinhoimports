@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatBRL } from '@/lib/brl';
 import { type DatabaseProduct } from '@/lib/supabase';
-import { getWhatsAppLink } from '@/data/products';
 
 const PIX_ICON = (
   <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
@@ -50,7 +49,7 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
   return (
     <Dialog open={!!product} onOpenChange={o => !o && onClose()}>
       <DialogContent
-        className="max-w-4xl w-[95vw] max-h-[92vh] overflow-y-auto p-0 border-primary/30 animate-scale-in"
+        className="max-w-4xl w-[95vw] max-h-[92vh] overflow-y-auto p-0 border-primary/30"
       >
         <button
           onClick={onClose}
@@ -257,6 +256,3 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
     </Dialog>
   );
 }
-
-// Avoid unused import warning
-void getWhatsAppLink;
