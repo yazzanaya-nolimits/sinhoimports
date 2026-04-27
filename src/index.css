@@ -84,8 +84,18 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
-    background-image: var(--gradient-surface);
     background-attachment: fixed;
+    transition: background-color 300ms ease, color 300ms ease;
+  }
+  /* Surface por tema */
+  html[data-theme="preto_dourado"] body { background-image: radial-gradient(ellipse at top, hsl(0 0% 8%), hsl(0 0% 4%)); }
+  html[data-theme="rosa_branco"] body  { background-image: radial-gradient(ellipse at top, #FFE4EE, #FFF5F8); }
+  html[data-theme="azul_marinho"] body { background-image: radial-gradient(ellipse at top, #E3EAFC, #F0F4FF); }
+  html[data-theme="branco_preto"] body { background-image: linear-gradient(180deg, #FFFFFF, #F0F0F0); }
+  html[data-theme="verde_neon"] body   {
+    background-image:
+      repeating-linear-gradient(0deg, rgba(57,255,20,0.04) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse at top, #0A0F0A, #050505);
   }
 
   h1, h2, h3, h4, h5, h6 {
