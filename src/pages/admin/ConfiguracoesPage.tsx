@@ -290,48 +290,88 @@ const ConfiguracoesPage = () => {
               <p className="text-sm text-muted-foreground">{t('settings.themes.desc')}</p>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {(Object.keys(THEME_META) as ThemeKey[]).map(key => {
                 const meta = THEME_META[key];
                 const active = themeDraft === key;
                 return (
-                  <button
+                  <div
                     key={key}
                     onClick={() => previewTheme(key)}
-                    className={`relative p-4 rounded-xl border-2 text-left transition-all overflow-hidden ${
-                      active ? 'border-primary shadow-2xl scale-[1.02]' : 'border-border hover:border-primary/40'
+                    className={`group relative rounded-2xl border-2 overflow-hidden cursor-pointer transition-all duration-300 ${
+                      active
+                        ? 'border-primary shadow-2xl scale-[1.02]'
+                        : 'border-border hover:border-primary/50 hover:scale-[1.01] hover:shadow-xl'
                     }`}
                   >
-                    {/* Preview de cores */}
-                    <div className="h-24 rounded-lg overflow-hidden mb-3 flex" style={{ background: meta.preview.bg }}>
-                      <div className="flex-1" style={{ background: meta.preview.bg }} />
-                      <div className="w-1/3" style={{ background: meta.preview.primary }} />
-                      <div className="w-1/4" style={{ background: meta.preview.accent }} />
-                    </div>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="font-semibold flex items-center gap-2">
-                          <span className="text-xl">{meta.emoji}</span>
-                          {meta.label}
-                        </p>
-                        <div className="flex gap-1.5 mt-2">
-                          <span className="w-4 h-4 rounded-full border border-border/60" style={{ background: meta.preview.bg }} />
-                          <span className="w-4 h-4 rounded-full border border-border/60" style={{ background: meta.preview.primary }} />
-                          <span className="w-4 h-4 rounded-full border border-border/60" style={{ background: meta.preview.accent }} />
-                        </div>
+                    {/* Mini-preview do tema */}
+                    <div
+                      className="h-44 relative overflow-hidden"
+                      style={{ background: meta.preview.bg }}
+                    >
+                      {/* mini sidebar */}
+                      <div
+                        className="absolute top-3 left-3 bottom-3 w-14 rounded-lg shadow-lg flex flex-col items-center pt-3 gap-1.5"
+                        style={{ background: meta.preview.sidebar }}
+                      >
+                        <span className="w-7 h-1.5 rounded-full" style={{ background: meta.preview.primary, opacity: 0.9 }} />
+                        <span className="w-7 h-1.5 rounded-full bg-white/40" />
+                        <span className="w-7 h-1.5 rounded-full bg-white/30" />
+                        <span className="w-7 h-1.5 rounded-full bg-white/20" />
+                      </div>
+                      {/* mini card */}
+                      <div
+                        className="absolute top-4 left-20 right-3 h-16 rounded-lg shadow-md p-2 flex flex-col justify-between"
+                        style={{ background: meta.preview.card, border: `1px solid ${meta.preview.primary}33` }}
+                      >
+                        <span className="block w-2/3 h-2 rounded-full" style={{ background: meta.preview.text, opacity: 0.6 }} />
+                        <span className="block w-12 h-3 rounded" style={{ background: meta.preview.primary }} />
+                      </div>
+                      {/* mini botão */}
+                      <div
+                        className="absolute bottom-4 left-20 right-3 h-7 rounded-md flex items-center justify-center text-[10px] font-semibold shadow"
+                        style={{ background: `linear-gradient(135deg, ${meta.preview.primary}, ${meta.preview.accent})`, color: '#fff' }}
+                      >
+                        BOTÃO PREMIUM
                       </div>
                       {active && (
-                        <div className="rounded-full bg-primary text-primary-foreground p-1">
+                        <div className="absolute top-2 right-2 rounded-full bg-primary text-primary-foreground p-1.5 shadow-lg">
                           <Check className="w-3.5 h-3.5" />
                         </div>
                       )}
                     </div>
-                  </button>
+
+                    {/* Info + ação */}
+                    <div className="p-4 bg-card space-y-3">
+                      <div>
+                        <p className="font-semibold flex items-center gap-2 text-card-foreground">
+                          <span className="text-xl">{meta.emoji}</span>
+                          {meta.label}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{meta.tagline}</p>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex gap-1.5">
+                          <span className="w-5 h-5 rounded-full border border-border/60" style={{ background: meta.preview.bg }} />
+                          <span className="w-5 h-5 rounded-full border border-border/60" style={{ background: meta.preview.primary }} />
+                          <span className="w-5 h-5 rounded-full border border-border/60" style={{ background: meta.preview.accent }} />
+                        </div>
+                        <Button
+                          size="sm"
+                          onClick={(e) => { e.stopPropagation(); setThemeDraft(key); setTheme(key, true); toast({ title: t('settings.themes.saved') }); }}
+                          className="btn-themed h-8 text-xs"
+                          disabled={theme === key}
+                        >
+                          {theme === key ? t('settings.themes.current') : t('settings.themes.apply')}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 );
               })}
             </div>
 
-            <div className="flex flex-wrap gap-3 items-center pt-2 border-t">
+            <div className="flex flex-wrap gap-3 items-center pt-4 border-t">
               <p className="text-sm text-muted-foreground flex-1">
                 {t('settings.themes.current')}: <strong>{THEME_META[themeDraft].emoji} {THEME_META[themeDraft].label}</strong>
               </p>
@@ -342,7 +382,7 @@ const ConfiguracoesPage = () => {
               >
                 {t('common.cancel')}
               </Button>
-              <Button onClick={saveTheme} className="bg-gradient-gold text-primary-foreground">
+              <Button onClick={saveTheme} className="btn-themed">
                 {t('settings.themes.apply')}
               </Button>
             </div>
