@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { MessageCircle, Search, Tag, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,12 +7,15 @@ import { useSupabaseProducts } from '@/hooks/useSupabaseProducts';
 import { formatBRL } from '@/lib/brl';
 import { getWhatsAppLink } from '@/data/products';
 import { useToast } from '@/hooks/use-toast';
+import ProductModal from './ProductModal';
+import { type DatabaseProduct } from '@/lib/supabase';
 
 const ProductsSection = () => {
   const { products, loading } = useSupabaseProducts();
   const [search, setSearch] = useState('');
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number; type: 'percentual' | 'fixo' } | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<DatabaseProduct | null>(null);
   const { toast } = useToast();
 
   const filtered = products.filter(p => 
