@@ -28,6 +28,14 @@ export default {
           light: "hsl(var(--gold-light))",
           dark: "hsl(var(--gold-dark))",
         },
+        electric: {
+          DEFAULT: "hsl(var(--electric))",
+          light: "hsl(var(--electric-light))",
+          dark: "hsl(var(--electric-dark))",
+        },
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
+        info: "hsl(var(--info))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
