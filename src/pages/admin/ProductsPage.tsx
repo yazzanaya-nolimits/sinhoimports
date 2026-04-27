@@ -340,9 +340,43 @@ const ProductsPage = () => {
               )}
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Switch id="status" checked={form.status === 'ativo'} onCheckedChange={c => setForm(f => ({ ...f, status: c ? 'ativo' : 'inativo' }))} />
-              <Label htmlFor="status">Produto ativo na loja</Label>
+            {/* Categoria + destaque + status */}
+            <div className="p-4 border border-dashed rounded-lg space-y-4 bg-secondary/10">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Categoria *</Label>
+                  <Select
+                    value={form.categoria}
+                    onValueChange={v => setForm(f => ({ ...f, categoria: v }))}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {PRODUTO_CATEGORIAS.map(c => (
+                        <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">Usada para filtrar na página /catalogo</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Visibilidade na loja</Label>
+                  <div className="flex items-center gap-3 h-10 px-3 rounded-md border bg-card">
+                    <Switch
+                      id="destaque"
+                      checked={form.destaque}
+                      onCheckedChange={c => setForm(f => ({ ...f, destaque: c }))}
+                    />
+                    <Label htmlFor="destaque" className="cursor-pointer">⭐ Produto em destaque (home)</Label>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Apenas produtos em destaque aparecem nos 6 da página inicial.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2 pt-2 border-t">
+                <Switch id="status" checked={form.status === 'ativo'} onCheckedChange={c => setForm(f => ({ ...f, status: c ? 'ativo' : 'inativo' }))} />
+                <Label htmlFor="status">Produto ativo na loja</Label>
+              </div>
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-border">
