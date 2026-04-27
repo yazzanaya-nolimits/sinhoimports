@@ -236,9 +236,9 @@ const ConfiguracoesPage = () => {
               </TableHeader>
               <TableBody>
                 {loading ? (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">{t('common.loading')}</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={4} className="text-center py-8 text-muted-foreground">{t('common.loading')}</TableCell></TableRow>
                 ) : membros.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">{t('settings.users.noMembers')}</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={4} className="text-center py-8 text-muted-foreground">{t('settings.users.noMembers')}</TableCell></TableRow>
                 ) : membros.map(m => (
                   <TableRow key={m.id}>
                     <TableCell className="font-medium">
@@ -250,7 +250,6 @@ const ConfiguracoesPage = () => {
                       </div>
                     </TableCell>
                     <TableCell className="font-mono text-sm">{m.username}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{m.email}</TableCell>
                     <TableCell>
                       <Badge className={m.status === 'ativo'
                         ? 'bg-emerald-600/80 hover:bg-emerald-600 text-white border-0'
@@ -405,14 +404,13 @@ const ConfiguracoesPage = () => {
               </div>
               <div>
                 <Label>{t('settings.users.username')} *</Label>
-                <Input value={form.username}
-                  onChange={(e) => setForm({ ...form, username: e.target.value.toLowerCase().replace(/\s/g, '') })} />
-              </div>
-              <div>
-                <Label>{t('settings.users.email')} *</Label>
-                <Input type="email" value={form.email} disabled={editing}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })} />
-                {editing && <p className="text-xs text-muted-foreground mt-1">{t('settings.users.emailLocked')}</p>}
+                <Input
+                  value={form.username}
+                  placeholder="ex: joao"
+                  disabled={editing}
+                  onChange={(e) => setForm({ ...form, username: e.target.value.toLowerCase().replace(/[^a-z0-9_.-]/g, '') })}
+                />
+                {!editing && <p className="text-xs text-muted-foreground mt-1">Apenas letras, números, _ . -</p>}
               </div>
               {!editing && (
                 <div>
