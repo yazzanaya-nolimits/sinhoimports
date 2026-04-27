@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   ShoppingCart, DollarSign, Package, LayoutDashboard,
   LogOut, Menu, X, Home, Kanban, Boxes, Image, Megaphone, History, Settings, Images,
@@ -8,9 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth, type Modulo } from '@/contexts/AuthContext';
+import { useLanguage } from '@/hooks/useLanguage';
 
 type NavItem = {
-  label: string;
+  labelKey: string;
   icon: typeof LayoutDashboard;
   path: string;
   modulo: Modulo;
@@ -19,22 +21,24 @@ type NavItem = {
 };
 
 const sidebarItems: NavItem[] = [
-  { label: 'Dashboard Geral', icon: LayoutDashboard, path: '/admin/dashboard', modulo: 'dashboard' },
-  { label: 'PDV — Vendas', icon: ShoppingCart, path: '/admin/pdv', modulo: 'pdv' },
-  { label: 'Histórico de Vendas', icon: History, path: '/admin/vendas', modulo: 'pdv' },
-  { label: 'Estoque', icon: Boxes, path: '/admin/estoque', modulo: 'estoque', alert: 'estoque' },
-  { label: 'Financeiro', icon: DollarSign, path: '/admin/financial', modulo: 'financeiro' },
-  { label: 'CRM Comercial', icon: Kanban, path: '/admin/crm', modulo: 'crm' },
-  { label: 'Catálogo do Site', icon: Package, path: '/admin/products', modulo: 'catalogo' },
-  { label: 'Imagens do Site', icon: Image, path: '/admin/site-imagens', modulo: 'catalogo' },
-  { label: 'Fotos do Carrossel', icon: Images, path: '/admin/carrossel', modulo: 'catalogo' },
-  { label: 'Banner Promocional', icon: Megaphone, path: '/admin/banner', modulo: 'catalogo' },
-  { label: 'Configurações', icon: Settings, path: '/admin/configuracoes', modulo: 'configuracoes', levels: ['total'] },
+  { labelKey: 'sidebar.dashboard',     icon: LayoutDashboard, path: '/admin/dashboard',     modulo: 'dashboard' },
+  { labelKey: 'sidebar.pdv',           icon: ShoppingCart,    path: '/admin/pdv',           modulo: 'pdv' },
+  { labelKey: 'sidebar.salesHistory',  icon: History,         path: '/admin/vendas',        modulo: 'pdv' },
+  { labelKey: 'sidebar.stock',         icon: Boxes,           path: '/admin/estoque',       modulo: 'estoque', alert: 'estoque' },
+  { labelKey: 'sidebar.financial',     icon: DollarSign,      path: '/admin/financial',     modulo: 'financeiro' },
+  { labelKey: 'sidebar.crm',           icon: Kanban,          path: '/admin/crm',           modulo: 'crm' },
+  { labelKey: 'sidebar.catalog',       icon: Package,         path: '/admin/products',      modulo: 'catalogo' },
+  { labelKey: 'sidebar.siteImages',    icon: Image,           path: '/admin/site-imagens',  modulo: 'catalogo' },
+  { labelKey: 'sidebar.carousel',      icon: Images,          path: '/admin/carrossel',     modulo: 'catalogo' },
+  { labelKey: 'sidebar.banner',        icon: Megaphone,       path: '/admin/banner',        modulo: 'catalogo' },
+  { labelKey: 'sidebar.settings',      icon: Settings,        path: '/admin/configuracoes', modulo: 'configuracoes', levels: ['total'] },
 ];
 
 const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
+  useLanguage(); // ativa sincronização do idioma com o membro logado
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [estoqueAlerts, setEstoqueAlerts] = useState(0);
   const [now, setNow] = useState(new Date());
