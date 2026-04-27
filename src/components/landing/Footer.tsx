@@ -82,6 +82,12 @@ const Footer = () => {
           >
             <ChevronUp className="w-4 h-4" /> Voltar ao topo
           </button>
+          <a
+            href="/admin"
+            className="text-xs text-muted-foreground/50 hover:text-primary transition-colors mt-2"
+          >
+            Adm Master
+          </a>
         </div>
       </div>
     </footer>
