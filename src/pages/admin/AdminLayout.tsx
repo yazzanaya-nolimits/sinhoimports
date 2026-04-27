@@ -87,12 +87,11 @@ const AdminLayout = () => {
   const visibleItems = sidebarItems.filter((it) => hasPermission(it.modulo, it.levels));
 
   return (
-    <div className="min-h-screen flex" style={{ background: 'var(--gradient-surface)' }}>
+    <div className="min-h-screen flex bg-background text-foreground">
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-sidebar border-r border-sidebar-border transform transition-transform duration-200 lg:relative lg:translate-x-0 ${
+        className={`sidebar-themed fixed inset-y-0 left-0 z-50 w-64 border-r border-sidebar-border transform transition-transform duration-200 lg:relative lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
-        style={{ background: 'linear-gradient(180deg, hsl(0 0% 6%), hsl(0 0% 4%))' }}
       >
         <div className="p-6 border-b border-sidebar-border flex items-center justify-between">
           <div>
