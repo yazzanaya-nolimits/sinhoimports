@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
 import {
   ShoppingCart, DollarSign, Package, Users, BarChart3,
-  LogOut, Menu, X, Home, Globe
+  LogOut, Menu, X, Home, Globe, Kanban, Boxes
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const sidebarItems = [
   { label: 'PDV / Vendas', icon: ShoppingCart, path: '/admin/dashboard' },
   { label: 'Produtos', icon: Package, path: '/admin/products' },
+  { label: 'Estoque', icon: Boxes, path: '/admin/estoque' },
+  { label: 'CRM Comercial', icon: Kanban, path: '/admin/crm' },
   { label: 'Financeiro', icon: DollarSign, path: '/admin/financial' },
   { label: 'Clientes', icon: Users, path: '/admin/clients' },
   { label: 'Relatórios', icon: BarChart3, path: '/admin/reports' },

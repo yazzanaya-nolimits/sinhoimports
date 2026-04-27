@@ -14,6 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
+      crm_leads: {
+        Row: {
+          created_at: string
+          email: string | null
+          etapa: string
+          historico: Json
+          id: string
+          interesse: string | null
+          nome: string
+          observacao: string | null
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          etapa?: string
+          historico?: Json
+          id?: string
+          interesse?: string | null
+          nome: string
+          observacao?: string | null
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          etapa?: string
+          historico?: Json
+          id?: string
+          interesse?: string | null
+          nome?: string
+          observacao?: string | null
+          telefone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      estoque: {
+        Row: {
+          created_at: string
+          id: string
+          lucro_valor: number
+          margem_percentual: number
+          nome: string
+          quantidade: number
+          quantidade_minima: number
+          status: string
+          tipo: string | null
+          updated_at: string
+          valor_compra: number
+          valor_venda: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lucro_valor?: number
+          margem_percentual?: number
+          nome: string
+          quantidade?: number
+          quantidade_minima?: number
+          status?: string
+          tipo?: string | null
+          updated_at?: string
+          valor_compra?: number
+          valor_venda?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lucro_valor?: number
+          margem_percentual?: number
+          nome?: string
+          quantidade?: number
+          quantidade_minima?: number
+          status?: string
+          tipo?: string | null
+          updated_at?: string
+          valor_compra?: number
+          valor_venda?: number
+        }
+        Relationships: []
+      }
       produtos: {
         Row: {
           created_at: string
