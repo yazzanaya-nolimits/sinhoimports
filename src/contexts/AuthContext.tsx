@@ -76,7 +76,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (usernameOrEmail: string, password: string) => {
+    const raw = usernameOrEmail.trim();
+    // Aceita username puro OU e-mail (compat). Username -> email sintético.
+    const email = raw.includes('@') ? raw.toLowerCase() : `${raw.toLowerCase()}@sinho.local`;
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return { error: 'Usuário ou senha incorretos' };
     return { error: null };
