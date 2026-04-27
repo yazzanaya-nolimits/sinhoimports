@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      banner_desconto: {
+        Row: {
+          ativo: boolean
+          id: string
+          mensagem: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          id?: string
+          mensagem?: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          id?: string
+          mensagem?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       crm_leads: {
         Row: {
           created_at: string
@@ -98,8 +119,34 @@ export type Database = {
         }
         Relationships: []
       }
+      imagens_site: {
+        Row: {
+          created_at: string
+          id: string
+          ordem: number
+          tipo: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ordem?: number
+          tipo: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ordem?: number
+          tipo?: string
+          url?: string
+        }
+        Relationships: []
+      }
       produtos: {
         Row: {
+          aceita_cartao: boolean
+          aceita_pix: boolean
           created_at: string
           cupom_codigo: string | null
           cupom_tipo: string | null
@@ -109,12 +156,19 @@ export type Database = {
           foto_url: string | null
           id: string
           imagem_destaque_url: string | null
+          informacoes_gerais: string | null
+          ingredientes: string | null
+          max_parcelas: number
+          modo_uso: string | null
           nome: string
           status: string
           updated_at: string
           valor: number
+          variacoes: Json
         }
         Insert: {
+          aceita_cartao?: boolean
+          aceita_pix?: boolean
           created_at?: string
           cupom_codigo?: string | null
           cupom_tipo?: string | null
@@ -124,12 +178,19 @@ export type Database = {
           foto_url?: string | null
           id?: string
           imagem_destaque_url?: string | null
+          informacoes_gerais?: string | null
+          ingredientes?: string | null
+          max_parcelas?: number
+          modo_uso?: string | null
           nome: string
           status?: string
           updated_at?: string
           valor?: number
+          variacoes?: Json
         }
         Update: {
+          aceita_cartao?: boolean
+          aceita_pix?: boolean
           created_at?: string
           cupom_codigo?: string | null
           cupom_tipo?: string | null
@@ -139,10 +200,15 @@ export type Database = {
           foto_url?: string | null
           id?: string
           imagem_destaque_url?: string | null
+          informacoes_gerais?: string | null
+          ingredientes?: string | null
+          max_parcelas?: number
+          modo_uso?: string | null
           nome?: string
           status?: string
           updated_at?: string
           valor?: number
+          variacoes?: Json
         }
         Relationships: []
       }
