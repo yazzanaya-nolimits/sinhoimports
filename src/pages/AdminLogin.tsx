@@ -4,7 +4,7 @@ import { Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
-const ADMIN_PIN = '2572';
+const ADMIN_PIN = '5387';
 
 const AdminLogin = () => {
   const [pin, setPin] = useState('');
