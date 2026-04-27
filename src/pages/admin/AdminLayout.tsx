@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   ShoppingCart, DollarSign, Package, LayoutDashboard,
   LogOut, Menu, X, Home, Kanban, Boxes, Image, Megaphone, History, Settings, Images,
@@ -8,9 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth, type Modulo } from '@/contexts/AuthContext';
+import { useLanguage } from '@/hooks/useLanguage';
 
 type NavItem = {
-  label: string;
+  labelKey: string;
   icon: typeof LayoutDashboard;
   path: string;
   modulo: Modulo;
@@ -19,22 +21,24 @@ type NavItem = {
 };
 
 const sidebarItems: NavItem[] = [
-  { label: 'Dashboard Geral', icon: LayoutDashboard, path: '/admin/dashboard', modulo: 'dashboard' },
-  { label: 'PDV — Vendas', icon: ShoppingCart, path: '/admin/pdv', modulo: 'pdv' },
-  { label: 'Histórico de Vendas', icon: History, path: '/admin/vendas', modulo: 'pdv' },
-  { label: 'Estoque', icon: Boxes, path: '/admin/estoque', modulo: 'estoque', alert: 'estoque' },
-  { label: 'Financeiro', icon: DollarSign, path: '/admin/financial', modulo: 'financeiro' },
-  { label: 'CRM Comercial', icon: Kanban, path: '/admin/crm', modulo: 'crm' },
-  { label: 'Catálogo do Site', icon: Package, path: '/admin/products', modulo: 'catalogo' },
-  { label: 'Imagens do Site', icon: Image, path: '/admin/site-imagens', modulo: 'catalogo' },
-  { label: 'Fotos do Carrossel', icon: Images, path: '/admin/carrossel', modulo: 'catalogo' },
-  { label: 'Banner Promocional', icon: Megaphone, path: '/admin/banner', modulo: 'catalogo' },
-  { label: 'Configurações', icon: Settings, path: '/admin/configuracoes', modulo: 'configuracoes', levels: ['total'] },
+  { labelKey: 'sidebar.dashboard',     icon: LayoutDashboard, path: '/admin/dashboard',     modulo: 'dashboard' },
+  { labelKey: 'sidebar.pdv',           icon: ShoppingCart,    path: '/admin/pdv',           modulo: 'pdv' },
+  { labelKey: 'sidebar.salesHistory',  icon: History,         path: '/admin/vendas',        modulo: 'pdv' },
+  { labelKey: 'sidebar.stock',         icon: Boxes,           path: '/admin/estoque',       modulo: 'estoque', alert: 'estoque' },
+  { labelKey: 'sidebar.financial',     icon: DollarSign,      path: '/admin/financial',     modulo: 'financeiro' },
+  { labelKey: 'sidebar.crm',           icon: Kanban,          path: '/admin/crm',           modulo: 'crm' },
+  { labelKey: 'sidebar.catalog',       icon: Package,         path: '/admin/products',      modulo: 'catalogo' },
+  { labelKey: 'sidebar.siteImages',    icon: Image,           path: '/admin/site-imagens',  modulo: 'catalogo' },
+  { labelKey: 'sidebar.carousel',      icon: Images,          path: '/admin/carrossel',     modulo: 'catalogo' },
+  { labelKey: 'sidebar.banner',        icon: Megaphone,       path: '/admin/banner',        modulo: 'catalogo' },
+  { labelKey: 'sidebar.settings',      icon: Settings,        path: '/admin/configuracoes', modulo: 'configuracoes', levels: ['total'] },
 ];
 
 const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
+  useLanguage(); // ativa sincronização do idioma com o membro logado
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [estoqueAlerts, setEstoqueAlerts] = useState(0);
   const [now, setNow] = useState(new Date());
@@ -115,7 +119,7 @@ const AdminLayout = () => {
                 }`}
               >
                 <item.icon className={`w-[18px] h-[18px] transition-colors ${active ? 'text-electric' : 'group-hover:text-primary'}`} />
-                <span className="flex-1">{item.label}</span>
+                <span className="flex-1">{t(item.labelKey)}</span>
                 {showBadge && (
                   <Badge className="h-5 px-1.5 text-[10px] bg-destructive text-destructive-foreground pulse-glow border-0">
                     {estoqueAlerts}
@@ -128,7 +132,7 @@ const AdminLayout = () => {
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-sidebar-border space-y-2 bg-sidebar/80 backdrop-blur">
           {(membro || isPinFallback) && (
             <div className="px-2 pb-1">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Logado como</p>
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wider">{t('common.loggedAs')}</p>
               <p className="text-sm font-medium truncate">
                 {membro?.nome ?? 'Admin Master (PIN)'}
               </p>
@@ -138,14 +142,14 @@ const AdminLayout = () => {
             to="/"
             className="flex items-center gap-3 px-4 py-2 rounded-lg text-sm text-muted-foreground hover:bg-sidebar-accent hover:text-primary transition-colors"
           >
-            <Home className="w-4 h-4" /> Ver Site
+            <Home className="w-4 h-4" /> {t('common.seeSite')}
           </Link>
           <Button
             variant="ghost"
             className="w-full justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/10"
             onClick={handleLogout}
           >
-            <LogOut className="w-4 h-4" /> Sair
+            <LogOut className="w-4 h-4" /> {t('common.logout')}
           </Button>
         </div>
       </aside>
@@ -163,7 +167,7 @@ const AdminLayout = () => {
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-electric pulse-glow" />
               <span className="text-sm font-medium">
-                {sidebarItems.find(i => i.path === location.pathname)?.label || 'Painel'}
+                {(() => { const it = sidebarItems.find(i => i.path === location.pathname); return it ? t(it.labelKey) : 'Painel'; })()}
               </span>
             </div>
           </div>
