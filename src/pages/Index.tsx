@@ -13,8 +13,10 @@ import { getWhatsAppLink } from '@/data/products';
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      <PromoBanner />
       <Navbar />
+      {/* Spacer para compensar a navbar fixa (h-16 = 4rem) */}
+      <div className="h-16" aria-hidden="true" />
+      <PromoBanner />
       <main>
         <HeroSection />
         <ProductsSection />
