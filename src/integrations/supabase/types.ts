@@ -238,6 +238,48 @@ export type Database = {
         }
         Relationships: []
       }
+      membros: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          idioma: string
+          nome: string
+          permissoes: Json
+          status: string
+          tema: string
+          updated_at: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          idioma?: string
+          nome: string
+          permissoes?: Json
+          status?: string
+          tema?: string
+          updated_at?: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          idioma?: string
+          nome?: string
+          permissoes?: Json
+          status?: string
+          tema?: string
+          updated_at?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
       produtos: {
         Row: {
           aceita_cartao: boolean
@@ -414,6 +456,19 @@ export type Database = {
         }
         Returns: string
       }
+      get_module_permission: {
+        Args: { _module: string; _user_id: string }
+        Returns: string
+      }
+      has_module_level: {
+        Args: { _level: string; _module: string; _user_id: string }
+        Returns: boolean
+      }
+      has_module_permission: {
+        Args: { _module: string; _user_id: string }
+        Returns: boolean
+      }
+      membros_count: { Args: never; Returns: number }
       registrar_entrada_estoque: {
         Args: {
           p_gerar_despesa?: boolean
