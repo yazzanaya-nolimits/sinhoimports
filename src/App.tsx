@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import RequirePermission from "@/components/admin/RequirePermission";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import CatalogoPage from "./pages/CatalogoPage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminLayout from "./pages/admin/AdminLayout";
 import DashboardPage from "./pages/admin/DashboardPage";
@@ -18,6 +19,7 @@ import FinancialPage from "./pages/admin/FinancialPage";
 import CrmPage from "./pages/admin/CrmPage";
 import EstoquePage from "./pages/admin/EstoquePage";
 import SiteImagesPage from "./pages/admin/SiteImagesPage";
+import CarrosselPage from "./pages/admin/CarrosselPage";
 import BannerPage from "./pages/admin/BannerPage";
 import ConfiguracoesPage from "./pages/admin/ConfiguracoesPage";
 
@@ -33,6 +35,7 @@ const App = () => (
           <AuthProvider>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/catalogo" element={<CatalogoPage />} />
               <Route path="/admin" element={<AdminLogin />} />
               <Route element={<AdminLayout />}>
                 <Route path="/admin/dashboard" element={
@@ -58,6 +61,9 @@ const App = () => (
                 } />
                 <Route path="/admin/site-imagens" element={
                   <RequirePermission modulo="catalogo"><SiteImagesPage /></RequirePermission>
+                } />
+                <Route path="/admin/carrossel" element={
+                  <RequirePermission modulo="catalogo"><CarrosselPage /></RequirePermission>
                 } />
                 <Route path="/admin/banner" element={
                   <RequirePermission modulo="catalogo"><BannerPage /></RequirePermission>

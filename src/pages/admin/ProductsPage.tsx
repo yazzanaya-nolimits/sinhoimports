@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { formatBRL } from '@/lib/brl';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseProducts } from '@/hooks/useSupabaseProducts';
-import { type DatabaseProduct, type ProductVariation } from '@/lib/supabase';
+import { type DatabaseProduct, type ProductVariation, PRODUTO_CATEGORIAS } from '@/lib/supabase';
 
 type FormState = {
   nome: string;
@@ -34,6 +34,8 @@ type FormState = {
   aceita_pix: boolean;
   aceita_cartao: boolean;
   max_parcelas: number;
+  categoria: string;
+  destaque: boolean;
 };
 
 const emptyForm: FormState = {
@@ -43,6 +45,7 @@ const emptyForm: FormState = {
   ingredientes: '', modo_uso: '', informacoes_gerais: '',
   variacoes: [],
   aceita_pix: true, aceita_cartao: true, max_parcelas: 12,
+  categoria: 'outros', destaque: false,
 };
 
 const ProductsPage = () => {
@@ -84,6 +87,8 @@ const ProductsPage = () => {
       aceita_pix: form.aceita_pix,
       aceita_cartao: form.aceita_cartao,
       max_parcelas: form.max_parcelas,
+      categoria: form.categoria,
+      destaque: form.destaque,
     };
     if (editId) payload.id = editId;
     const result = await saveProduct(payload);
@@ -102,6 +107,8 @@ const ProductsPage = () => {
       variacoes: Array.isArray(p.variacoes) ? p.variacoes : [],
       aceita_pix: p.aceita_pix ?? true, aceita_cartao: p.aceita_cartao ?? true,
       max_parcelas: p.max_parcelas ?? 12,
+      categoria: p.categoria ?? 'outros',
+      destaque: p.destaque ?? false,
     });
     setEditId(p.id);
     setShowForm(true);
@@ -333,9 +340,43 @@ const ProductsPage = () => {
               )}
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Switch id="status" checked={form.status === 'ativo'} onCheckedChange={c => setForm(f => ({ ...f, status: c ? 'ativo' : 'inativo' }))} />
-              <Label htmlFor="status">Produto ativo na loja</Label>
+            {/* Categoria + destaque + status */}
+            <div className="p-4 border border-dashed rounded-lg space-y-4 bg-secondary/10">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Categoria *</Label>
+                  <Select
+                    value={form.categoria}
+                    onValueChange={v => setForm(f => ({ ...f, categoria: v }))}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {PRODUTO_CATEGORIAS.map(c => (
+                        <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">Usada para filtrar na página /catalogo</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Visibilidade na loja</Label>
+                  <div className="flex items-center gap-3 h-10 px-3 rounded-md border bg-card">
+                    <Switch
+                      id="destaque"
+                      checked={form.destaque}
+                      onCheckedChange={c => setForm(f => ({ ...f, destaque: c }))}
+                    />
+                    <Label htmlFor="destaque" className="cursor-pointer">⭐ Produto em destaque (home)</Label>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Apenas produtos em destaque aparecem nos 6 da página inicial.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2 pt-2 border-t">
+                <Switch id="status" checked={form.status === 'ativo'} onCheckedChange={c => setForm(f => ({ ...f, status: c ? 'ativo' : 'inativo' }))} />
+                <Label htmlFor="status">Produto ativo na loja</Label>
+              </div>
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-border">

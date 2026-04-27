@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
 import {
   ShoppingCart, DollarSign, Package, LayoutDashboard,
-  LogOut, Menu, X, Home, Kanban, Boxes, Image, Megaphone, History, Settings,
+  LogOut, Menu, X, Home, Kanban, Boxes, Image, Megaphone, History, Settings, Images,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +27,7 @@ const sidebarItems: NavItem[] = [
   { label: 'CRM Comercial', icon: Kanban, path: '/admin/crm', modulo: 'crm' },
   { label: 'Catálogo do Site', icon: Package, path: '/admin/products', modulo: 'catalogo' },
   { label: 'Imagens do Site', icon: Image, path: '/admin/site-imagens', modulo: 'catalogo' },
+  { label: 'Fotos do Carrossel', icon: Images, path: '/admin/carrossel', modulo: 'catalogo' },
   { label: 'Banner Promocional', icon: Megaphone, path: '/admin/banner', modulo: 'catalogo' },
   { label: 'Configurações', icon: Settings, path: '/admin/configuracoes', modulo: 'configuracoes', levels: ['total'] },
 ];

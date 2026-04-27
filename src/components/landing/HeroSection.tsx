@@ -6,6 +6,7 @@ import heroPerfume from '@/assets/hero-perfume.jpg';
 import heroWatch from '@/assets/hero-watch.jpg';
 import heroMultimedia from '@/assets/hero-multimedia.jpg';
 import { useSiteImages } from '@/hooks/useSiteImages';
+import { useCarrossel } from '@/hooks/useCarrossel';
 
 const defaultSlides = [
   { image: heroPerfume, label: 'Perfumes Árabes', caption: 'Fragrâncias originais importadas' },
@@ -16,17 +17,26 @@ const defaultSlides = [
 const HeroSection = () => {
   const [current, setCurrent] = useState(0);
   const { capa, carrossel } = useSiteImages();
+  const { imagens: carrosselNovo } = useCarrossel();
   const heroTitle = localStorage.getItem('sinho_hero_title') || 'Luxo Original para Todo Brasil';
   const heroDesc =
     localStorage.getItem('sinho_hero_desc') ||
     'Perfumes árabes originais, relógios de luxo e acessórios premium. Qualidade garantida com envio para todo o país.';
 
   const slides = useMemo(() => {
-    // Prioridade: capa (primeiro) + carrossel do Supabase; senão defaults
+    // Prioridade 1: nova tabela carrossel_imagens (apenas ativos)
+    const novasUrls = carrosselNovo.filter(c => c.ativo).map(c => c.url);
+    if (novasUrls.length > 0) {
+      return novasUrls.map((url, i) => ({
+        image: url,
+        label: defaultSlides[i % defaultSlides.length].label,
+        caption: defaultSlides[i % defaultSlides.length].caption,
+      }));
+    }
+    // Prioridade 2: capa + carrossel antigo (compatibilidade)
     const remoteUrls: string[] = [];
     if (capa?.url) remoteUrls.push(capa.url);
     carrossel.forEach(c => remoteUrls.push(c.url));
-
     if (remoteUrls.length > 0) {
       return remoteUrls.map((url, i) => ({
         image: url,
@@ -35,7 +45,7 @@ const HeroSection = () => {
       }));
     }
     return defaultSlides;
-  }, [capa, carrossel]);
+  }, [capa, carrossel, carrosselNovo]);
 
   useEffect(() => {
     if (slides.length <= 1) return;

@@ -35,6 +35,30 @@ export type Database = {
         }
         Relationships: []
       }
+      carrossel_imagens: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          id: string
+          ordem: number
+          url: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          ordem?: number
+          url: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          ordem?: number
+          url?: string
+        }
+        Relationships: []
+      }
       crm_leads: {
         Row: {
           created_at: string
@@ -284,12 +308,14 @@ export type Database = {
         Row: {
           aceita_cartao: boolean
           aceita_pix: boolean
+          categoria: string
           created_at: string
           cupom_codigo: string | null
           cupom_tipo: string | null
           cupom_validade: string | null
           cupom_valor: number | null
           descricao: string | null
+          destaque: boolean
           estoque_status: string
           foto_url: string | null
           id: string
@@ -313,12 +339,14 @@ export type Database = {
         Insert: {
           aceita_cartao?: boolean
           aceita_pix?: boolean
+          categoria?: string
           created_at?: string
           cupom_codigo?: string | null
           cupom_tipo?: string | null
           cupom_validade?: string | null
           cupom_valor?: number | null
           descricao?: string | null
+          destaque?: boolean
           estoque_status?: string
           foto_url?: string | null
           id?: string
@@ -342,12 +370,14 @@ export type Database = {
         Update: {
           aceita_cartao?: boolean
           aceita_pix?: boolean
+          categoria?: string
           created_at?: string
           cupom_codigo?: string | null
           cupom_tipo?: string | null
           cupom_validade?: string | null
           cupom_valor?: number | null
           descricao?: string | null
+          destaque?: boolean
           estoque_status?: string
           foto_url?: string | null
           id?: string
