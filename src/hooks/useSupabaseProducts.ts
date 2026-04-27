@@ -74,6 +74,8 @@ export function useSupabaseProducts() {
         aceita_pix: product.aceita_pix ?? true,
         aceita_cartao: product.aceita_cartao ?? true,
         max_parcelas: product.max_parcelas ?? 12,
+        categoria: product.categoria ?? 'outros',
+        destaque: product.destaque ?? false,
       };
 
       const { data, error } = product.id
