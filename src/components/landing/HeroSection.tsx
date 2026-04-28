@@ -138,10 +138,13 @@ const HeroSection = () => {
                     key={i}
                     src={s.image}
                     alt={s.label}
+                    width={448}
+                    height={448}
                     className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ${
                       i === current ? 'opacity-100' : 'opacity-0'
                     }`}
                     loading="lazy"
+                    decoding="async"
                   />
                 ))}
               </div>
