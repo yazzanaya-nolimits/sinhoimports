@@ -81,12 +81,39 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Evita overflow horizontal em qualquer breakpoint */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
     background-attachment: fixed;
     transition: background-color 300ms ease, color 300ms ease;
+    -webkit-font-smoothing: antialiased;
+    -webkit-overflow-scrolling: touch;
   }
+
+  /* Imagens responsivas por padrão — evita layout shift e overflow */
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Inputs em mobile precisam de min 16px para evitar auto-zoom no iOS */
+  @media (max-width: 767px) {
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+  }
+
   /* Surface por tema */
   html[data-theme="preto_dourado"] body { background-image: radial-gradient(ellipse at top, hsl(0 0% 8%), hsl(0 0% 4%)); }
   html[data-theme="rosa_branco"] body  { background-image: radial-gradient(ellipse at top, #FFE4EE, #FFF5F8); }
@@ -111,6 +138,28 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, hsl(43 72% 55% / 0.7), hsl(210 100% 60% / 0.7));
+  }
+
+  /* Scroll horizontal suave em containers (kanban, tabelas) */
+  .scroll-touch {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Marquee — usa keyframe definido no tailwind.config; aqui só hint de GPU */
+  .animate-marquee {
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  /* Respeita preferência de movimento reduzido */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 

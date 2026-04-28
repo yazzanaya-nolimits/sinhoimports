@@ -27,15 +27,19 @@ const Index = () => {
       <Footer />
       <ExitIntentPopup />
 
-      {/* Floating WhatsApp Button */}
+      {/* Floating WhatsApp Button — respeita safe-area no mobile */}
       <a
         href={getWhatsAppLink()}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 hover:shadow-[0_0_25px_rgba(34,197,94,0.5)]"
+        style={{
+          bottom: 'max(1rem, env(safe-area-inset-bottom))',
+          right: 'max(1rem, env(safe-area-inset-right))',
+        }}
+        className="fixed z-50 w-12 h-12 sm:w-14 sm:h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 hover:shadow-[0_0_25px_rgba(34,197,94,0.5)]"
         aria-label="Falar no WhatsApp"
       >
-        <MessageCircle className="w-7 h-7 text-white" />
+        <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
       </a>
     </div>
   );

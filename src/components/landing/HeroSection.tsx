@@ -58,7 +58,7 @@ const HeroSection = () => {
   const titleLine2 = rest.length > 0 ? 'para ' + rest.join(' para ') : '';
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section className="relative min-h-[100svh] flex items-center overflow-hidden">
       {/* Background image with crossfade */}
       <div className="absolute inset-0">
         {slides.map((s, i) => (
@@ -71,8 +71,12 @@ const HeroSection = () => {
             <img
               src={s.image}
               alt={s.label}
+              width={1920}
+              height={1080}
               className="w-full h-full object-cover scale-105"
               loading={i === 0 ? 'eager' : 'lazy'}
+              fetchPriority={i === 0 ? 'high' : 'auto'}
+              decoding={i === 0 ? 'sync' : 'async'}
             />
           </div>
         ))}
@@ -91,7 +95,10 @@ const HeroSection = () => {
                 {slide.label}
               </span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-serif font-bold leading-tight">
+            <h1
+              className="font-serif font-bold leading-tight"
+              style={{ fontSize: 'clamp(2.25rem, 6vw, 4.5rem)' }}
+            >
               {titleLine1}
               {titleLine2 && (
                 <>
@@ -100,7 +107,12 @@ const HeroSection = () => {
                 </>
               )}
             </h1>
-            <p className="text-lg text-muted-foreground max-w-md leading-relaxed">{heroDesc}</p>
+            <p
+              className="text-muted-foreground max-w-md leading-relaxed"
+              style={{ fontSize: 'clamp(0.95rem, 1.6vw, 1.125rem)' }}
+            >
+              {heroDesc}
+            </p>
             <div className="flex flex-wrap gap-4">
               <Button
                 size="lg"
@@ -126,10 +138,13 @@ const HeroSection = () => {
                     key={i}
                     src={s.image}
                     alt={s.label}
+                    width={448}
+                    height={448}
                     className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ${
                       i === current ? 'opacity-100' : 'opacity-0'
                     }`}
                     loading="lazy"
+                    decoding="async"
                   />
                 ))}
               </div>

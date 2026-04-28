@@ -11,10 +11,14 @@ const PromoBanner = () => {
 
   return (
     <div className="relative w-full bg-red-600 text-white overflow-hidden border-b border-red-700/50 shadow-lg">
-      <div className="flex animate-marquee whitespace-nowrap py-2">
+      <div className="flex animate-marquee whitespace-nowrap py-1.5 sm:py-2">
         {items.map((_, i) => (
-          <span key={i} className="flex items-center gap-3 px-8 font-bold text-sm uppercase tracking-wider">
-            <Zap className="w-4 h-4 fill-white" />
+          <span
+            key={i}
+            className="flex items-center gap-2 sm:gap-3 px-4 sm:px-8 font-bold uppercase tracking-wider"
+            style={{ fontSize: 'clamp(0.7rem, 2.2vw, 0.875rem)' }}
+          >
+            <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-white shrink-0" />
             {banner!.mensagem}
           </span>
         ))}
