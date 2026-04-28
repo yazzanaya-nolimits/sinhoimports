@@ -146,14 +146,10 @@
     scroll-behavior: smooth;
   }
 
-  /* Marquee com GPU */
-  @keyframes marquee {
-    0%   { transform: translate3d(0, 0, 0); }
-    100% { transform: translate3d(-50%, 0, 0); }
-  }
+  /* Marquee — usa keyframe definido no tailwind.config; aqui só hint de GPU */
   .animate-marquee {
-    animation: marquee 28s linear infinite;
     will-change: transform;
+    transform: translateZ(0);
   }
 
   /* Respeita preferência de movimento reduzido */
