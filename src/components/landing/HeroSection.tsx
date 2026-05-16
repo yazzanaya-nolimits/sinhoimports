@@ -86,12 +86,14 @@ const HeroSection = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8 animate-fade-in">
-            <div className="inline-flex items-center gap-2 border border-primary/40 px-4 py-1.5 rounded-full bg-background/40 backdrop-blur-sm">
-              <Sparkles className="w-3.5 h-3.5 text-primary" />
-              <span className="text-xs tracking-[0.3em] uppercase text-primary/90">
-                {slide.label}
-              </span>
-            </div>
+            {slide.label && (
+              <div className="inline-flex items-center gap-2 border border-primary/40 px-4 py-1.5 rounded-full bg-background/40 backdrop-blur-sm">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span className="text-xs tracking-[0.3em] uppercase text-primary/90">
+                  {slide.label}
+                </span>
+              </div>
+            )}
             <h1
               className="font-serif font-bold leading-tight"
               style={{ fontSize: 'clamp(2.25rem, 6vw, 4.5rem)' }}
