@@ -119,18 +119,18 @@ const FinancialPage = () => {
         </Select>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <Card><CardContent className="p-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center"><TrendingUp className="w-5 h-5 text-green-500" /></div>
-          <div><p className="text-xs text-muted-foreground">Receita</p><p className="text-lg font-bold text-green-500">{formatBRL(totais.receita)}</p></div>
+          <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center shrink-0"><TrendingUp className="w-5 h-5 text-green-500" /></div>
+          <div className="min-w-0"><p className="text-xs text-muted-foreground">Receita</p><p className="text-lg font-bold text-green-500 break-words">{formatBRL(totais.receita)}</p></div>
         </CardContent></Card>
         <Card><CardContent className="p-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center"><TrendingDown className="w-5 h-5 text-red-500" /></div>
-          <div><p className="text-xs text-muted-foreground">Despesas</p><p className="text-lg font-bold text-red-500">{formatBRL(totais.despesa)}</p></div>
+          <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0"><TrendingDown className="w-5 h-5 text-red-500" /></div>
+          <div className="min-w-0"><p className="text-xs text-muted-foreground">Despesas</p><p className="text-lg font-bold text-red-500 break-words">{formatBRL(totais.despesa)}</p></div>
         </CardContent></Card>
         <Card><CardContent className="p-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center"><DollarSign className="w-5 h-5 text-primary" /></div>
-          <div><p className="text-xs text-muted-foreground">Lucro líquido</p><p className={`text-lg font-bold ${totais.lucro >= 0 ? 'text-primary' : 'text-red-500'}`}>{formatBRL(totais.lucro)}</p></div>
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0"><DollarSign className="w-5 h-5 text-primary" /></div>
+          <div className="min-w-0"><p className="text-xs text-muted-foreground">Lucro líquido</p><p className={`text-lg font-bold break-words ${totais.lucro >= 0 ? 'text-primary' : 'text-red-500'}`}>{formatBRL(totais.lucro)}</p></div>
         </CardContent></Card>
         <Card><CardContent className="p-4">
           <p className="text-xs text-muted-foreground">Margem geral</p>
@@ -138,7 +138,7 @@ const FinancialPage = () => {
         </CardContent></Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 min-w-0">
         <Card className="p-4">
           <h3 className="text-sm font-medium mb-3">Receita × Despesa × Lucro</h3>
           <ResponsiveContainer width="100%" height={260}>
@@ -167,7 +167,7 @@ const FinancialPage = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 min-w-0">
         <Card className="p-4">
           <h3 className="text-sm font-medium mb-3">Despesas por categoria</h3>
           <ResponsiveContainer width="100%" height={240}>
