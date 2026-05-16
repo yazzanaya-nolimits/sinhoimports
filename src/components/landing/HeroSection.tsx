@@ -27,22 +27,14 @@ const HeroSection = () => {
     // Prioridade 1: nova tabela carrossel_imagens (apenas ativos)
     const novasUrls = carrosselNovo.filter(c => c.ativo).map(c => c.url);
     if (novasUrls.length > 0) {
-      return novasUrls.map((url, i) => ({
-        image: url,
-        label: defaultSlides[i % defaultSlides.length].label,
-        caption: defaultSlides[i % defaultSlides.length].caption,
-      }));
+      return novasUrls.map(url => ({ image: url, label: '', caption: '' }));
     }
     // Prioridade 2: capa + carrossel antigo (compatibilidade)
     const remoteUrls: string[] = [];
     if (capa?.url) remoteUrls.push(capa.url);
     carrossel.forEach(c => remoteUrls.push(c.url));
     if (remoteUrls.length > 0) {
-      return remoteUrls.map((url, i) => ({
-        image: url,
-        label: defaultSlides[i % defaultSlides.length].label,
-        caption: defaultSlides[i % defaultSlides.length].caption,
-      }));
+      return remoteUrls.map(url => ({ image: url, label: '', caption: '' }));
     }
     return defaultSlides;
   }, [capa, carrossel, carrosselNovo]);
