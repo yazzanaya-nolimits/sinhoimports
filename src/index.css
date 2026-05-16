@@ -146,6 +146,22 @@
     scroll-behavior: smooth;
   }
 
+  /* Container universal para tabelas largas - força scroll horizontal sem quebrar layout */
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-scroll > table { min-width: max-content; }
+
+  /* Padding adaptativo para conteúdo principal do admin */
+  .admin-main { padding: 0.75rem; }
+  @media (min-width: 640px) { .admin-main { padding: 1rem; } }
+  @media (min-width: 1024px) { .admin-main { padding: 1.5rem; } }
+
+  /* Diálogos e Sheets seguros em mobile */
+  [role="dialog"] { max-width: min(95vw, var(--dialog-max, 100%)); }
+
   /* Marquee — usa keyframe definido no tailwind.config; aqui só hint de GPU */
   .animate-marquee {
     will-change: transform;

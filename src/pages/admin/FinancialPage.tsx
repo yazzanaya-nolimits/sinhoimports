@@ -108,7 +108,7 @@ const FinancialPage = () => {
           <p className="text-sm text-muted-foreground">Receita automática das vendas + despesas operacionais.</p>
         </div>
         <Select value={periodo} onValueChange={setPeriodo}>
-          <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-full md:w-44"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="1">Hoje</SelectItem>
             <SelectItem value="7">Últimos 7 dias</SelectItem>
