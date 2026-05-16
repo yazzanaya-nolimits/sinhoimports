@@ -64,9 +64,12 @@ export function useCarrossel() {
   };
 
   const saveOrder = async (orderedIds: string[]) => {
-    for (let i = 0; i < orderedIds.length; i++) {
-      await supabase.from('carrossel_imagens').update({ ordem: i + 1 }).eq('id', orderedIds[i]);
-    }
+    await Promise.all(
+      orderedIds.map((id, i) =>
+        supabase.from('carrossel_imagens').update({ ordem: i + 1 }).eq('id', id)
+      )
+    );
+    await fetch();
   };
 
   return { imagens, loading, uploadImage, addImagem, removeImagem, toggleAtivo, saveOrder, refetch: fetch };
