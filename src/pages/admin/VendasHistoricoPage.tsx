@@ -81,10 +81,10 @@ const VendasHistoricoPage = () => {
         <Button variant="outline" onClick={exportar}><Download className="w-4 h-4 mr-2" /> Exportar CSV</Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Card className="p-4"><p className="text-xs text-muted-foreground">Vendas no período</p><p className="text-2xl font-bold">{totais.qtd}</p></Card>
-        <Card className="p-4"><p className="text-xs text-muted-foreground">Receita</p><p className="text-2xl font-bold text-green-500">{formatBRL(totais.receita)}</p></Card>
-        <Card className="p-4"><p className="text-xs text-muted-foreground">Ticket médio</p><p className="text-2xl font-bold">{formatBRL(totais.ticket)}</p></Card>
+        <Card className="p-4"><p className="text-xs text-muted-foreground">Receita</p><p className="text-2xl font-bold text-green-500 break-words">{formatBRL(totais.receita)}</p></Card>
+        <Card className="p-4"><p className="text-xs text-muted-foreground">Ticket médio</p><p className="text-2xl font-bold break-words">{formatBRL(totais.ticket)}</p></Card>
       </div>
 
       <Card className="p-4 flex flex-col md:flex-row gap-3">
