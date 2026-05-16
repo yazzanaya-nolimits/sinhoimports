@@ -53,7 +53,12 @@ const HeroSection = () => {
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  const slide = slides[current];
+  const safeIndex = slides.length > 0 ? current % slides.length : 0;
+  const slide = slides[safeIndex] ?? defaultSlides[0];
+
+  useEffect(() => {
+    if (current >= slides.length) setCurrent(0);
+  }, [slides.length, current]);
   const [titleLine1, ...rest] = heroTitle.split(' para ');
   const titleLine2 = rest.length > 0 ? 'para ' + rest.join(' para ') : '';
 
