@@ -147,10 +147,12 @@ const HeroSection = () => {
                   />
                 ))}
               </div>
-              <div className="absolute -bottom-2 left-6 right-6 bg-background/85 backdrop-blur-md rounded-xl p-4 border border-primary/30 shadow-xl">
-                <p className="text-xs tracking-widest uppercase text-primary/80">{slide.label}</p>
-                <p className="font-serif font-semibold text-lg mt-1">{slide.caption}</p>
-              </div>
+              {(slide.label || slide.caption) && (
+                <div className="absolute -bottom-2 left-6 right-6 bg-background/85 backdrop-blur-md rounded-xl p-4 border border-primary/30 shadow-xl">
+                  {slide.label && <p className="text-xs tracking-widest uppercase text-primary/80">{slide.label}</p>}
+                  {slide.caption && <p className="font-serif font-semibold text-lg mt-1">{slide.caption}</p>}
+                </div>
+              )}
             </div>
           </div>
         </div>
