@@ -129,7 +129,7 @@ export default function CrmPage() {
       </div>
 
       {/* Métricas */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <Card className="p-4">
           <p className="text-xs text-muted-foreground">Total de leads</p>
           <p className="text-2xl font-bold">{metrics.total}</p>
@@ -180,9 +180,9 @@ export default function CrmPage() {
         </Button>
       </Card>
 
-      {/* Kanban */}
-      <div className="overflow-x-auto pb-2">
-        <div className="flex gap-4 min-w-max">
+      {/* Kanban — horizontal em md+, vertical empilhado no celular */}
+      <div className="md:overflow-x-auto md:pb-2">
+        <div className="flex flex-col md:flex-row gap-4 md:min-w-max">
           {STAGES.map(stage => {
             const colLeads = filteredLeads.filter(l => l.etapa === stage.key);
             return (
@@ -190,7 +190,7 @@ export default function CrmPage() {
                 key={stage.key}
                 onDragOver={e => e.preventDefault()}
                 onDrop={() => handleDrop(stage.key)}
-                className="w-72 flex-shrink-0 bg-card border border-border rounded-lg flex flex-col max-h-[70vh]"
+                className="w-full md:w-72 md:flex-shrink-0 bg-card border border-border rounded-lg flex flex-col md:max-h-[70vh]"
               >
                 <div className="p-3 border-b border-border flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -236,7 +236,7 @@ export default function CrmPage() {
       </div>
 
       {/* Gráficos */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-w-0">
         <Card className="p-4">
           <h3 className="text-sm font-medium mb-3">Leads por etapa</h3>
           <ResponsiveContainer width="100%" height={220}>
