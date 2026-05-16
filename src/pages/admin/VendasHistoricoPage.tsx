@@ -121,7 +121,41 @@ const VendasHistoricoPage = () => {
         </Select>
       </Card>
 
-      <Card className="overflow-x-auto">
+      {/* MOBILE: cards */}
+      <div className="md:hidden space-y-3">
+        {filtradas.map(v => (
+          <Card key={v.id} className="p-3 space-y-2">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <p className="font-medium truncate">{v.produto_nome}{v.variacao && <span className="text-muted-foreground text-xs"> ({v.variacao})</span>}</p>
+                <p className="text-[11px] text-muted-foreground">{new Date(v.created_at).toLocaleString('pt-BR')}</p>
+              </div>
+              <Badge variant="outline" className={`shrink-0 text-[10px] ${v.status === 'cancelada' ? 'text-red-500 border-red-500/40' : 'text-green-500 border-green-500/40'}`}>
+                {v.status}
+              </Badge>
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-xs">
+              <div><p className="text-muted-foreground">Qtd</p><p className="font-medium">{v.quantidade}</p></div>
+              <div><p className="text-muted-foreground">Total</p><p className="font-bold text-primary">{formatBRL(Number(v.valor_total))}</p></div>
+              <div><p className="text-muted-foreground">Pag.</p><p className="font-medium uppercase">{v.forma_pagamento}{v.parcelas > 1 ? ` ${v.parcelas}x` : ''}</p></div>
+            </div>
+            {v.cliente_nome && <p className="text-xs"><span className="text-muted-foreground">Cliente: </span>{v.cliente_nome}</p>}
+            {v.status === 'concluida' && (
+              <div className="flex justify-end pt-1 border-t border-border/40">
+                <Button size="sm" variant="ghost" className="h-7 text-destructive" onClick={() => setConfirmCancel(v.id)}>
+                  <X className="w-3.5 h-3.5 mr-1" /> Cancelar
+                </Button>
+              </div>
+            )}
+          </Card>
+        ))}
+        {!filtradas.length && (
+          <Card className="p-6 text-center text-muted-foreground text-sm">Nenhuma venda encontrada.</Card>
+        )}
+      </div>
+
+      {/* DESKTOP/TABLET: tabela */}
+      <Card className="hidden md:block table-scroll">
         <Table>
           <TableHeader>
             <TableRow>

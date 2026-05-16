@@ -228,48 +228,84 @@ const FinancialPage = () => {
 
       <Card>
         <CardHeader><CardTitle className="text-base">Últimos lançamentos</CardTitle></CardHeader>
-        <CardContent className="p-0 overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Data</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Categoria</TableHead>
-                <TableHead>Descrição</TableHead>
-                <TableHead>Pagamento</TableHead>
-                <TableHead className="text-right">Valor</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filtrados.slice(0, 100).map(l => (
-                <TableRow key={l.id}>
-                  <TableCell className="text-xs">{new Date(l.created_at).toLocaleString('pt-BR')}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={l.tipo === 'receita' ? 'text-green-500 border-green-500/40' : 'text-red-500 border-red-500/40'}>
-                      {l.tipo}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-xs">{l.categoria}</TableCell>
-                  <TableCell>{l.descricao}</TableCell>
-                  <TableCell className="text-xs uppercase">{l.forma_pagamento || '—'}</TableCell>
-                  <TableCell className={`text-right font-bold ${l.tipo === 'receita' ? 'text-green-500' : 'text-red-500'}`}>
+        <CardContent className="p-0">
+          {/* MOBILE: cards */}
+          <div className="md:hidden p-3 space-y-2">
+            {filtrados.slice(0, 100).map(l => (
+              <div key={l.id} className="border border-border rounded-md p-3 space-y-1.5">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-sm truncate">{l.descricao}</p>
+                    <p className="text-[11px] text-muted-foreground">{new Date(l.created_at).toLocaleString('pt-BR')} · {l.categoria}</p>
+                  </div>
+                  <Badge variant="outline" className={`shrink-0 text-[10px] ${l.tipo === 'receita' ? 'text-green-500 border-green-500/40' : 'text-red-500 border-red-500/40'}`}>
+                    {l.tipo}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs uppercase text-muted-foreground">{l.forma_pagamento || '—'}</span>
+                  <span className={`font-bold text-base ${l.tipo === 'receita' ? 'text-green-500' : 'text-red-500'}`}>
                     {l.tipo === 'receita' ? '+' : '-'} {formatBRL(Number(l.valor))}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {!l.venda_id && (
-                      <Button size="icon" variant="ghost" onClick={() => removerLancamento(l.id)}>
-                        <Trash2 className="w-4 h-4 text-destructive" />
-                      </Button>
-                    )}
-                  </TableCell>
+                  </span>
+                </div>
+                {!l.venda_id && (
+                  <div className="flex justify-end pt-1 border-t border-border/40">
+                    <Button size="sm" variant="ghost" className="h-7 text-destructive" onClick={() => removerLancamento(l.id)}>
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            ))}
+            {!filtrados.length && (
+              <p className="text-center py-8 text-muted-foreground text-sm">Nenhum lançamento no período.</p>
+            )}
+          </div>
+
+          {/* DESKTOP/TABLET: tabela */}
+          <div className="hidden md:block table-scroll">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Data</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Categoria</TableHead>
+                  <TableHead>Descrição</TableHead>
+                  <TableHead>Pagamento</TableHead>
+                  <TableHead className="text-right">Valor</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
-              ))}
-              {!filtrados.length && (
-                <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Nenhum lançamento no período.</TableCell></TableRow>
-              )}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filtrados.slice(0, 100).map(l => (
+                  <TableRow key={l.id}>
+                    <TableCell className="text-xs">{new Date(l.created_at).toLocaleString('pt-BR')}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={l.tipo === 'receita' ? 'text-green-500 border-green-500/40' : 'text-red-500 border-red-500/40'}>
+                        {l.tipo}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-xs">{l.categoria}</TableCell>
+                    <TableCell>{l.descricao}</TableCell>
+                    <TableCell className="text-xs uppercase">{l.forma_pagamento || '—'}</TableCell>
+                    <TableCell className={`text-right font-bold ${l.tipo === 'receita' ? 'text-green-500' : 'text-red-500'}`}>
+                      {l.tipo === 'receita' ? '+' : '-'} {formatBRL(Number(l.valor))}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {!l.venda_id && (
+                        <Button size="icon" variant="ghost" onClick={() => removerLancamento(l.id)}>
+                          <Trash2 className="w-4 h-4 text-destructive" />
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {!filtrados.length && (
+                  <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Nenhum lançamento no período.</TableCell></TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
