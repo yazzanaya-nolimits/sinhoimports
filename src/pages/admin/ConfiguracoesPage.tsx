@@ -441,11 +441,11 @@ const ConfiguracoesPage = () => {
               <Label className="text-base font-semibold">{t('settings.users.permissionsTitle')}</Label>
               <div className="mt-2 space-y-2">
                 {MODULOS.map(({ key, label, levels }) => (
-                  <div key={key} className="flex items-center justify-between gap-3 p-2.5 rounded-lg border border-border bg-background/40">
+                  <div key={key} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2.5 rounded-lg border border-border bg-background/40">
                     <span className="text-sm font-medium">{label}</span>
                     <Select value={form.permissoes[key]}
                       onValueChange={(v) => setForm({ ...form, permissoes: { ...form.permissoes, [key]: v } })}>
-                      <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="w-full sm:w-[200px]"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {levels.map(l => <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>)}
                       </SelectContent>

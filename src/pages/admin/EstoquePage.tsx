@@ -130,7 +130,41 @@ export default function EstoquePage() {
         </Select>
       </Card>
 
-      <Card className="overflow-x-auto">
+      {/* MOBILE: cards empilhados */}
+      <div className="md:hidden space-y-3">
+        {filtered.map(item => (
+          <Card key={item.id} className="p-3 space-y-2">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <p className="font-medium truncate">{item.nome}</p>
+                <p className="text-xs text-muted-foreground">{item.tipo || '—'}</p>
+              </div>
+              <Badge variant="outline" className={`${STATUS_LABEL[item.estoque_status]?.cls} text-[10px] shrink-0`}>
+                {STATUS_LABEL[item.estoque_status]?.label}
+              </Badge>
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-xs">
+              <div><p className="text-muted-foreground">Qtd</p><p className="font-bold text-base">{item.quantidade}</p></div>
+              <div><p className="text-muted-foreground">Compra</p><p className="font-medium">{formatBRL(Number(item.valor_compra))}</p></div>
+              <div><p className="text-muted-foreground">Venda</p><p className="font-medium">{formatBRL(Number(item.valor))}</p></div>
+              <div className="col-span-3"><p className="text-muted-foreground text-[10px]">Margem: {Number(item.margem_percentual).toFixed(1)}%</p></div>
+            </div>
+            <div className="flex justify-end gap-1 flex-wrap border-t border-border/40 pt-2">
+              <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => ajustarRapido(item, -1)}><ArrowDown className="w-3.5 h-3.5 text-red-500" /></Button>
+              <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => ajustarRapido(item, 1)}><ArrowUp className="w-3.5 h-3.5 text-green-500" /></Button>
+              <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => setEntrada(item)}><ArrowUp className="w-3.5 h-3.5 text-primary" /> <span className="text-xs ml-1">Entrada</span></Button>
+              <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => setEditing(item)}><Edit2 className="w-3.5 h-3.5" /></Button>
+              <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => abrirHistorico(item)}><History className="w-3.5 h-3.5" /></Button>
+            </div>
+          </Card>
+        ))}
+        {!filtered.length && (
+          <Card className="p-6 text-center text-muted-foreground text-sm">Nenhum produto encontrado.</Card>
+        )}
+      </div>
+
+      {/* DESKTOP/TABLET: tabela */}
+      <Card className="hidden md:block table-scroll">
         <Table>
           <TableHeader>
             <TableRow>
