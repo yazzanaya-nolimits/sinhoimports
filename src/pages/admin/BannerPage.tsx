@@ -37,7 +37,7 @@ export default function BannerPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-3xl min-w-0">
       <div>
         <h1 className="text-2xl font-serif font-bold text-gradient-gold">Banner Promocional</h1>
         <p className="text-sm text-muted-foreground">Faixa animada exibida no topo do site.</p>

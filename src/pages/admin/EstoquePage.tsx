@@ -105,13 +105,13 @@ export default function EstoquePage() {
       </div>
 
       {/* Métricas */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         <Card className="p-4"><p className="text-xs text-muted-foreground">Produtos</p><p className="text-2xl font-bold">{metrics.total}</p></Card>
         <Card className="p-4"><p className="text-xs text-muted-foreground">Estoque baixo</p><p className="text-2xl font-bold text-yellow-500">{metrics.baixo}</p></Card>
         <Card className="p-4"><p className="text-xs text-muted-foreground">Esgotados</p><p className="text-2xl font-bold text-red-500">{metrics.esgotado}</p></Card>
-        <Card className="p-4"><p className="text-xs text-muted-foreground">Total em custo</p><p className="text-lg font-bold">{formatBRL(metrics.totalCompra)}</p></Card>
-        <Card className="p-4"><p className="text-xs text-muted-foreground">Total em venda</p><p className="text-lg font-bold">{formatBRL(metrics.totalVenda)}</p></Card>
-        <Card className="p-4"><p className="text-xs text-muted-foreground">Lucro potencial</p><p className="text-lg font-bold text-green-500">{formatBRL(metrics.lucro)}</p></Card>
+        <Card className="p-4"><p className="text-xs text-muted-foreground">Total em custo</p><p className="text-lg font-bold break-words">{formatBRL(metrics.totalCompra)}</p></Card>
+        <Card className="p-4"><p className="text-xs text-muted-foreground">Total em venda</p><p className="text-lg font-bold break-words">{formatBRL(metrics.totalVenda)}</p></Card>
+        <Card className="p-4"><p className="text-xs text-muted-foreground">Lucro potencial</p><p className="text-lg font-bold text-green-500 break-words">{formatBRL(metrics.lucro)}</p></Card>
       </div>
 
       <Card className="p-4 flex flex-col md:flex-row gap-3">
