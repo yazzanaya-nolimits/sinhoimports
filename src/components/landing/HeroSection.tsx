@@ -27,22 +27,14 @@ const HeroSection = () => {
     // Prioridade 1: nova tabela carrossel_imagens (apenas ativos)
     const novasUrls = carrosselNovo.filter(c => c.ativo).map(c => c.url);
     if (novasUrls.length > 0) {
-      return novasUrls.map((url, i) => ({
-        image: url,
-        label: defaultSlides[i % defaultSlides.length].label,
-        caption: defaultSlides[i % defaultSlides.length].caption,
-      }));
+      return novasUrls.map(url => ({ image: url, label: '', caption: '' }));
     }
     // Prioridade 2: capa + carrossel antigo (compatibilidade)
     const remoteUrls: string[] = [];
     if (capa?.url) remoteUrls.push(capa.url);
     carrossel.forEach(c => remoteUrls.push(c.url));
     if (remoteUrls.length > 0) {
-      return remoteUrls.map((url, i) => ({
-        image: url,
-        label: defaultSlides[i % defaultSlides.length].label,
-        caption: defaultSlides[i % defaultSlides.length].caption,
-      }));
+      return remoteUrls.map(url => ({ image: url, label: '', caption: '' }));
     }
     return defaultSlides;
   }, [capa, carrossel, carrosselNovo]);
@@ -94,12 +86,14 @@ const HeroSection = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8 animate-fade-in">
-            <div className="inline-flex items-center gap-2 border border-primary/40 px-4 py-1.5 rounded-full bg-background/40 backdrop-blur-sm">
-              <Sparkles className="w-3.5 h-3.5 text-primary" />
-              <span className="text-xs tracking-[0.3em] uppercase text-primary/90">
-                {slide.label}
-              </span>
-            </div>
+            {slide.label && (
+              <div className="inline-flex items-center gap-2 border border-primary/40 px-4 py-1.5 rounded-full bg-background/40 backdrop-blur-sm">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span className="text-xs tracking-[0.3em] uppercase text-primary/90">
+                  {slide.label}
+                </span>
+              </div>
+            )}
             <h1
               className="font-serif font-bold leading-tight"
               style={{ fontSize: 'clamp(2.25rem, 6vw, 4.5rem)' }}
@@ -153,10 +147,12 @@ const HeroSection = () => {
                   />
                 ))}
               </div>
-              <div className="absolute -bottom-2 left-6 right-6 bg-background/85 backdrop-blur-md rounded-xl p-4 border border-primary/30 shadow-xl">
-                <p className="text-xs tracking-widest uppercase text-primary/80">{slide.label}</p>
-                <p className="font-serif font-semibold text-lg mt-1">{slide.caption}</p>
-              </div>
+              {(slide.label || slide.caption) && (
+                <div className="absolute -bottom-2 left-6 right-6 bg-background/85 backdrop-blur-md rounded-xl p-4 border border-primary/30 shadow-xl">
+                  {slide.label && <p className="text-xs tracking-widest uppercase text-primary/80">{slide.label}</p>}
+                  {slide.caption && <p className="font-serif font-semibold text-lg mt-1">{slide.caption}</p>}
+                </div>
+              )}
             </div>
           </div>
         </div>
