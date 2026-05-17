@@ -86,6 +86,9 @@ const App = () => (
                   <Route path="/admin/banner" element={
                     <RequirePermission modulo="catalogo"><BannerPage /></RequirePermission>
                   } />
+                  <Route path="/admin/branding" element={
+                    <RequirePermission modulo="catalogo"><BrandingPage /></RequirePermission>
+                  } />
                   <Route path="/admin/configuracoes" element={
                     <RequirePermission modulo="configuracoes" levels={["total"]}><ConfiguracoesPage /></RequirePermission>
                   } />
