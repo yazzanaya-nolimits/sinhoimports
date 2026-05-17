@@ -10,7 +10,7 @@ export const es = {
     dashboard: 'Panel general', pdv: 'TPV — Ventas', salesHistory: 'Historial de ventas',
     stock: 'Inventario', financial: 'Finanzas', crm: 'CRM',
     catalog: 'Catálogo del sitio', siteImages: 'Imágenes del sitio', carousel: 'Fotos del carrusel',
-    banner: 'Banner promocional', settings: 'Configuración',
+    banner: 'Banner promocional', branding: 'Branding de la marca', settings: 'Configuración',
   },
   settings: {
     title: 'Configuración', subtitle: 'Idioma, usuarios y tema',
