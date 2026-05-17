@@ -25,6 +25,7 @@ const SiteImagesPage = lazy(() => import("./pages/admin/SiteImagesPage"));
 const CarrosselPage = lazy(() => import("./pages/admin/CarrosselPage"));
 const BannerPage = lazy(() => import("./pages/admin/BannerPage"));
 const ConfiguracoesPage = lazy(() => import("./pages/admin/ConfiguracoesPage"));
+const BrandingPage = lazy(() => import("./pages/admin/BrandingPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -84,6 +85,9 @@ const App = () => (
                   } />
                   <Route path="/admin/banner" element={
                     <RequirePermission modulo="catalogo"><BannerPage /></RequirePermission>
+                  } />
+                  <Route path="/admin/branding" element={
+                    <RequirePermission modulo="catalogo"><BrandingPage /></RequirePermission>
                   } />
                   <Route path="/admin/configuracoes" element={
                     <RequirePermission modulo="configuracoes" levels={["total"]}><ConfiguracoesPage /></RequirePermission>

@@ -3,7 +3,7 @@ import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   ShoppingCart, DollarSign, Package, LayoutDashboard,
-  LogOut, Menu, X, Home, Kanban, Boxes, Image, Megaphone, History, Settings, Images,
+  LogOut, Menu, X, Home, Kanban, Boxes, Image, Megaphone, History, Settings, Images, Sparkles,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -31,6 +31,7 @@ const sidebarItems: NavItem[] = [
   { labelKey: 'sidebar.siteImages',    icon: Image,           path: '/admin/site-imagens',  modulo: 'catalogo' },
   { labelKey: 'sidebar.carousel',      icon: Images,          path: '/admin/carrossel',     modulo: 'catalogo' },
   { labelKey: 'sidebar.banner',        icon: Megaphone,       path: '/admin/banner',        modulo: 'catalogo' },
+  { labelKey: 'sidebar.branding',      icon: Sparkles,        path: '/admin/branding',      modulo: 'catalogo' },
   { labelKey: 'sidebar.settings',      icon: Settings,        path: '/admin/configuracoes', modulo: 'configuracoes', levels: ['total'] },
 ];
 

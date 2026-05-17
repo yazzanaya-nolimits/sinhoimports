@@ -10,7 +10,7 @@ export const en = {
     dashboard: 'Dashboard', pdv: 'POS — Sales', salesHistory: 'Sales history',
     stock: 'Inventory', financial: 'Finance', crm: 'CRM',
     catalog: 'Site catalog', siteImages: 'Site images', carousel: 'Carousel photos',
-    banner: 'Promo banner', settings: 'Settings',
+    banner: 'Promo banner', branding: 'Brand assets', settings: 'Settings',
   },
   settings: {
     title: 'Settings', subtitle: 'Language, users and theme',
