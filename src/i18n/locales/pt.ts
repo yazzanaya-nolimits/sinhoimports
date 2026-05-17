@@ -31,6 +31,7 @@ export const pt = {
     siteImages: 'Imagens do Site',
     carousel: 'Fotos do Carrossel',
     banner: 'Banner Promocional',
+    branding: 'Branding da Marca',
     settings: 'Configurações',
   },
   settings: {
