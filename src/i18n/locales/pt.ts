@@ -41,6 +41,7 @@ export const pt = {
       language: 'Idioma',
       users: 'Usuários',
       themes: 'Temas',
+      payments: 'Pagamentos',
     },
     language: {
       title: 'Idioma do painel',

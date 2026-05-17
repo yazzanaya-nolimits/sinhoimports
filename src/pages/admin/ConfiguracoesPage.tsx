@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Trash2, Pencil, Power, Loader2, X, Eye, EyeOff, Languages, Users, Palette, Check } from 'lucide-react';
+import { Plus, Trash2, Pencil, Power, Loader2, X, Eye, EyeOff, Languages, Users, Palette, Check, CreditCard, ExternalLink, HelpCircle, ShieldCheck, Copy } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -171,10 +171,11 @@ const ConfiguracoesPage = () => {
       </div>
 
       <Tabs defaultValue="users" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
+        <TabsList className="grid w-full max-w-md grid-cols-4">
           <TabsTrigger value="language" className="gap-2"><Languages className="w-4 h-4" />{t('settings.tabs.language')}</TabsTrigger>
           <TabsTrigger value="users" className="gap-2"><Users className="w-4 h-4" />{t('settings.tabs.users')}</TabsTrigger>
           <TabsTrigger value="themes" className="gap-2"><Palette className="w-4 h-4" />{t('settings.tabs.themes')}</TabsTrigger>
+          <TabsTrigger value="payments" className="gap-2"><CreditCard className="w-4 h-4" />{t('settings.tabs.payments')}</TabsTrigger>
         </TabsList>
 
         {/* ===== LANGUAGE ===== */}
@@ -381,6 +382,92 @@ const ConfiguracoesPage = () => {
               </Button>
               <Button onClick={saveTheme} className="btn-themed">
                 {t('settings.themes.apply')}
+              </Button>
+            </div>
+          </Card>
+        </TabsContent>
+
+        {/* ===== PAYMENTS (MERCADO PAGO GUIDE) ===== */}
+        <TabsContent value="payments" className="mt-6">
+          <Card className="p-6 space-y-6 max-w-3xl">
+            <div className="flex items-start gap-4 p-4 rounded-xl bg-primary/10 border border-primary/20">
+              <ShieldCheck className="w-8 h-8 text-primary shrink-0 mt-1" />
+              <div>
+                <h2 className="text-lg font-bold text-primary">Integração Mercado Pago</h2>
+                <p className="text-sm text-muted-foreground">
+                  Para habilitar pagamentos via PIX e Cartão de Crédito de forma segura e direta na sua conta, 
+                  precisamos de algumas chaves de API do seu painel de desenvolvedor.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="font-semibold flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs text-primary">1</div>
+                O que você precisa nos enviar:
+              </h3>
+              
+              <div className="grid gap-3 pl-8">
+                {[
+                  { title: "Public Key (Chave Pública)", desc: "Começa com 'APP_USR-...' ou 'TEST-...' (Produção/Teste)" },
+                  { title: "Access Token (Token de Acesso)", desc: "É uma chave longa e secreta. Nunca compartilhe publicamente." }
+                ].map((item, i) => (
+                  <div key={i} className="p-3 rounded-lg border border-border bg-background/40">
+                    <p className="text-sm font-medium">{item.title}</p>
+                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="font-semibold flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs text-primary">2</div>
+                Como obter as credenciais (Passo a Passo):
+              </h3>
+              
+              <ol className="list-decimal pl-12 text-sm space-y-3 text-muted-foreground">
+                <li>Acesse o <a href="https://www.mercadopago.com.br/developers/panel" target="_blank" rel="noreferrer" className="text-primary hover:underline inline-flex items-center gap-1 font-medium">Painel de Desenvolvedor do Mercado Pago <ExternalLink className="w-3 h-3" /></a></li>
+                <li>Faça login com sua conta do Mercado Pago/Mercado Livre.</li>
+                <li>Clique em <strong>"Suas integrações"</strong> ou <strong>"Criar nova aplicação"</strong> (se for a primeira vez).</li>
+                <li>Crie uma aplicação com o nome do seu site (ex: Sinho Imports).</li>
+                <li>No menu lateral da aplicação, vá em <strong>"Credenciais de produção"</strong>.</li>
+                <li>Copie a <strong>Public Key</strong> e o <strong>Access Token</strong> e nos envie com segurança.</li>
+              </ol>
+            </div>
+
+            <div className="p-4 rounded-lg bg-secondary/50 border border-border flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <HelpCircle className="w-5 h-5 text-muted-foreground" />
+                <p className="text-sm font-medium">Tem alguma dúvida sobre o processo?</p>
+              </div>
+              <Button size="sm" variant="outline" className="gap-2" onClick={() => {
+                const text = "Olá, estou com dúvidas sobre como pegar as credenciais do Mercado Pago para o meu site Sinho Imports.";
+                window.open(`https://wa.me/55?text=${encodeURIComponent(text)}`, '_blank');
+              }}>
+                Chamar suporte
+              </Button>
+            </div>
+
+            <div className="pt-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex -space-x-2">
+                <div className="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center p-1.5 shadow-sm">
+                  <img src="https://www.mercadopago.com/static/v1/assets/images/payment-methods/mercadopago.svg" alt="MP" className="w-full" />
+                </div>
+                <div className="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center p-1.5 shadow-sm">
+                  <img src="https://www.mercadopago.com/static/v1/assets/images/payment-methods/pix.svg" alt="PIX" className="w-full" />
+                </div>
+              </div>
+              <Button size="sm" variant="outline" className="gap-2" onClick={() => {
+                const msg = `Passo a passo Integração Mercado Pago:
+1. Acesse: https://www.mercadopago.com.br/developers/panel
+2. Crie uma aplicação.
+3. Copie as "Credenciais de Produção" (Public Key e Access Token).
+4. Envie para o desenvolvedor.`;
+                navigator.clipboard.writeText(msg);
+                toast({ title: "Copiado para o clipboard!", description: "Envie este guia rápido para o cliente." });
+              }}>
+                <Copy className="w-4 h-4" /> Copiar guia rápido
               </Button>
             </div>
           </Card>

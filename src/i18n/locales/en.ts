@@ -14,7 +14,7 @@ export const en = {
   },
   settings: {
     title: 'Settings', subtitle: 'Language, users and theme',
-    tabs: { language: 'Language', users: 'Users', themes: 'Themes' },
+    tabs: { language: 'Language', users: 'Users', themes: 'Themes', payments: 'Payments' },
     language: {
       title: 'Panel language',
       desc: 'Select the interface language. Preference is saved per user.',
