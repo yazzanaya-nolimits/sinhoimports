@@ -14,7 +14,7 @@ export const es = {
   },
   settings: {
     title: 'Configuración', subtitle: 'Idioma, usuarios y tema',
-    tabs: { language: 'Idioma', users: 'Usuarios', themes: 'Temas' },
+    tabs: { language: 'Idioma', users: 'Usuarios', themes: 'Temas', payments: 'Pagos' },
     language: {
       title: 'Idioma del panel',
       desc: 'Selecciona el idioma de la interfaz. La preferencia se guarda por usuario.',
