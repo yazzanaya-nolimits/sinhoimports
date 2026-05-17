@@ -3,7 +3,7 @@ import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   ShoppingCart, DollarSign, Package, LayoutDashboard,
-  LogOut, Menu, X, Home, Kanban, Boxes, Image, Megaphone, History, Settings, Images,
+  LogOut, Menu, X, Home, Kanban, Boxes, Image, Megaphone, History, Settings, Images, Sparkles,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
