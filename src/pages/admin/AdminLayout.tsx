@@ -31,6 +31,7 @@ const sidebarItems: NavItem[] = [
   { labelKey: 'sidebar.siteImages',    icon: Image,           path: '/admin/site-imagens',  modulo: 'catalogo' },
   { labelKey: 'sidebar.carousel',      icon: Images,          path: '/admin/carrossel',     modulo: 'catalogo' },
   { labelKey: 'sidebar.banner',        icon: Megaphone,       path: '/admin/banner',        modulo: 'catalogo' },
+  { labelKey: 'sidebar.branding',      icon: Sparkles,        path: '/admin/branding',      modulo: 'catalogo' },
   { labelKey: 'sidebar.settings',      icon: Settings,        path: '/admin/configuracoes', modulo: 'configuracoes', levels: ['total'] },
 ];
 
