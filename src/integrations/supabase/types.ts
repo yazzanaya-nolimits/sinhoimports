@@ -510,6 +510,10 @@ export type Database = {
     }
     Functions: {
       cancelar_venda: { Args: { p_venda_id: string }; Returns: boolean }
+      check_user_permission: {
+        Args: { _level?: string; _module: string }
+        Returns: boolean
+      }
       confirmar_venda: {
         Args: {
           p_cliente_nome?: string
