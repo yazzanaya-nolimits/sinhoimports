@@ -188,7 +188,11 @@ export default function CatalogoPage() {
 
       <Footer />
 
-      <ProductModal product={selected} onClose={() => setSelected(null)} />
+      <ProductModal 
+        product={selected} 
+        onClose={() => setSelected(null)} 
+        discountedPrice={selected?.valor} 
+      />
     </div>
   );
 }

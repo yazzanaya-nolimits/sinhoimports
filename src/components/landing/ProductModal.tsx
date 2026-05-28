@@ -28,7 +28,7 @@ interface Props {
 export default function ProductModal({ product, discountedPrice, onClose }: Props) {
   const [selectedVariation, setSelectedVariation] = useState<number>(0);
   const [parcelas, setParcelas] = useState<number>(1);
-  const { config } = useSiteConfig();
+  const { config, loading: configLoading } = useSiteConfig();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
 
@@ -238,7 +238,12 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
             </div>
 
             <div className="flex flex-col gap-2 pt-2">
-              {config?.mercado_pago_enabled && (
+              {configLoading ? (
+                <Button size="lg" className="w-full opacity-70" disabled>
+                  <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                  Carregando...
+                </Button>
+              ) : config?.mercado_pago_enabled ? (
                 <Button
                   size="lg"
                   className="w-full bg-primary text-primary-foreground font-bold gap-2 shadow-lg hover:scale-[1.02] transition-transform"
@@ -257,7 +262,7 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
                     </>
                   )}
                 </Button>
-              )}
+              ) : null}
 
 
               <Button
