@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageCircle, Search, Tag, Loader2, X, LayoutGrid, ArrowRight } from 'lucide-react';
+import { MessageCircle, Search, Tag, Loader2, X, LayoutGrid, ArrowRight, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
