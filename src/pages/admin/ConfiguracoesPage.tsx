@@ -18,6 +18,8 @@ import { MODULOS, defaultPermissoes } from '@/lib/permissions';
 import { useTheme, THEME_META, type ThemeKey } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/hooks/useLanguage';
 import { SUPPORTED_LANGS, type LangCode } from '@/i18n';
+import { useSiteConfig } from '@/hooks/useSiteConfig';
+
 
 type FormState = {
   id?: string;
@@ -40,6 +42,31 @@ const ConfiguracoesPage = () => {
   const { membro: meuMembro, isPinFallback } = useAuth();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
+  const { config, updateConfig } = useSiteConfig();
+
+  // ===== MERCADO PAGO =====
+  const [mpForm, setMpForm] = useState({ public_key: '', access_token: '' });
+  const [showMpToken, setShowMpToken] = useState(false);
+  const [savingMp, setSavingMp] = useState(false);
+
+  useEffect(() => {
+    if (config) {
+      setMpForm({
+        public_key: config.mercado_pago_public_key || '',
+        access_token: config.mercado_pago_access_token || '',
+      });
+    }
+  }, [config]);
+
+  const handleSaveMp = async () => {
+    setSavingMp(true);
+    await updateConfig({
+      mercado_pago_public_key: mpForm.public_key,
+      mercado_pago_access_token: mpForm.access_token,
+    });
+    setSavingMp(false);
+  };
+
 
   // ===== USERS =====
   const [membros, setMembros] = useState<Membro[]>([]);
@@ -387,90 +414,128 @@ const ConfiguracoesPage = () => {
           </Card>
         </TabsContent>
 
-        {/* ===== PAYMENTS (MERCADO PAGO GUIDE) ===== */}
         <TabsContent value="payments" className="mt-6">
-          <Card className="p-6 space-y-6 max-w-3xl">
-            <div className="flex items-start gap-4 p-4 rounded-xl bg-primary/10 border border-primary/20">
-              <ShieldCheck className="w-8 h-8 text-primary shrink-0 mt-1" />
-              <div>
-                <h2 className="text-lg font-bold text-primary">Integração Mercado Pago</h2>
-                <p className="text-sm text-muted-foreground">
-                  Para habilitar pagamentos via PIX e Cartão de Crédito de forma segura e direta na sua conta, 
-                  precisamos de algumas chaves de API do seu painel de desenvolvedor.
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="font-semibold flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs text-primary">1</div>
-                O que você precisa nos enviar:
-              </h3>
-              
-              <div className="grid gap-3 pl-8">
-                {[
-                  { title: "Public Key (Chave Pública)", desc: "Começa com 'APP_USR-...' ou 'TEST-...' (Produção/Teste)" },
-                  { title: "Access Token (Token de Acesso)", desc: "É uma chave longa e secreta. Nunca compartilhe publicamente." }
-                ].map((item, i) => (
-                  <div key={i} className="p-3 rounded-lg border border-border bg-background/40">
-                    <p className="text-sm font-medium">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="p-6 space-y-6">
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-primary/10 border border-primary/20">
+                <ShieldCheck className="w-8 h-8 text-primary shrink-0 mt-1" />
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <h2 className="text-lg font-bold text-primary">Configurações Mercado Pago</h2>
+                    <Switch 
+                      checked={config?.mercado_pago_enabled || false}
+                      onCheckedChange={(v) => updateConfig({ mercado_pago_enabled: v })}
+                    />
                   </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="font-semibold flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs text-primary">2</div>
-                Como obter as credenciais (Passo a Passo):
-              </h3>
-              
-              <ol className="list-decimal pl-12 text-sm space-y-3 text-muted-foreground">
-                <li>Acesse o <a href="https://www.mercadopago.com.br/developers/panel" target="_blank" rel="noreferrer" className="text-primary hover:underline inline-flex items-center gap-1 font-medium">Painel de Desenvolvedor do Mercado Pago <ExternalLink className="w-3 h-3" /></a></li>
-                <li>Faça login com sua conta do Mercado Pago/Mercado Livre.</li>
-                <li>Clique em <strong>"Suas integrações"</strong> ou <strong>"Criar nova aplicação"</strong> (se for a primeira vez).</li>
-                <li>Crie uma aplicação com o nome do seu site (ex: Sinho Imports).</li>
-                <li>No menu lateral da aplicação, vá em <strong>"Credenciais de produção"</strong>.</li>
-                <li>Copie a <strong>Public Key</strong> e o <strong>Access Token</strong> e nos envie com segurança.</li>
-              </ol>
-            </div>
-
-            <div className="p-4 rounded-lg bg-secondary/50 border border-border flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <HelpCircle className="w-5 h-5 text-muted-foreground" />
-                <p className="text-sm font-medium">Tem alguma dúvida sobre o processo?</p>
-              </div>
-              <Button size="sm" variant="outline" className="gap-2" onClick={() => {
-                const text = "Olá, estou com dúvidas sobre como pegar as credenciais do Mercado Pago para o meu site Sinho Imports.";
-                window.open(`https://wa.me/55?text=${encodeURIComponent(text)}`, '_blank');
-              }}>
-                Chamar suporte
-              </Button>
-            </div>
-
-            <div className="pt-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center p-1.5 shadow-sm">
-                  <img src="https://www.mercadopago.com/static/v1/assets/images/payment-methods/mercadopago.svg" alt="MP" className="w-full" />
-                </div>
-                <div className="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center p-1.5 shadow-sm">
-                  <img src="https://www.mercadopago.com/static/v1/assets/images/payment-methods/pix.svg" alt="PIX" className="w-full" />
+                  <p className="text-sm text-muted-foreground">
+                    Habilite pagamentos via PIX e Cartão de Crédito.
+                  </p>
                 </div>
               </div>
-              <Button size="sm" variant="outline" className="gap-2" onClick={() => {
-                const msg = `Passo a passo Integração Mercado Pago:
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Public Key (Chave Pública)</Label>
+                  <Input 
+                    placeholder="APP_USR-..." 
+                    value={mpForm.public_key}
+                    onChange={(e) => setMpForm(prev => ({ ...prev, public_key: e.target.value }))}
+                  />
+                  <p className="text-[10px] text-muted-foreground">Necessária para o carregamento do formulário de pagamento.</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Access Token (Token de Acesso)</Label>
+                  <div className="relative">
+                    <Input 
+                      type={showMpToken ? 'text' : 'password'}
+                      placeholder="APP_USR-..." 
+                      value={mpForm.access_token}
+                      onChange={(e) => setMpForm(prev => ({ ...prev, access_token: e.target.value }))}
+                      className="pr-10"
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => setShowMpToken(!showMpToken)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                    >
+                      {showMpToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">Utilizada para processar os pagamentos no servidor (Edge Function).</p>
+                </div>
+
+                <Button 
+                  onClick={handleSaveMp} 
+                  className="w-full bg-gradient-gold text-primary-foreground"
+                  disabled={savingMp}
+                >
+                  {savingMp ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Check className="w-4 h-4 mr-2" />}
+                  Salvar Credenciais
+                </Button>
+              </div>
+
+              <div className="pt-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex -space-x-2">
+                  <div className="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center p-1.5 shadow-sm">
+                    <img src="https://www.mercadopago.com/static/v1/assets/images/payment-methods/mercadopago.svg" alt="MP" className="w-full" />
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center p-1.5 shadow-sm">
+                    <img src="https://www.mercadopago.com/static/v1/assets/images/payment-methods/pix.svg" alt="PIX" className="w-full" />
+                  </div>
+                </div>
+                <Badge variant="outline" className={config?.mercado_pago_enabled ? 'text-green-500 border-green-500/40' : 'text-amber-500 border-amber-500/40'}>
+                  {config?.mercado_pago_enabled ? 'Checkout Ativo' : 'Checkout Desativado'}
+                </Badge>
+              </div>
+            </Card>
+
+            <Card className="p-6 space-y-6">
+              <div className="space-y-4">
+                <h3 className="font-semibold flex items-center gap-2 text-primary">
+                  <HelpCircle className="w-5 h-5" />
+                  Guia de Integração
+                </h3>
+                
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-[10px] text-primary">1</div>
+                      Passo a Passo:
+                    </h4>
+                    <ol className="list-decimal pl-9 text-xs space-y-2 text-muted-foreground">
+                      <li>Acesse o <a href="https://www.mercadopago.com.br/developers/panel" target="_blank" rel="noreferrer" className="text-primary hover:underline inline-flex items-center gap-1">Painel Dev MP <ExternalLink className="w-3 h-3" /></a></li>
+                      <li>Vá em <strong>"Suas integrações"</strong> ou <strong>"Criar nova aplicação"</strong>.</li>
+                      <li>No menu lateral, vá em <strong>"Credenciais de produção"</strong>.</li>
+                      <li>Copie a <strong>Public Key</strong> e o <strong>Access Token</strong> e cole aqui.</li>
+                    </ol>
+                  </div>
+
+                  <div className="p-4 rounded-lg bg-secondary/50 border border-border">
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Compartilhe este guia com o cliente se você estiver configurando para ele.
+                    </p>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="w-full gap-2 text-xs h-8" 
+                      onClick={() => {
+                        const msg = `Passo a passo Integração Mercado Pago:
 1. Acesse: https://www.mercadopago.com.br/developers/panel
 2. Crie uma aplicação.
 3. Copie as "Credenciais de Produção" (Public Key e Access Token).
 4. Envie para o desenvolvedor.`;
-                navigator.clipboard.writeText(msg);
-                toast({ title: "Copiado para o clipboard!", description: "Envie este guia rápido para o cliente." });
-              }}>
-                <Copy className="w-4 h-4" /> Copiar guia rápido
-              </Button>
-            </div>
-          </Card>
+                        navigator.clipboard.writeText(msg);
+                        toast({ title: "Copiado!", description: "Guia copiado para o clipboard." });
+                      }}
+                    >
+                      <Copy className="w-3.5 h-3.5" /> Copiar guia para WhatsApp
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
 

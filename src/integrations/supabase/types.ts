@@ -400,6 +400,33 @@ export type Database = {
         }
         Relationships: []
       }
+      site_config: {
+        Row: {
+          id: number
+          mercado_pago_access_token: string | null
+          mercado_pago_enabled: boolean | null
+          mercado_pago_public_key: string | null
+          updated_at: string | null
+          whatsapp_numero: string | null
+        }
+        Insert: {
+          id?: number
+          mercado_pago_access_token?: string | null
+          mercado_pago_enabled?: boolean | null
+          mercado_pago_public_key?: string | null
+          updated_at?: string | null
+          whatsapp_numero?: string | null
+        }
+        Update: {
+          id?: number
+          mercado_pago_access_token?: string | null
+          mercado_pago_enabled?: boolean | null
+          mercado_pago_public_key?: string | null
+          updated_at?: string | null
+          whatsapp_numero?: string | null
+        }
+        Relationships: []
+      }
       vendas: {
         Row: {
           cliente_nome: string | null
