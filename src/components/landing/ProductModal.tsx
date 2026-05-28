@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
-import { MessageCircle, X, CreditCard, Tag } from 'lucide-react';
+import { MessageCircle, X, CreditCard, Tag, CheckCircle2 } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatBRL } from '@/lib/brl';
 import { type DatabaseProduct } from '@/lib/supabase';
+import { useSiteConfig } from '@/hooks/useSiteConfig';
+
 
 const PIX_ICON = (
   <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
@@ -23,6 +25,9 @@ interface Props {
 export default function ProductModal({ product, discountedPrice, onClose }: Props) {
   const [selectedVariation, setSelectedVariation] = useState<number>(0);
   const [parcelas, setParcelas] = useState<number>(1);
+  const { config } = useSiteConfig();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
 
   const gallery = useMemo(() => {
     if (!product) return [];
@@ -204,20 +209,41 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
               )}
             </div>
 
-            <Button
-              size="lg"
-              className="w-full bg-gradient-gold text-primary-foreground font-semibold gap-2"
-              asChild
-            >
-              <a
-                href={`https://wa.me/5511970677627?text=${encodeURIComponent(waMessage)}`}
-                target="_blank"
-                rel="noopener noreferrer"
+            <div className="flex flex-col gap-2 pt-2">
+              {config?.mercado_pago_enabled && (
+                <Button
+                  size="lg"
+                  className="w-full bg-primary text-primary-foreground font-bold gap-2 shadow-lg hover:scale-[1.02] transition-transform"
+                  onClick={() => setCheckoutLoading(true)}
+                  disabled={checkoutLoading}
+                >
+                  {checkoutLoading ? (
+                    <span className="flex items-center gap-2">Processando...</span>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-5 h-5" />
+                      Pagar Agora (PIX/Cartão)
+                    </>
+                  )}
+                </Button>
+              )}
+
+              <Button
+                size="lg"
+                variant={config?.mercado_pago_enabled ? "outline" : "default"}
+                className={`w-full font-semibold gap-2 ${!config?.mercado_pago_enabled ? 'bg-gradient-gold text-primary-foreground' : ''}`}
+                asChild
               >
-                <MessageCircle className="w-5 h-5" />
-                Comprar via WhatsApp
-              </a>
-            </Button>
+                <a
+                  href={`https://wa.me/5511970677627?text=${encodeURIComponent(waMessage)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  Comprar via WhatsApp
+                </a>
+              </Button>
+            </div>
 
             {/* Informações adicionais */}
             {(product.ingredientes || product.modo_uso || product.informacoes_gerais) && (
