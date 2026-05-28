@@ -18,6 +18,8 @@ import { MODULOS, defaultPermissoes } from '@/lib/permissions';
 import { useTheme, THEME_META, type ThemeKey } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/hooks/useLanguage';
 import { SUPPORTED_LANGS, type LangCode } from '@/i18n';
+import { useSiteConfig } from '@/hooks/useSiteConfig';
+
 
 type FormState = {
   id?: string;
@@ -40,6 +42,31 @@ const ConfiguracoesPage = () => {
   const { membro: meuMembro, isPinFallback } = useAuth();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
+  const { config, updateConfig } = useSiteConfig();
+
+  // ===== MERCADO PAGO =====
+  const [mpForm, setMpForm] = useState({ public_key: '', access_token: '' });
+  const [showMpToken, setShowMpToken] = useState(false);
+  const [savingMp, setSavingMp] = useState(false);
+
+  useEffect(() => {
+    if (config) {
+      setMpForm({
+        public_key: config.mercado_pago_public_key || '',
+        access_token: config.mercado_pago_access_token || '',
+      });
+    }
+  }, [config]);
+
+  const handleSaveMp = async () => {
+    setSavingMp(true);
+    await updateConfig({
+      mercado_pago_public_key: mpForm.public_key,
+      mercado_pago_access_token: mpForm.access_token,
+    });
+    setSavingMp(false);
+  };
+
 
   // ===== USERS =====
   const [membros, setMembros] = useState<Membro[]>([]);
