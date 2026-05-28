@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Loader2, MessageCircle, Search, LayoutGrid } from 'lucide-react';
+import { ArrowRight, Loader2, MessageCircle, Search, LayoutGrid, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -148,6 +148,24 @@ export default function CatalogoPage() {
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-end p-4 gap-2">
+                    <Button
+                      size="sm"
+                      className="w-full bg-gradient-gold text-primary-foreground font-bold"
+                      onClick={(e) => { e.stopPropagation(); setSelected(product); }}
+                    >
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Comprar Agora
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="w-full text-white hover:bg-white/10"
+                      onClick={(e) => { e.stopPropagation(); setSelected(product); }}
+                    >
+                      Ver detalhes
+                    </Button>
+                  </div>
                   {product.cupom_codigo && (
                     <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground font-bold shadow-lg">
                       {product.cupom_tipo === 'percentual'
