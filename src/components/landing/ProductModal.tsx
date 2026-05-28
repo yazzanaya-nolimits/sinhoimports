@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
-import { MessageCircle, X, CreditCard, Tag, CheckCircle2 } from 'lucide-react';
+import { useMemo, useState, useEffect } from 'react';
+import { MessageCircle, X, CreditCard, Tag, CheckCircle2, Loader2 } from 'lucide-react';
+
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { formatBRL } from '@/lib/brl';
 import { type DatabaseProduct } from '@/lib/supabase';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
+import { supabase } from '@/integrations/supabase/client';
+
 
 
 const PIX_ICON = (
@@ -50,6 +53,31 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
   const waMessage = `Olá! Tenho interesse no produto: ${product.nome}${
     variations.length ? ` — variação ${variations[selectedVariation]?.tamanho}` : ''
   } (${formatBRL(finalValue)})`;
+
+  const handleCheckout = async () => {
+    if (!product) return;
+    setCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('mercadopago-checkout', {
+        body: {
+          product,
+          variation: variations[selectedVariation],
+          quantity: 1
+        }
+      });
+
+      if (error) throw error;
+      if (data?.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      }
+    } catch (err: any) {
+      console.error('Checkout error:', err);
+      alert('Erro ao iniciar checkout. Tente novamente ou use o WhatsApp.');
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
 
   return (
     <Dialog open={!!product} onOpenChange={o => !o && onClose()}>
@@ -214,11 +242,14 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
                 <Button
                   size="lg"
                   className="w-full bg-primary text-primary-foreground font-bold gap-2 shadow-lg hover:scale-[1.02] transition-transform"
-                  onClick={() => setCheckoutLoading(true)}
+                  onClick={handleCheckout}
                   disabled={checkoutLoading}
                 >
                   {checkoutLoading ? (
-                    <span className="flex items-center gap-2">Processando...</span>
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Iniciando...
+                    </>
                   ) : (
                     <>
                       <CheckCircle2 className="w-5 h-5" />
@@ -227,6 +258,7 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
                   )}
                 </Button>
               )}
+
 
               <Button
                 size="lg"
