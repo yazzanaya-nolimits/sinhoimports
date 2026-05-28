@@ -1,11 +1,9 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-client@2'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4'
 
-serve(async (req) => {
-  const supabaseClient = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-  )
+Deno.serve(async (req) => {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+  const supabaseClient = createClient(supabaseUrl, serviceKey)
 
   try {
     const body = await req.json()
@@ -13,7 +11,7 @@ serve(async (req) => {
 
     const { type, data } = body
 
-    if (type === 'payment') {
+    if (type === 'payment' && data?.id) {
       const paymentId = data.id
 
       // 1. Get token
@@ -23,7 +21,7 @@ serve(async (req) => {
         .eq('id', 1)
         .single()
 
-      if (!config?.mercado_pago_access_token) throw new Error('No token')
+      if (!config?.mercado_pago_access_token) throw new Error('No token configured')
 
       // 2. Fetch payment details from MP
       const mpResp = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
@@ -32,7 +30,8 @@ serve(async (req) => {
       const paymentData = await mpResp.json()
 
       if (paymentData.status === 'approved') {
-        const preferenceId = paymentData.order?.id || paymentData.preference_id
+        // MP uses order.id for preference_id in notifications often
+        const preferenceId = paymentData.order?.id || paymentData.preference_id || paymentData.external_reference
 
         // 3. Update Venda
         const { data: venda, error: findError } = await supabaseClient
