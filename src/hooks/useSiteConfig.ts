@@ -20,7 +20,7 @@ export function useSiteConfig() {
     try {
       const { data, error } = await supabase
         .from('site_config')
-        .select('*')
+        .select('id, mercado_pago_enabled, whatsapp_numero, updated_at')
         .eq('id', 1)
         .maybeSingle();
 
