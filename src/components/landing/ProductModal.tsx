@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { formatBRL } from '@/lib/brl';
 import { type DatabaseProduct } from '@/lib/supabase';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
+import { supabase } from '@/integrations/supabase/client';
+
 
 
 const PIX_ICON = (
