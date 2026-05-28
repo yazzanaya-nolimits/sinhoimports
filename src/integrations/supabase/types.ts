@@ -429,6 +429,8 @@ export type Database = {
       }
       vendas: {
         Row: {
+          checkout_id: string | null
+          checkout_url: string | null
           cliente_nome: string | null
           created_at: string
           cupom_codigo: string | null
@@ -436,6 +438,8 @@ export type Database = {
           forma_pagamento: string
           id: string
           observacao: string | null
+          pagamento_metodo: string | null
+          pagamento_status: string | null
           parcelas: number
           produto_id: string | null
           produto_nome: string
@@ -447,6 +451,8 @@ export type Database = {
           variacao: string | null
         }
         Insert: {
+          checkout_id?: string | null
+          checkout_url?: string | null
           cliente_nome?: string | null
           created_at?: string
           cupom_codigo?: string | null
@@ -454,6 +460,8 @@ export type Database = {
           forma_pagamento?: string
           id?: string
           observacao?: string | null
+          pagamento_metodo?: string | null
+          pagamento_status?: string | null
           parcelas?: number
           produto_id?: string | null
           produto_nome: string
@@ -465,6 +473,8 @@ export type Database = {
           variacao?: string | null
         }
         Update: {
+          checkout_id?: string | null
+          checkout_url?: string | null
           cliente_nome?: string | null
           created_at?: string
           cupom_codigo?: string | null
@@ -472,6 +482,8 @@ export type Database = {
           forma_pagamento?: string
           id?: string
           observacao?: string | null
+          pagamento_metodo?: string | null
+          pagamento_status?: string | null
           parcelas?: number
           produto_id?: string | null
           produto_nome?: string
