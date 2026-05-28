@@ -13,6 +13,8 @@ import Index from "./pages/Index";
 const NotFound = lazy(() => import("./pages/NotFound"));
 const CatalogoPage = lazy(() => import("./pages/CatalogoPage"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const SuccessPage = lazy(() => import("./pages/SuccessPage"));
+
 const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
 const DashboardPage = lazy(() => import("./pages/admin/DashboardPage"));
 const PDVPage = lazy(() => import("./pages/admin/PDVPage"));
@@ -54,7 +56,9 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/catalogo" element={<CatalogoPage />} />
+                <Route path="/pagamento-sucesso" element={<SuccessPage />} />
                 <Route path="/admin" element={<AdminLogin />} />
+
                 <Route element={<AdminLayout />}>
                   <Route path="/admin/dashboard" element={
                     <RequirePermission modulo="dashboard"><DashboardPage /></RequirePermission>
