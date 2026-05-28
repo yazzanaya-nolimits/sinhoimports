@@ -1,21 +1,19 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-client@2'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabaseClient = createClient(supabaseUrl, serviceKey)
 
     const { product, variation, quantity = 1 } = await req.json()
 
@@ -38,14 +36,14 @@ serve(async (req) => {
     const preference = {
       items: [
         {
-          id: product.id,
+          id: String(product.id),
           title: `${product.nome}${variation ? ` - ${variation.tamanho}` : ''}`,
           description: product.descricao?.substring(0, 250),
           picture_url: product.foto_url,
           category_id: product.categoria || 'others',
-          quantity: quantity,
+          quantity: Number(quantity),
           currency_id: 'BRL',
-          unit_price: unitPrice,
+          unit_price: Number(unitPrice),
         }
       ],
       back_urls: {
@@ -54,7 +52,7 @@ serve(async (req) => {
         pending: `${req.headers.get('origin')}/pagamento-sucesso`,
       },
       auto_return: 'approved',
-      notification_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/mercadopago-webhook`,
+      notification_url: `${supabaseUrl}/functions/v1/mercadopago-webhook`,
       statement_descriptor: 'SINHO IMPORTS',
       external_reference: `prod_${product.id}_${Date.now()}`,
     }
