@@ -5,10 +5,14 @@ import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { useCarrossel } from '@/hooks/useCarrossel';
+import { useAuth } from '@/contexts/AuthContext';
+import AdminWriteGuard from '@/components/admin/AdminWriteGuard';
+import { IMAGE_ACCEPT, validateImage } from '@/lib/imageUpload';
 
 export default function CarrosselPage() {
   const { imagens, uploadImage, addImagem, removeImagem, toggleAtivo, saveOrder } = useCarrossel();
   const { toast } = useToast();
+  const { isPinFallback } = useAuth();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -23,16 +27,17 @@ export default function CarrosselPage() {
     setOrderDirty(false);
   }, [imagens]);
 
+  useEffect(() => () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
+
   const handleSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
-    if (f.size > 5 * 1024 * 1024) {
-      toast({ title: 'Arquivo muito grande (máx 5MB)', variant: 'destructive' });
-      return;
-    }
-    const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!allowed.includes(f.type)) {
-      toast({ title: 'Formato inválido', description: 'Use JPG, PNG ou WebP', variant: 'destructive' });
+    const validationError = validateImage(f);
+    if (validationError) {
+      toast({ title: 'Imagem inválida', description: validationError, variant: 'destructive' });
+      e.target.value = '';
       return;
     }
     setPendingFile(f);
@@ -42,15 +47,19 @@ export default function CarrosselPage() {
   const handlePublish = async () => {
     if (!pendingFile) return;
     setUploading(true);
-    const url = await uploadImage(pendingFile);
-    if (!url) { setUploading(false); toast({ title: 'Falha no upload', variant: 'destructive' }); return; }
-    const { error } = await addImagem(url);
-    setUploading(false);
-    if (error) { toast({ title: 'Erro ao salvar', variant: 'destructive' }); return; }
-    toast({ title: 'Imagem adicionada ao carrossel!' });
-    setPendingFile(null);
-    setPreviewUrl(null);
-    if (inputRef.current) inputRef.current.value = '';
+    try {
+      const upload = await uploadImage(pendingFile);
+      const { error } = await addImagem(upload);
+      if (error) throw error;
+      toast({ title: 'Imagem adicionada ao carrossel!' });
+      setPendingFile(null);
+      setPreviewUrl(null);
+      if (inputRef.current) inputRef.current.value = '';
+    } catch (error) {
+      toast({ title: 'Não foi possível enviar a foto', description: error instanceof Error ? error.message : 'Tente novamente.', variant: 'destructive' });
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleDragOver = (e: React.DragEvent, overId: string) => {
@@ -66,16 +75,21 @@ export default function CarrosselPage() {
   };
 
   const handleSaveOrder = async () => {
-    await saveOrder(order);
-    setOrderDirty(false);
-    toast({ title: 'Ordem do carrossel salva!' });
+    const { error } = await saveOrder(order);
+    if (error) toast({ title: 'Não foi possível salvar a ordem', description: error.message, variant: 'destructive' });
+    else { setOrderDirty(false); toast({ title: 'Ordem do carrossel salva!' }); }
   };
 
   const handleRemove = async (id: string) => {
     if (!confirm('Remover esta imagem do carrossel?')) return;
     const { error } = await removeImagem(id);
-    if (error) toast({ title: 'Erro ao remover', variant: 'destructive' });
+    if (error) toast({ title: 'Erro ao remover', description: error.message, variant: 'destructive' });
     else toast({ title: 'Imagem removida' });
+  };
+
+  const handleToggle = async (id: string, ativo: boolean) => {
+    const { error } = await toggleAtivo(id, ativo);
+    if (error) toast({ title: 'Não foi possível alterar a imagem', description: error.message, variant: 'destructive' });
   };
 
   const orderedItems = order
@@ -90,6 +104,7 @@ export default function CarrosselPage() {
           Gerencie as imagens exibidas no carrossel principal do site. Atualizações em tempo real.
         </p>
       </div>
+      <AdminWriteGuard />
 
       {/* Upload */}
       <Card className="p-6 space-y-4">
@@ -110,20 +125,20 @@ export default function CarrosselPage() {
             )}
           </div>
           <div className="flex flex-col gap-3 justify-center">
-            <Button variant="outline" onClick={() => inputRef.current?.click()} disabled={uploading}>
+            <Button variant="outline" onClick={() => inputRef.current?.click()} disabled={uploading || isPinFallback}>
               <Upload className="mr-2 w-4 h-4" /> Selecionar arquivo
             </Button>
             <input
               ref={inputRef}
               type="file"
               className="hidden"
-              accept="image/jpeg,image/png,image/webp"
+              accept={IMAGE_ACCEPT}
               onChange={handleSelect}
             />
             <Button
               className="bg-gradient-gold text-primary-foreground"
               onClick={handlePublish}
-              disabled={!pendingFile || uploading}
+              disabled={!pendingFile || uploading || isPinFallback}
             >
               {uploading ? <Loader2 className="mr-2 w-4 h-4 animate-spin" /> : <Save className="mr-2 w-4 h-4" />}
               Publicar no carrossel
@@ -145,7 +160,7 @@ export default function CarrosselPage() {
           </h2>
           <Button
             onClick={handleSaveOrder}
-            disabled={!orderDirty}
+              disabled={!orderDirty || isPinFallback}
             className="bg-gradient-gold text-primary-foreground"
           >
             <Save className="mr-2 w-4 h-4" /> Salvar ordem
@@ -180,8 +195,9 @@ export default function CarrosselPage() {
                   <Button
                     size="icon"
                     variant="destructive"
-                    className="absolute top-2 right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-2 right-2 h-8 w-8 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                     onClick={() => handleRemove(c.id)}
+                    disabled={isPinFallback}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </Button>
@@ -192,7 +208,8 @@ export default function CarrosselPage() {
                     </span>
                     <Switch
                       checked={c.ativo}
-                      onCheckedChange={(v) => toggleAtivo(c.id, v)}
+                      onCheckedChange={(v) => handleToggle(c.id, v)}
+                      disabled={isPinFallback}
                     />
                   </div>
                 </div>

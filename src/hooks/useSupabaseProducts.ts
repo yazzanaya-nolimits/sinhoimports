@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase, type DatabaseProduct } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { formatBRL } from '@/lib/brl';
+import { uploadPublicImage } from '@/lib/imageUpload';
 
 export function useSupabaseProducts() {
   const [products, setProducts] = useState<DatabaseProduct[]>([]);
@@ -136,27 +137,9 @@ export function useSupabaseProducts() {
 
   const uploadFile = async (file: File, bucket: string = 'produtos') => {
     try {
-      const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-      if (!allowed.includes(file.type)) {
-        toast({
-          title: 'Formato não suportado',
-          description: 'Use JPG, PNG ou WebP.',
-          variant: 'destructive',
-        });
-        return null;
-      }
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${crypto.randomUUID()}.${fileExt}`;
-      const filePath = fileName;
-
-      const { error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(filePath, file, { cacheControl: '3600', upsert: false });
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
-      return data.publicUrl;
+      if (bucket !== 'produtos') throw new Error('Destino de imagem inválido.');
+      const upload = await uploadPublicImage(file, 'produtos');
+      return upload.url;
     } catch (error: any) {
       toast({
         title: 'Erro no upload',
