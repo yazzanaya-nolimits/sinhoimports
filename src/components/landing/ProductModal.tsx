@@ -9,6 +9,7 @@ import { formatBRL } from '@/lib/brl';
 import { type DatabaseProduct } from '@/lib/supabase';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 
 
@@ -30,6 +31,7 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
   const [parcelas, setParcelas] = useState<number>(1);
   const { config, loading: configLoading } = useSiteConfig();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const { toast } = useToast();
 
 
   const gallery = useMemo(() => {
@@ -62,17 +64,24 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
         body: {
           product,
           variation: variations[selectedVariation],
-          quantity: 1
+          quantity: 1,
+          installments: parcelas,
         }
       });
 
       if (error) throw error;
       if (data?.checkoutUrl) {
         window.location.href = data.checkoutUrl;
+      } else {
+        throw new Error(data?.error || 'O pagamento não retornou um endereço válido.');
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Checkout error:', err);
-      alert('Erro ao iniciar checkout. Tente novamente ou use o WhatsApp.');
+      toast({
+        title: 'Não foi possível iniciar o pagamento',
+        description: err instanceof Error ? err.message : 'Tente novamente ou use o WhatsApp.',
+        variant: 'destructive',
+      });
     } finally {
       setCheckoutLoading(false);
     }
