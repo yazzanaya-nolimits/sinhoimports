@@ -7,10 +7,13 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { useBanner } from '@/hooks/useBanner';
+import { useAuth } from '@/contexts/AuthContext';
+import AdminWriteGuard from '@/components/admin/AdminWriteGuard';
 
 export default function BannerPage() {
   const { banner, update } = useBanner();
   const { toast } = useToast();
+  const { isPinFallback } = useAuth();
   const [mensagem, setMensagem] = useState('');
   const [ativo, setAtivo] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -32,8 +35,11 @@ export default function BannerPage() {
 
   const handleToggle = async (next: boolean) => {
     setAtivo(next);
-    await update({ mensagem, ativo: next });
-    toast({ title: next ? 'Banner ativado' : 'Banner desativado' });
+    const { error } = await update({ mensagem, ativo: next });
+    if (error) {
+      setAtivo(!next);
+      toast({ title: 'Não foi possível alterar o banner', description: error.message, variant: 'destructive' });
+    } else toast({ title: next ? 'Banner ativado' : 'Banner desativado' });
   };
 
   return (
@@ -42,6 +48,7 @@ export default function BannerPage() {
         <h1 className="text-2xl font-serif font-bold text-gradient-gold">Banner Promocional</h1>
         <p className="text-sm text-muted-foreground">Faixa animada exibida no topo do site.</p>
       </div>
+      <AdminWriteGuard />
 
       <Card className="p-6 space-y-5">
         <div className="flex items-center justify-between">
@@ -51,7 +58,7 @@ export default function BannerPage() {
               Quando ligado, a faixa vermelha aparece no topo do site.
             </p>
           </div>
-          <Switch checked={ativo} onCheckedChange={handleToggle} />
+          <Switch checked={ativo} onCheckedChange={handleToggle} disabled={isPinFallback || saving} />
         </div>
 
         <div className="space-y-2">
@@ -88,7 +95,7 @@ export default function BannerPage() {
         <Button
           className="bg-gradient-gold text-primary-foreground w-full sm:w-auto"
           onClick={handlePublish}
-          disabled={saving}
+          disabled={saving || isPinFallback}
         >
           <Save className="mr-2 w-4 h-4" />
           Publicar banner

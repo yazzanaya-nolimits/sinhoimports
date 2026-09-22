@@ -4,10 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useSiteImages } from '@/hooks/useSiteImages';
+import { useAuth } from '@/contexts/AuthContext';
+import AdminWriteGuard from '@/components/admin/AdminWriteGuard';
+import { IMAGE_ACCEPT, validateImage } from '@/lib/imageUpload';
 
 export default function SiteImagesPage() {
   const { capa, carrossel, uploadImage, setCapa, addCarrossel, removeImage, saveOrder } = useSiteImages();
   const { toast } = useToast();
+  const { isPinFallback } = useAuth();
   const capaInputRef = useRef<HTMLInputElement>(null);
   const carrosselInputRef = useRef<HTMLInputElement>(null);
 
@@ -23,11 +27,17 @@ export default function SiteImagesPage() {
     setOrderDirty(false);
   }, [carrossel]);
 
+  useEffect(() => () => {
+    if (previewCapa) URL.revokeObjectURL(previewCapa);
+  }, [previewCapa]);
+
   const handleCapaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
-    if (f.size > 5 * 1024 * 1024) {
-      toast({ title: 'Arquivo muito grande (máx 5MB)', variant: 'destructive' });
+    const validationError = validateImage(f);
+    if (validationError) {
+      toast({ title: 'Imagem inválida', description: validationError, variant: 'destructive' });
+      e.target.value = '';
       return;
     }
     setPendingCapaFile(f);
@@ -37,28 +47,42 @@ export default function SiteImagesPage() {
   const handleCapaPublish = async () => {
     if (!pendingCapaFile) return;
     setUploading(true);
-    const url = await uploadImage(pendingCapaFile);
-    if (!url) { setUploading(false); toast({ title: 'Falha no upload', variant: 'destructive' }); return; }
-    const { error } = await setCapa(url);
-    setUploading(false);
-    if (error) { toast({ title: 'Erro ao salvar capa', variant: 'destructive' }); return; }
-    toast({ title: 'Capa atualizada com sucesso!' });
-    setPendingCapaFile(null);
-    setPreviewCapa(null);
+    try {
+      const upload = await uploadImage(pendingCapaFile);
+      const { error } = await setCapa(upload);
+      if (error) throw error;
+      toast({ title: 'Capa atualizada com sucesso!' });
+      setPendingCapaFile(null);
+      setPreviewCapa(null);
+      if (capaInputRef.current) capaInputRef.current.value = '';
+    } catch (error) {
+      toast({ title: 'Não foi possível atualizar a capa', description: error instanceof Error ? error.message : 'Tente novamente.', variant: 'destructive' });
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleCarrosselUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
-    if (f.size > 5 * 1024 * 1024) { toast({ title: 'Máx 5MB', variant: 'destructive' }); return; }
+    const validationError = validateImage(f);
+    if (validationError) {
+      toast({ title: 'Imagem inválida', description: validationError, variant: 'destructive' });
+      e.target.value = '';
+      return;
+    }
     setUploading(true);
-    const url = await uploadImage(f);
-    if (!url) { setUploading(false); toast({ title: 'Falha no upload', variant: 'destructive' }); return; }
-    const { error } = await addCarrossel(url);
-    setUploading(false);
-    if (e.target) e.target.value = '';
-    if (error) { toast({ title: 'Erro', variant: 'destructive' }); return; }
-    toast({ title: 'Imagem adicionada ao carrossel!' });
+    try {
+      const upload = await uploadImage(f);
+      const { error } = await addCarrossel(upload);
+      if (error) throw error;
+      toast({ title: 'Imagem adicionada ao carrossel!' });
+    } catch (error) {
+      toast({ title: 'Não foi possível enviar a imagem', description: error instanceof Error ? error.message : 'Tente novamente.', variant: 'destructive' });
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
   };
 
   const handleDragOver = (e: React.DragEvent, overId: string) => {
@@ -74,9 +98,16 @@ export default function SiteImagesPage() {
   };
 
   const handleSaveOrder = async () => {
-    await saveOrder(order);
-    setOrderDirty(false);
-    toast({ title: 'Ordem do carrossel salva!' });
+    const { error } = await saveOrder(order);
+    if (error) toast({ title: 'Não foi possível salvar a ordem', description: error.message, variant: 'destructive' });
+    else { setOrderDirty(false); toast({ title: 'Ordem do carrossel salva!' }); }
+  };
+
+  const handleRemove = async (id: string) => {
+    if (!confirm('Remover esta imagem?')) return;
+    const { error } = await removeImage(id);
+    if (error) toast({ title: 'Não foi possível remover', description: error.message, variant: 'destructive' });
+    else toast({ title: 'Imagem removida' });
   };
 
   const orderedItems = order
@@ -89,6 +120,7 @@ export default function SiteImagesPage() {
         <h1 className="text-2xl font-serif font-bold text-gradient-gold">Imagens do Site</h1>
         <p className="text-sm text-muted-foreground">Gerencie capa principal e carrossel da página inicial.</p>
       </div>
+      <AdminWriteGuard />
 
       {/* Capa Principal */}
       <Card className="p-6 space-y-4">
@@ -121,20 +153,20 @@ export default function SiteImagesPage() {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Button variant="outline" onClick={() => capaInputRef.current?.click()} disabled={uploading}>
+          <Button variant="outline" onClick={() => capaInputRef.current?.click()} disabled={uploading || isPinFallback}>
             <Upload className="mr-2 w-4 h-4" /> Selecionar imagem
           </Button>
           <input
             ref={capaInputRef}
             type="file"
             className="hidden"
-            accept="image/jpeg,image/png,image/webp"
+            accept={IMAGE_ACCEPT}
             onChange={handleCapaSelect}
           />
           <Button
             className="bg-gradient-gold text-primary-foreground"
             onClick={handleCapaPublish}
-            disabled={!pendingCapaFile || uploading}
+            disabled={!pendingCapaFile || uploading || isPinFallback}
           >
             {uploading ? <Loader2 className="mr-2 w-4 h-4 animate-spin" /> : <Save className="mr-2 w-4 h-4" />}
             Atualizar capa
@@ -149,8 +181,8 @@ export default function SiteImagesPage() {
             <ImageIcon className="w-5 h-5 text-primary" />
             Carrossel ({orderedItems.length})
           </h2>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => carrosselInputRef.current?.click()} disabled={uploading}>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <Button variant="outline" onClick={() => carrosselInputRef.current?.click()} disabled={uploading || isPinFallback}>
               {uploading ? <Loader2 className="mr-2 w-4 h-4 animate-spin" /> : <Upload className="mr-2 w-4 h-4" />}
               Adicionar imagem
             </Button>
@@ -158,12 +190,12 @@ export default function SiteImagesPage() {
               ref={carrosselInputRef}
               type="file"
               className="hidden"
-              accept="image/jpeg,image/png,image/webp"
+              accept={IMAGE_ACCEPT}
               onChange={handleCarrosselUpload}
             />
             <Button
               onClick={handleSaveOrder}
-              disabled={!orderDirty}
+              disabled={!orderDirty || isPinFallback}
               className="bg-gradient-gold text-primary-foreground"
             >
               <Save className="mr-2 w-4 h-4" /> Salvar ordem
@@ -195,8 +227,9 @@ export default function SiteImagesPage() {
                 <Button
                   size="icon"
                   variant="destructive"
-                  className="absolute top-2 right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => removeImage(c.id)}
+                  className="absolute top-2 right-2 h-8 w-8 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                  onClick={() => handleRemove(c.id)}
+                  disabled={isPinFallback}
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </Button>

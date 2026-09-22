@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { removePublicImage, storagePathFromPublicUrl, uploadPublicImage, type UploadedImage } from '@/lib/imageUpload';
 
 export type CarrosselImagem = {
   id: string;
@@ -31,45 +32,43 @@ export function useCarrossel() {
     return () => { supabase.removeChannel(ch); };
   }, [fetch]);
 
-  const uploadImage = async (file: File): Promise<string | null> => {
-    const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!allowed.includes(file.type)) return null;
-    if (file.size > 5 * 1024 * 1024) return null;
-    const ext = file.name.split('.').pop();
-    const path = `carrossel/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from('site-imagens').upload(path, file, {
-      cacheControl: '3600', upsert: false,
-    });
-    if (error) return null;
-    const { data } = supabase.storage.from('site-imagens').getPublicUrl(path);
-    return data.publicUrl;
-  };
+  const uploadImage = (file: File): Promise<UploadedImage> =>
+    uploadPublicImage(file, 'site-imagens', 'carrossel');
 
-  const addImagem = async (url: string) => {
+  const addImagem = async (upload: UploadedImage) => {
     const maxOrdem = imagens.reduce((m, i) => Math.max(m, i.ordem), 0);
     const { error } = await supabase.from('carrossel_imagens').insert({
-      url, ordem: maxOrdem + 1, ativo: true,
+      url: upload.url, ordem: maxOrdem + 1, ativo: true,
     });
+    if (error) await removePublicImage('site-imagens', upload.path).catch(() => undefined);
+    else await fetch();
     return { error };
   };
 
   const removeImagem = async (id: string) => {
+    const image = imagens.find(item => item.id === id);
     const { error } = await supabase.from('carrossel_imagens').delete().eq('id', id);
+    if (!error && image) {
+      const path = storagePathFromPublicUrl(image.url, 'site-imagens');
+      if (path) await removePublicImage('site-imagens', path).catch(() => undefined);
+      await fetch();
+    }
     return { error };
   };
 
   const toggleAtivo = async (id: string, ativo: boolean) => {
     const { error } = await supabase.from('carrossel_imagens').update({ ativo }).eq('id', id);
+    if (!error) await fetch();
     return { error };
   };
 
   const saveOrder = async (orderedIds: string[]) => {
-    await Promise.all(
-      orderedIds.map((id, i) =>
-        supabase.from('carrossel_imagens').update({ ordem: i + 1 }).eq('id', id)
-      )
-    );
+    for (let i = 0; i < orderedIds.length; i++) {
+      const { error } = await supabase.from('carrossel_imagens').update({ ordem: i + 1 }).eq('id', orderedIds[i]);
+      if (error) return { error };
+    }
     await fetch();
+    return { error: null };
   };
 
   return { imagens, loading, uploadImage, addImagem, removeImagem, toggleAtivo, saveOrder, refetch: fetch };

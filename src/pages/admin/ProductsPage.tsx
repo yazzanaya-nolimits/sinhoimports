@@ -15,6 +15,9 @@ import { formatBRL } from '@/lib/brl';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseProducts } from '@/hooks/useSupabaseProducts';
 import { type DatabaseProduct, type ProductVariation, PRODUTO_CATEGORIAS } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+import AdminWriteGuard from '@/components/admin/AdminWriteGuard';
+import { IMAGE_ACCEPT, validateImage } from '@/lib/imageUpload';
 
 type FormState = {
   nome: string;
@@ -50,6 +53,7 @@ const emptyForm: FormState = {
 
 const ProductsPage = () => {
   const { toast } = useToast();
+  const { isPinFallback } = useAuth();
   const photoInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
 
@@ -117,14 +121,17 @@ const ProductsPage = () => {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'foto_url' | 'imagem_destaque_url') => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      toast({ title: 'Arquivo muito grande', description: 'Máx 5MB', variant: 'destructive' });
+    const validationError = validateImage(file);
+    if (validationError) {
+      toast({ title: 'Imagem inválida', description: validationError, variant: 'destructive' });
+      e.target.value = '';
       return;
     }
     setIsUploading(true);
     const url = await uploadFile(file);
     setIsUploading(false);
     if (url) setForm(prev => ({ ...prev, [field]: url }));
+    e.target.value = '';
   };
 
   const addVariation = () => setForm(f => ({ ...f, variacoes: [...f.variacoes, { tamanho: '', valor: null }] }));
@@ -161,10 +168,11 @@ const ProductsPage = () => {
     <div className="space-y-6">
       <div className="flex flex-wrap gap-3 justify-between items-center">
         <h1 className="text-2xl font-serif font-bold">Gestão de Produtos</h1>
-        <Button size="sm" className="bg-gradient-gold text-primary-foreground" onClick={() => setShowForm(true)}>
+        <Button size="sm" className="bg-gradient-gold text-primary-foreground" onClick={() => setShowForm(true)} disabled={isPinFallback}>
           <Plus className="mr-2 h-4 w-4" /> Novo Produto
         </Button>
       </div>
+      <AdminWriteGuard />
 
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:items-center">
@@ -215,18 +223,18 @@ const ProductsPage = () => {
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Foto Principal</Label>
-                <Button variant="outline" size="sm" className="w-full" onClick={() => photoInputRef.current?.click()} disabled={isUploading}>
+                 <Button variant="outline" size="sm" className="w-full" onClick={() => photoInputRef.current?.click()} disabled={isUploading || isPinFallback}>
                   {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />} Upload
                 </Button>
-                <input type="file" ref={photoInputRef} className="hidden" accept="image/jpeg,image/png,image/webp" onChange={e => handleFileUpload(e, 'foto_url')} />
+                <input type="file" ref={photoInputRef} className="hidden" accept={IMAGE_ACCEPT} onChange={e => handleFileUpload(e, 'foto_url')} />
                 {form.foto_url && <img src={form.foto_url} alt="" className="w-24 h-24 object-cover rounded border" />}
               </div>
               <div className="space-y-2">
                 <Label>Imagem destaque/banner</Label>
-                <Button variant="outline" size="sm" className="w-full" onClick={() => bannerInputRef.current?.click()} disabled={isUploading}>
+                <Button variant="outline" size="sm" className="w-full" onClick={() => bannerInputRef.current?.click()} disabled={isUploading || isPinFallback}>
                   {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />} Upload
                 </Button>
-                <input type="file" ref={bannerInputRef} className="hidden" accept="image/jpeg,image/png,image/webp" onChange={e => handleFileUpload(e, 'imagem_destaque_url')} />
+                <input type="file" ref={bannerInputRef} className="hidden" accept={IMAGE_ACCEPT} onChange={e => handleFileUpload(e, 'imagem_destaque_url')} />
                 {form.imagem_destaque_url && <img src={form.imagem_destaque_url} alt="" className="w-24 h-24 object-cover rounded border" />}
               </div>
             </div>
@@ -381,7 +389,7 @@ const ProductsPage = () => {
 
             <div className="flex justify-end gap-3 pt-4 border-t border-border">
               <Button variant="outline" onClick={resetForm}>Cancelar</Button>
-              <Button className="bg-gradient-gold text-primary-foreground min-w-[140px]" onClick={handleSave} disabled={isUploading}>
+              <Button className="bg-gradient-gold text-primary-foreground min-w-[140px]" onClick={handleSave} disabled={isUploading || isPinFallback}>
                 <Save className="mr-2 h-4 w-4" /> Salvar produto
               </Button>
             </div>
@@ -405,7 +413,7 @@ const ProductsPage = () => {
                 <div className="w-full h-full flex items-center justify-center text-muted-foreground italic text-xs">Sem foto</div>
               )}
               <div className="absolute top-2 right-2 flex gap-1">
-                <Button size="icon" variant="secondary" className="h-7 w-7 rounded-full bg-background/80 backdrop-blur-sm" onClick={() => toggleStatus(p.id, p.status)}>
+                <Button size="icon" variant="secondary" className="h-7 w-7 rounded-full bg-background/80 backdrop-blur-sm" onClick={() => toggleStatus(p.id, p.status)} disabled={isPinFallback}>
                   {p.status === 'ativo' ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-destructive" />}
                 </Button>
               </div>
@@ -428,10 +436,10 @@ const ProductsPage = () => {
                   {p.status === 'ativo' ? 'Ativo' : 'Inativo'}
                 </Badge>
                 <div className="flex gap-1">
-                  <Button size="icon" variant="ghost" className="h-8 w-8 text-primary" onClick={() => startEdit(p)}>
+                  <Button size="icon" variant="ghost" className="h-8 w-8 text-primary" onClick={() => startEdit(p)} disabled={isPinFallback}>
                     <Edit2 className="w-3.5 h-3.5" />
                   </Button>
-                  <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive" onClick={() => deleteProduct(p.id)}>
+                  <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive" onClick={() => deleteProduct(p.id)} disabled={isPinFallback}>
                     <Trash2 className="w-3.5 h-3.5" />
                   </Button>
                 </div>
