@@ -389,7 +389,7 @@ const ProductsPage = () => {
 
             <div className="flex justify-end gap-3 pt-4 border-t border-border">
               <Button variant="outline" onClick={resetForm}>Cancelar</Button>
-              <Button className="bg-gradient-gold text-primary-foreground min-w-[140px]" onClick={handleSave} disabled={isUploading}>
+              <Button className="bg-gradient-gold text-primary-foreground min-w-[140px]" onClick={handleSave} disabled={isUploading || isPinFallback}>
                 <Save className="mr-2 h-4 w-4" /> Salvar produto
               </Button>
             </div>
@@ -413,7 +413,7 @@ const ProductsPage = () => {
                 <div className="w-full h-full flex items-center justify-center text-muted-foreground italic text-xs">Sem foto</div>
               )}
               <div className="absolute top-2 right-2 flex gap-1">
-                <Button size="icon" variant="secondary" className="h-7 w-7 rounded-full bg-background/80 backdrop-blur-sm" onClick={() => toggleStatus(p.id, p.status)}>
+                <Button size="icon" variant="secondary" className="h-7 w-7 rounded-full bg-background/80 backdrop-blur-sm" onClick={() => toggleStatus(p.id, p.status)} disabled={isPinFallback}>
                   {p.status === 'ativo' ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-destructive" />}
                 </Button>
               </div>
@@ -436,10 +436,10 @@ const ProductsPage = () => {
                   {p.status === 'ativo' ? 'Ativo' : 'Inativo'}
                 </Badge>
                 <div className="flex gap-1">
-                  <Button size="icon" variant="ghost" className="h-8 w-8 text-primary" onClick={() => startEdit(p)}>
+                  <Button size="icon" variant="ghost" className="h-8 w-8 text-primary" onClick={() => startEdit(p)} disabled={isPinFallback}>
                     <Edit2 className="w-3.5 h-3.5" />
                   </Button>
-                  <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive" onClick={() => deleteProduct(p.id)}>
+                  <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive" onClick={() => deleteProduct(p.id)} disabled={isPinFallback}>
                     <Trash2 className="w-3.5 h-3.5" />
                   </Button>
                 </div>
