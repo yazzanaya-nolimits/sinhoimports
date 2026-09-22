@@ -8,6 +8,13 @@
       "when": 1790048079810,
       "tag": "0000_align_gallery_upload_permissions",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790048206129,
+      "tag": "0001_remove_legacy_public_carousel_writes",
+      "breakpoints": true
     }
   ]
 }
