@@ -1,57 +1,68 @@
-import { Shield, Truck, Star, Globe } from 'lucide-react';
+import heroWatch from '@/assets/hero-watch.jpg';
+import { WHATSAPP_NUMBER } from '@/data/products';
+import { Icon } from './Icon';
+import { btnOutline, container, eyebrow, sectionTitle } from './styles';
 
 const features = [
-  { icon: Shield, title: 'Originais Garantidos', desc: 'Todos os produtos são 100% originais com certificado de autenticidade.' },
-  { icon: Truck, title: 'Envio para Todo Brasil', desc: 'Entrega rápida e segura para todas as regiões do país.' },
-  { icon: Star, title: 'Qualidade Premium', desc: 'Curadoria exclusiva dos melhores perfumes e relógios do mundo.' },
-  { icon: Globe, title: 'Importação Direta', desc: 'Produtos importados diretamente dos melhores fornecedores internacionais.' },
+  { icon: 'workspace_premium', title: 'Originais garantidos', desc: 'Produtos originais com certificado de autenticidade.' },
+  { icon: 'public', title: 'Importação direta', desc: 'Direto dos fornecedores internacionais.' },
+  { icon: 'local_shipping', title: 'Envio para todo o Brasil', desc: 'Entrega para todas as regiões do país.' },
+  { icon: 'forum', title: 'Atendimento pessoal', desc: 'Indicação de perfume pelo WhatsApp, de segunda a sábado.' },
 ];
 
-const AboutSection = () => {
-  return (
-    <section id="sobre" className="py-24">
-      <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div className="space-y-8">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold">
-              Sobre a <span className="text-gradient-gold">Sinho Imports</span>
-            </h2>
-            <div className="space-y-4 text-muted-foreground leading-relaxed">
-              <p>
-                A Sinho Imports nasceu da paixão por produtos exclusivos e da missão de trazer 
-                o melhor do luxo internacional para todo o Brasil. Somos especializados em perfumes 
-                árabes originais, relógios de luxo e acessórios automotivos premium.
-              </p>
-              <p>
-                Nossa curadoria rigorosa garante que cada produto oferecido é 100% autêntico e 
-                de qualidade superior. Trabalhamos diretamente com os melhores fornecedores 
-                internacionais para oferecer preços justos sem abrir mão da excelência.
-              </p>
-              <p>
-                Com envio para todo o Brasil, facilitamos o acesso a marcas como Lattafa, 
-                Al Haramain, Rolex, Bulgari e Invicta, entre outras.
-              </p>
-            </div>
-          </div>
+const watchesLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  'Olá! Quero ver os relógios disponíveis.',
+)}`;
 
-          <div className="grid grid-cols-2 gap-4">
-            {features.map((f, i) => (
-              <div
-                key={i}
-                className="bg-card border border-border rounded-xl p-6 hover:border-primary/40 hover:shadow-gold transition-all duration-300 space-y-3"
-              >
-                <div className="w-12 h-12 rounded-lg bg-gradient-gold flex items-center justify-center">
-                  <f.icon className="w-6 h-6 text-primary-foreground" />
-                </div>
-                <h3 className="font-serif font-semibold">{f.title}</h3>
-                <p className="text-sm text-muted-foreground">{f.desc}</p>
+const AboutSection = () => (
+  <>
+    <section id="sobre" className="bg-sinho-ink border-t border-sinho-line scroll-mt-20">
+      <div className={`${container} py-20 sm:py-24 grid lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-20`}>
+        <div className="flex flex-col gap-6">
+          <span className={`${eyebrow} text-sinho-gold`}>Sobre a Sinho</span>
+          <h2 className={`${sectionTitle} text-sinho-ivory`}>Cada frasco escolhido a dedo</h2>
+          {/* Dica: troque por fatos concretos (desde quando importa, quantos clientes, quem é o Sinho). */}
+          <p className="text-base sm:text-lg font-light leading-relaxed text-sinho-text">
+            A Sinho Imports nasceu para trazer a perfumaria árabe original para o Brasil. Trabalhamos com casas
+            como Lattafa e Al Haramain, conferimos a procedência de cada peça e enviamos para todo o país.
+          </p>
+        </div>
+
+        <ul className="grid sm:grid-cols-2 gap-x-10 gap-y-9 content-center">
+          {features.map(f => (
+            <li key={f.title} className="flex gap-4">
+              <Icon name={f.icon} className="w-8 h-8 text-sinho-gold mt-0.5" />
+              <div className="flex flex-col gap-1.5">
+                <h3 className="font-body text-base font-medium text-sinho-ivory">{f.title}</h3>
+                <p className="text-sm leading-relaxed text-sinho-muted">{f.desc}</p>
               </div>
-            ))}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section id="relogios" className="bg-sinho-ink scroll-mt-20">
+      <div className={`${container} pb-20 sm:pb-24`}>
+        <div className="grid md:grid-cols-2 border border-sinho-line">
+          <div className="relative min-h-[280px] bg-sinho-panel overflow-hidden">
+            <img src={heroWatch} alt="Relógio" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+          </div>
+          <div className="flex flex-col justify-center gap-5 p-8 sm:p-12">
+            <span className={`${eyebrow} text-sinho-gold`}>Também na Sinho</span>
+            <h2 className="font-display text-3xl sm:text-4xl tracking-[0.06em] uppercase text-sinho-ivory">Relógios</h2>
+            <p className="text-base font-light leading-relaxed text-sinho-text">
+              Invicta, Bulgari e outras marcas, com atendimento individual para escolher o modelo certo.
+            </p>
+            <a href={watchesLink} target="_blank" rel="noopener noreferrer" className={`${btnOutline} self-start`}>
+              Consultar modelos
+              <Icon name="arrow_forward" className="w-5 h-5" />
+            </a>
           </div>
         </div>
       </div>
     </section>
-  );
-};
+  </>
+);
 
 export default AboutSection;

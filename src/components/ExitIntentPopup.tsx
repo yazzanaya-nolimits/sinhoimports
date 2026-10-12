@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, MessageCircle } from 'lucide-react';
+import { X, MessageCircle } from '@/components/landing/Icon';
 import { Button } from '@/components/ui/button';
 import { WHATSAPP_NUMBER } from '@/data/products';
 

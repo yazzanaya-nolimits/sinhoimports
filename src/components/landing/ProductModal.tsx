@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { MessageCircle, X, CreditCard, Tag, CheckCircle2, Loader2 } from 'lucide-react';
+import { MessageCircle, X, CreditCard, Tag, CheckCircle2, Loader2 } from '@/components/landing/Icon';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
