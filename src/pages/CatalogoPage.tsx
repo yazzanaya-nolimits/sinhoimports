@@ -1,216 +1,222 @@
-import { useMemo, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Loader2, MessageCircle, Search, LayoutGrid, CreditCard } from '@/components/landing/Icon';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useSupabaseProducts } from '@/hooks/useSupabaseProducts';
-import { formatBRL } from '@/lib/brl';
-import { getWhatsAppLink } from '@/data/products';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import StoreShell from '@/components/store/StoreShell';
+import ProductCard from '@/components/store/ProductCard';
 import ProductModal from '@/components/landing/ProductModal';
-import Navbar from '@/components/landing/Navbar';
-import Footer from '@/components/landing/Footer';
-import PromoBanner from '@/components/landing/PromoBanner';
+import { categoryLabel, hasActiveOffer, useStore } from '@/components/store/useStore';
+import { container } from '@/components/store/ui';
+import { Icon } from '@/components/icons';
 import { type DatabaseProduct } from '@/lib/supabase';
 
-const CATEGORIAS = [
-  { id: 'todos', label: 'Todos', icon: '📦' },
-  { id: 'masculino', label: 'Masculino', icon: '👨' },
-  { id: 'feminino', label: 'Feminino', icon: '👩' },
-  { id: 'perfumes', label: 'Perfumes', icon: '🌸' },
-  { id: 'automotivo', label: 'Automotivo', icon: '🚗' },
-  { id: 'unisex', label: 'Unisex', icon: '🤝' },
-  { id: 'outros', label: 'Outros', icon: '📦' },
-] as const;
-
-type CatId = typeof CATEGORIAS[number]['id'];
 type SortBy = 'recentes' | 'menor_preco' | 'maior_preco';
 
+const sortOptions: { id: SortBy; label: string }[] = [
+  { id: 'recentes', label: 'Mais recentes' },
+  { id: 'menor_preco', label: 'Menor preço' },
+  { id: 'maior_preco', label: 'Maior preço' },
+];
+
+const filterLink = (active: boolean) =>
+  `flex items-center justify-between min-h-[44px] px-4 rounded-full text-[15px] transition-colors ${
+    active ? 'bg-sinho-ink text-sinho-ivory' : 'text-sinho-dark hover:bg-sinho-soft'
+  }`;
+
 export default function CatalogoPage() {
-  const { products, loading } = useSupabaseProducts();
-  const [categoria, setCategoria] = useState<CatId>('todos');
-  const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState<SortBy>('recentes');
+  const { ativos, loading, categories, applied, applyCoupon, clearCoupon, priceOf } = useStore();
+  const [params, setParams] = useSearchParams();
   const [selected, setSelected] = useState<DatabaseProduct | null>(null);
-  const navigate = useNavigate();
+  const [couponInput, setCouponInput] = useState('');
+
+  const q = params.get('q') ?? '';
+  const categoria = params.get('categoria');
+  const ofertas = params.get('ofertas') === '1';
+  const ordemParam = params.get('ordem');
+  const sortBy: SortBy = ordemParam === 'menor_preco' || ordemParam === 'maior_preco' ? ordemParam : 'recentes';
 
   useEffect(() => {
     document.title = 'Catálogo | Sinho Imports';
   }, []);
 
+  const update = (changes: Record<string, string | null>) => {
+    const next = new URLSearchParams(params);
+    Object.entries(changes).forEach(([k, v]) => (v ? next.set(k, v) : next.delete(k)));
+    setParams(next, { replace: true });
+  };
+
+  const offerCount = useMemo(() => ativos.filter(hasActiveOffer).length, [ativos]);
+
   const filtered = useMemo(() => {
-    let list = products.filter(p => p.status === 'ativo');
-    if (categoria !== 'todos') {
-      list = list.filter(p => (p.categoria || 'outros') === categoria);
+    let list = ativos;
+    if (categoria) list = list.filter(p => (p.categoria || 'outros') === categoria);
+    if (ofertas) list = list.filter(hasActiveOffer);
+    if (q) {
+      const t = q.toLowerCase();
+      list = list.filter(p => p.nome.toLowerCase().includes(t) || (p.descricao ?? '').toLowerCase().includes(t));
     }
-    if (search) {
-      const q = search.toLowerCase();
-      list = list.filter(p => p.nome.toLowerCase().includes(q));
-    }
-    list = [...list].sort((a, b) => {
-      if (sortBy === 'menor_preco') return a.valor - b.valor;
-      if (sortBy === 'maior_preco') return b.valor - a.valor;
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    return [...list].sort((a, b) => {
+      if (sortBy === 'menor_preco') return priceOf(a) - priceOf(b);
+      if (sortBy === 'maior_preco') return priceOf(b) - priceOf(a);
+      return +new Date(b.created_at) - +new Date(a.created_at);
     });
-    return list;
-  }, [products, categoria, search, sortBy]);
+  }, [ativos, categoria, ofertas, q, sortBy, priceOf]);
+
+  const title = q ? `Busca: “${q}”` : ofertas ? 'Ofertas' : categoria ? categoryLabel(categoria) : 'Toda a coleção';
+  const hasFilters = !!(q || categoria || ofertas);
+
+  const submitCoupon = (e: FormEvent) => {
+    e.preventDefault();
+    if (applyCoupon(couponInput)) setCouponInput('');
+  };
+
+  const countFor = (c: string) => ativos.filter(p => (p.categoria || 'outros') === c).length;
 
   return (
-    <div className="sinho-site min-h-screen bg-sinho-ink text-sinho-ivory">
-      <Navbar />
-      <div className="h-[72px]" aria-hidden="true" />
-      <PromoBanner />
-
-      <main className="container mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="text-center mb-10 space-y-3">
-          <div className="inline-flex items-center gap-2 border border-primary/40 px-4 py-1.5 rounded-full bg-background/40 backdrop-blur-sm">
-            <LayoutGrid className="w-3.5 h-3.5 text-primary" />
-            <span className="text-xs tracking-[0.3em] uppercase text-primary/90">Catálogo Completo</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-serif font-bold">
-            Toda a coleção <span className="text-gradient-gold">Sinho Imports</span>
-          </h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            Filtre por categoria, busque pelo nome e ordene como preferir.
-          </p>
+    <StoreShell categories={categories} hasOffers={offerCount > 0}>
+      <div className="bg-white border-b border-sinho-card-line">
+        <div className={`${container} py-7 sm:py-9`}>
+          <nav aria-label="Caminho" className="flex items-center gap-1.5 text-[13px] text-sinho-meta mb-3">
+            <Link to="/" className="hover:text-sinho-dark">Início</Link>
+            <Icon name="chevron_right" className="w-4 h-4" />
+            <Link to="/catalogo" className="hover:text-sinho-dark">Catálogo</Link>
+            {hasFilters && (
+              <>
+                <Icon name="chevron_right" className="w-4 h-4" />
+                <span className="text-sinho-dark">{title}</span>
+              </>
+            )}
+          </nav>
+          <h1 className="font-display text-3xl sm:text-[42px] leading-tight tracking-[0.06em] uppercase text-sinho-dark">{title}</h1>
         </div>
+      </div>
 
-        {/* Filtros por categoria */}
-        <div className="flex flex-wrap gap-2 justify-center mb-6">
-          {CATEGORIAS.map(c => {
-            const active = categoria === c.id;
-            return (
-              <button
-                key={c.id}
-                onClick={() => setCategoria(c.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${
-                  active
-                    ? 'bg-gradient-gold text-primary-foreground border-primary shadow-gold'
-                    : 'bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-foreground'
-                }`}
-              >
-                <span className="mr-1.5">{c.icon}</span>
-                {c.label}
+      <div className={`${container} py-8 grid lg:grid-cols-[260px_minmax(0,1fr)] gap-8 lg:gap-10`}>
+        {/* Filtros */}
+        <aside aria-label="Filtros" className="flex flex-col gap-7">
+          <div className="hidden lg:flex flex-col gap-1">
+            <h2 className="px-4 pb-2 text-xs font-semibold tracking-[0.2em] uppercase text-sinho-meta">Categorias</h2>
+            <button type="button" onClick={() => update({ categoria: null })} className={filterLink(!categoria)}>
+              Todas <span className="text-sm opacity-70">{ativos.length}</span>
+            </button>
+            {categories.map(c => (
+              <button key={c} type="button" onClick={() => update({ categoria: c })} className={filterLink(categoria === c)} aria-pressed={categoria === c}>
+                {categoryLabel(c)} <span className="text-sm opacity-70">{countFor(c)}</span>
               </button>
-            );
-          })}
-        </div>
-
-        {/* Busca + ordenação */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-10 max-w-2xl mx-auto">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar produto pelo nome..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="pl-10 bg-card"
-            />
-          </div>
-          <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortBy)}>
-            <SelectTrigger className="w-full sm:w-[200px] bg-card"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="recentes">Mais recentes</SelectItem>
-              <SelectItem value="menor_preco">Menor preço</SelectItem>
-              <SelectItem value="maior_preco">Maior preço</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Grid */}
-        {loading ? (
-          <div className="flex flex-col items-center py-20">
-            <Loader2 className="w-12 h-12 animate-spin text-primary/50" />
-            <p className="text-muted-foreground mt-4">Carregando catálogo...</p>
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground">Nenhum produto encontrado nesta categoria.</p>
-            <Button variant="outline" className="mt-4" onClick={() => { setCategoria('todos'); setSearch(''); }}>
-              Limpar filtros
-            </Button>
-          </div>
-        ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
-            {filtered.map((product, i) => (
-              <div
-                key={product.id}
-                onClick={() => setSelected(product)}
-                className="group bg-card rounded-xl border border-border overflow-hidden hover:border-primary/40 hover:shadow-gold transition-all duration-300 flex flex-col cursor-pointer"
-                style={{ animationDelay: `${i * 40}ms` }}
-              >
-                <div className="relative overflow-hidden aspect-square">
-                  <img
-                    src={product.foto_url || 'https://images.unsplash.com/photo-1541643600914-78b084683601?w=400'}
-                    alt={product.nome}
-                    loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-end p-4 gap-2">
-                    <Button
-                      size="sm"
-                      className="w-full bg-gradient-gold text-primary-foreground font-bold"
-                      onClick={(e) => { e.stopPropagation(); setSelected(product); }}
-                    >
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Comprar Agora
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="w-full text-white hover:bg-white/10"
-                      onClick={(e) => { e.stopPropagation(); setSelected(product); }}
-                    >
-                      Ver detalhes
-                    </Button>
-                  </div>
-                  {product.cupom_codigo && (
-                    <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground font-bold shadow-lg">
-                      {product.cupom_tipo === 'percentual'
-                        ? `${product.cupom_valor}% OFF`
-                        : `${formatBRL(product.cupom_valor || 0)} OFF`}
-                    </Badge>
-                  )}
-                </div>
-                <div className="p-4 space-y-2 flex-grow flex flex-col">
-                  <h3 className="font-serif font-semibold text-lg line-clamp-1">{product.nome}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2 flex-grow">{product.descricao}</p>
-                  <div className="pt-3 flex items-center justify-between">
-                    <span className="text-xl font-bold text-primary">{formatBRL(product.valor)}</span>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="text-primary hover:bg-primary/10"
-                      asChild
-                      onClick={e => e.stopPropagation()}
-                    >
-                      <a href={getWhatsAppLink(product.nome)} target="_blank" rel="noopener noreferrer">
-                        <MessageCircle className="h-5 w-5" />
-                      </a>
-                    </Button>
-                  </div>
-                </div>
-              </div>
             ))}
           </div>
-        )}
 
-        <div className="text-center mt-12">
-          <Button variant="outline" onClick={() => navigate('/')}>
-            <ArrowRight className="w-4 h-4 mr-2 rotate-180" /> Voltar para a página inicial
-          </Button>
+          {/* Categorias no celular */}
+          <div className="lg:hidden -mx-4 px-4 flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {[{ id: null as string | null, label: 'Todas' }, ...categories.map(c => ({ id: c, label: categoryLabel(c) }))].map(c => {
+              const active = categoria === c.id;
+              return (
+                <button
+                  key={c.label}
+                  type="button"
+                  onClick={() => update({ categoria: c.id })}
+                  aria-pressed={active}
+                  className={`shrink-0 min-h-[44px] px-5 rounded-full border text-[13px] tracking-[0.1em] uppercase ${active ? 'bg-sinho-ink text-sinho-ivory border-sinho-ink' : 'bg-white border-sinho-card-line text-sinho-dark'}`}
+                >
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {offerCount > 0 && (
+            <label className="flex items-center justify-between gap-3 min-h-[52px] px-4 rounded-2xl bg-white border border-sinho-card-line cursor-pointer">
+              <span className="flex items-center gap-2.5 text-[15px] text-sinho-dark">
+                <Icon name="local_offer" className="w-5 h-5 text-sinho-bronze" /> Só ofertas
+              </span>
+              <input
+                type="checkbox"
+                checked={ofertas}
+                onChange={e => update({ ofertas: e.target.checked ? '1' : null })}
+                className="w-5 h-5 accent-[#8C6A2A]"
+              />
+            </label>
+          )}
+
+          <form onSubmit={submitCoupon} className="flex flex-col gap-2.5 p-4 rounded-2xl bg-white border border-sinho-card-line">
+            <label htmlFor="cupom" className="text-xs font-semibold tracking-[0.2em] uppercase text-sinho-meta">Cupom de desconto</label>
+            {applied ? (
+              <div className="flex items-center justify-between gap-2 min-h-[44px] pl-4 pr-1 rounded-full bg-sinho-gold/20 border border-sinho-gold">
+                <span className="flex items-center gap-2 text-sm font-medium tracking-wider uppercase"><Icon name="check_circle" className="w-5 h-5 text-sinho-bronze" />{applied.code}</span>
+                <button type="button" onClick={clearCoupon} aria-label="Remover cupom" className="w-10 h-10 inline-flex items-center justify-center rounded-full hover:bg-white/60">
+                  <Icon name="close" className="w-5 h-5" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex">
+                <input
+                  id="cupom"
+                  value={couponInput}
+                  onChange={e => setCouponInput(e.target.value.toUpperCase())}
+                  placeholder="Digite o código"
+                  className="flex-1 min-w-0 h-11 pl-4 rounded-l-full border border-r-0 border-sinho-card-line bg-sinho-cream text-base uppercase tracking-wider placeholder:normal-case placeholder:tracking-normal focus:outline-none focus:border-sinho-dark"
+                />
+                <button type="submit" className="h-11 px-4 rounded-r-full bg-sinho-ink text-sinho-ivory text-xs tracking-[0.14em] uppercase hover:bg-black">
+                  Aplicar
+                </button>
+              </div>
+            )}
+          </form>
+        </aside>
+
+        {/* Resultados */}
+        <div className="flex flex-col gap-5 min-w-0">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-[15px] text-sinho-meta">
+              {loading ? 'Carregando...' : `${filtered.length} ${filtered.length === 1 ? 'produto' : 'produtos'}`}
+              {hasFilters && !loading && (
+                <button type="button" onClick={() => setParams({}, { replace: true })} className="ml-3 inline-flex items-center gap-1 min-h-[44px] text-sinho-dark underline underline-offset-4">
+                  Limpar filtros
+                </button>
+              )}
+            </p>
+            <label className="flex items-center gap-2 text-sm text-sinho-meta">
+              Ordenar por
+              <span className="relative">
+                <select
+                  value={sortBy}
+                  onChange={e => update({ ordem: e.target.value === 'recentes' ? null : e.target.value })}
+                  className="appearance-none h-11 pl-4 pr-10 rounded-full bg-white border border-sinho-card-line text-sinho-dark text-[15px] focus:outline-none focus:border-sinho-dark"
+                >
+                  {sortOptions.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
+                </select>
+                <Icon name="expand_more" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-sinho-dark" />
+              </span>
+            </label>
+          </div>
+
+          {loading ? (
+            <div className="py-20 flex flex-col items-center gap-4 text-sinho-meta">
+              <Icon name="progress_activity" className="w-10 h-10 animate-spin" />
+              <p>Carregando o catálogo...</p>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="py-16 px-6 flex flex-col items-center text-center gap-4 rounded-2xl bg-white border border-sinho-card-line">
+              <Icon name="search_off" className="w-12 h-12 text-sinho-chip" />
+              <p className="text-lg text-sinho-dark">Nenhum produto encontrado.</p>
+              <p className="text-sinho-meta max-w-md">Tente outro termo ou fale com a gente: indicamos o perfume certo pelo WhatsApp.</p>
+              <button type="button" onClick={() => setParams({}, { replace: true })} className="mt-2 min-h-[46px] px-6 rounded-full bg-sinho-ink text-sinho-ivory text-[13px] tracking-[0.16em] uppercase">
+                Ver todos os produtos
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
+              {filtered.map(p => (
+                <ProductCard key={p.id} product={p} price={priceOf(p)} onOpen={setSelected} />
+              ))}
+            </div>
+          )}
         </div>
-      </main>
+      </div>
 
-      <Footer />
-
-      <ProductModal 
-        product={selected} 
-        onClose={() => setSelected(null)} 
-        discountedPrice={selected?.valor} 
+      <ProductModal
+        product={selected}
+        discountedPrice={selected ? priceOf(selected) : undefined}
+        onClose={() => setSelected(null)}
       />
-    </div>
+    </StoreShell>
   );
 }

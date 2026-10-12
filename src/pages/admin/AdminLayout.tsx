@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  ShoppingCart, DollarSign, Package, LayoutDashboard,
+  Icon, ShoppingCart, DollarSign, Package, LayoutDashboard,
   LogOut, Menu, X, Home, Kanban, Boxes, Image, Megaphone, History, Settings, Images, Sparkles,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+} from '@/components/icons';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth, type Modulo } from '@/contexts/AuthContext';
@@ -87,23 +86,35 @@ const AdminLayout = () => {
 
   const visibleItems = sidebarItems.filter((it) => hasPermission(it.modulo, it.levels));
 
+  const currentLabel = (() => {
+    const it = sidebarItems.find(i => i.path === location.pathname);
+    return it ? t(it.labelKey) : 'Painel';
+  })();
+
   return (
     <div className="min-h-screen flex bg-background text-foreground">
       <aside
-        className={`sidebar-themed fixed inset-y-0 left-0 z-50 w-64 border-r border-sidebar-border transform transition-transform duration-200 lg:relative lg:translate-x-0 ${
+        className={`sidebar-themed fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col border-r border-sidebar-border transform transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="p-6 border-b border-sidebar-border flex items-center justify-between relative z-10">
-          <div>
-            <h2 className="text-xl font-serif font-bold text-theme-gradient leading-none">Sinho</h2>
-            <p className="text-[10px] tracking-[0.25em] uppercase mt-1 opacity-80">Admin · PDV</p>
-          </div>
-          <button className="lg:hidden text-muted-foreground hover:text-foreground" onClick={() => setSidebarOpen(false)}>
-            <X className="w-5 h-5" />
+        <div className="h-[72px] px-6 border-b border-sidebar-border flex items-center justify-between shrink-0">
+          <Link to="/admin/dashboard" className="flex flex-col leading-none">
+            <span className="font-serif text-[17px] tracking-[0.2em] whitespace-nowrap text-[hsl(var(--sidebar-foreground))]">
+              SINHO <span className="text-accent">IMPORTS</span>
+            </span>
+            <span className="text-[10px] tracking-[0.28em] uppercase mt-1.5 opacity-70">Painel de gestão</span>
+          </Link>
+          <button
+            className="lg:hidden w-11 h-11 -mr-2 inline-flex items-center justify-center opacity-80 hover:opacity-100"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Fechar menu"
+          >
+            <X className="w-6 h-6" />
           </button>
         </div>
-        <nav className="p-3 space-y-1 relative z-10">
+
+        <nav aria-label="Menu do painel" className="flex-1 overflow-y-auto p-3 space-y-0.5">
           {visibleItems.map(item => {
             const active = location.pathname === item.path;
             const showBadge = item.alert === 'estoque' && estoqueAlerts > 0;
@@ -112,14 +123,15 @@ const AdminLayout = () => {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                className={`nav-item group flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all duration-200 relative ${
-                  active ? 'is-active font-medium' : 'opacity-80 hover:opacity-100'
+                aria-current={active ? 'page' : undefined}
+                className={`nav-item group flex items-center gap-3 min-h-[44px] px-4 rounded-full text-[14px] tracking-[0.02em] transition-colors ${
+                  active ? 'is-active font-medium' : 'opacity-75 hover:opacity-100'
                 }`}
               >
-                <item.icon className="w-[18px] h-[18px]" />
+                <item.icon className="w-5 h-5" />
                 <span className="flex-1">{t(item.labelKey)}</span>
                 {showBadge && (
-                  <Badge className="h-5 px-1.5 text-[10px] bg-destructive text-destructive-foreground pulse-glow border-0">
+                  <Badge className="h-5 px-1.5 text-[10px] bg-destructive text-destructive-foreground border-0">
                     {estoqueAlerts}
                   </Badge>
                 )}
@@ -127,28 +139,32 @@ const AdminLayout = () => {
             );
           })}
         </nav>
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-sidebar-border space-y-2 backdrop-blur z-10" style={{ background: 'rgba(0,0,0,0.18)' }}>
+
+        <div className="shrink-0 p-4 border-t border-sidebar-border space-y-1">
           {(membro || isPinFallback) && (
-            <div className="px-2 pb-1">
-              <p className="text-[11px] uppercase tracking-wider opacity-70">{t('common.loggedAs')}</p>
-              <p className="text-sm font-medium truncate">
-                {membro?.nome ?? 'Admin Master (PIN)'}
-              </p>
+            <div className="flex items-center gap-3 px-2 pb-3">
+              <span className="w-9 h-9 rounded-full bg-accent text-accent-foreground inline-flex items-center justify-center text-sm font-medium uppercase">
+                {(membro?.nome ?? 'A').charAt(0)}
+              </span>
+              <div className="min-w-0">
+                <p className="text-[11px] uppercase tracking-[0.14em] opacity-60">{t('common.loggedAs')}</p>
+                <p className="text-sm font-medium truncate">{membro?.nome ?? 'Admin Master (PIN)'}</p>
+              </div>
             </div>
           )}
           <Link
             to="/"
-            className="nav-item flex items-center gap-3 px-4 py-2 rounded-lg text-sm opacity-80 hover:opacity-100 transition-colors"
+            className="nav-item flex items-center gap-3 min-h-[44px] px-4 rounded-full text-sm opacity-75 hover:opacity-100 transition-colors"
           >
-            <Home className="w-4 h-4" /> {t('common.seeSite')}
+            <Home className="w-5 h-5" /> {t('common.seeSite')}
           </Link>
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/10"
+          <button
+            type="button"
+            className="w-full flex items-center gap-3 min-h-[44px] px-4 rounded-full text-sm text-[#E8857A] hover:bg-white/5 transition-colors"
             onClick={handleLogout}
           >
-            <LogOut className="w-4 h-4" /> {t('common.logout')}
-          </Button>
+            <LogOut className="w-5 h-5" /> {t('common.logout')}
+          </button>
         </div>
       </aside>
 
@@ -156,24 +172,35 @@ const AdminLayout = () => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      <div className="flex-1 flex flex-col min-h-screen">
-        <header className="h-14 border-b border-border/60 flex items-center justify-between px-4 gap-4 bg-card/40 backdrop-blur-md sticky top-0 z-30">
-          <div className="flex items-center gap-3">
-            <button className="lg:hidden text-muted-foreground hover:text-foreground" onClick={() => setSidebarOpen(true)}>
+      <div className="flex-1 flex flex-col min-h-screen min-w-0">
+        <header className="h-[72px] border-b border-border flex items-center justify-between px-4 sm:px-6 gap-4 bg-card sticky top-0 z-30">
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              className="lg:hidden w-11 h-11 -ml-2 inline-flex items-center justify-center text-foreground"
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Abrir menu"
+            >
               <Menu className="w-6 h-6" />
             </button>
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-electric pulse-glow" />
-              <span className="text-sm font-medium">
-                {(() => { const it = sidebarItems.find(i => i.path === location.pathname); return it ? t(it.labelKey) : 'Painel'; })()}
-              </span>
-            </div>
+            <p className="flex items-center gap-1.5 text-sm text-muted-foreground truncate">
+              <span className="hidden sm:inline">Painel</span>
+              <Icon name="chevron_right" className="hidden sm:inline-flex w-4 h-4" />
+              <span className="font-medium text-foreground tracking-[0.04em]">{currentLabel}</span>
+            </p>
           </div>
-          <span className="text-xs text-muted-foreground hidden md:inline font-mono">
-            {now.toLocaleString('pt-BR')}
-          </span>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground hidden md:inline tabular-nums">
+              {now.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+            </span>
+            <Link
+              to="/"
+              className="hidden sm:inline-flex items-center gap-2 h-10 px-4 rounded-full border border-border text-sm hover:border-primary hover:text-primary transition-colors"
+            >
+              <Home className="w-[18px] h-[18px]" /> Ver loja
+            </Link>
+          </div>
         </header>
-        <main className="flex-1 p-3 sm:p-4 lg:p-6 overflow-auto min-w-0">
+        <main className="flex-1 p-3 sm:p-5 lg:p-8 overflow-auto min-w-0">
           <div className="max-w-full">
             <Outlet />
           </div>

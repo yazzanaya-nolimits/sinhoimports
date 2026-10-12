@@ -5,46 +5,46 @@
 @layer base {
   :root {
     /* Base — preto profundo com toque grafite */
-    --background: 0 0% 4%;
-    --foreground: 40 20% 92%;
+    --background: 40 53% 97%;
+    --foreground: 38 27% 8%;
 
-    --card: 0 0% 7%;
-    --card-foreground: 40 20% 92%;
+    --card: 0 0% 100%;
+    --card-foreground: 38 27% 8%;
 
-    --popover: 0 0% 7%;
-    --popover-foreground: 40 20% 92%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 38 27% 8%;
 
-    /* Dourado luxury — identidade Sinho */
-    --primary: 43 72% 55%;
-    --primary-foreground: 0 0% 4%;
+    /* Dourado Sinho: bronze para texto e botões, ouro para destaques */
+    --primary: 39 54% 36%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 40 20% 92%;
+    --secondary: 39 45% 91%;
+    --secondary-foreground: 38 27% 8%;
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 39 44% 94%;
+    --muted-foreground: 38 14% 38%;
 
-    --accent: 43 72% 55%;
-    --accent-foreground: 0 0% 4%;
+    --accent: 40 50% 57%;
+    --accent-foreground: 36 24% 4%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 65% 45%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 16%;
-    --input: 0 0% 16%;
-    --ring: 43 72% 55%;
+    --border: 39 32% 86%;
+    --input: 39 30% 81%;
+    --ring: 39 54% 36%;
 
-    --radius: 0.65rem;
+    --radius: 0.75rem;
 
     /* Sidebar */
-    --sidebar-background: 0 0% 5%;
-    --sidebar-foreground: 40 20% 92%;
-    --sidebar-primary: 43 72% 55%;
-    --sidebar-primary-foreground: 0 0% 4%;
-    --sidebar-accent: 0 0% 10%;
-    --sidebar-accent-foreground: 40 20% 92%;
-    --sidebar-border: 0 0% 14%;
-    --sidebar-ring: 210 100% 60%;
+    --sidebar-background: 36 24% 4%;
+    --sidebar-foreground: 39 45% 91%;
+    --sidebar-primary: 40 50% 57%;
+    --sidebar-primary-foreground: 36 24% 4%;
+    --sidebar-accent: 40 25% 11%;
+    --sidebar-accent-foreground: 40 50% 57%;
+    --sidebar-border: 40 25% 14%;
+    --sidebar-ring: 40 50% 57%;
 
     /* Dourado */
     --gold: 43 72% 55%;
@@ -52,27 +52,28 @@
     --gold-dark: 43 60% 40%;
 
     /* Azul elétrico — acentos tech/fintech */
-    --electric: 210 100% 60%;
-    --electric-light: 200 100% 70%;
-    --electric-dark: 220 90% 45%;
+    /* Antigo azul elétrico, agora no bronze da marca para manter tudo na paleta */
+    --electric: 39 54% 36%;
+    --electric-light: 40 50% 57%;
+    --electric-dark: 36 40% 24%;
 
     /* Status semânticos */
     --success: 152 72% 45%;
     --warning: 38 92% 55%;
-    --info: 210 100% 60%;
+    --info: 39 54% 36%;
 
     /* Gradientes & sombras assinatura */
-    --gradient-gold: linear-gradient(135deg, hsl(43 80% 70%), hsl(43 72% 55%), hsl(43 60% 40%));
-    --gradient-electric: linear-gradient(135deg, hsl(200 100% 70%), hsl(210 100% 60%), hsl(220 90% 45%));
-    --gradient-hybrid: linear-gradient(135deg, hsl(43 72% 55%) 0%, hsl(43 60% 40%) 50%, hsl(210 100% 60%) 100%);
-    --gradient-card: linear-gradient(160deg, hsl(0 0% 8%) 0%, hsl(0 0% 5%) 100%);
-    --gradient-surface: radial-gradient(ellipse at top, hsl(0 0% 10%), hsl(0 0% 4%));
+    --gradient-gold: linear-gradient(135deg, #C9A45C, #A9853F);
+    --gradient-electric: linear-gradient(135deg, #A9853F, #8C6A2A);
+    --gradient-hybrid: linear-gradient(135deg, #C9A45C 0%, #8C6A2A 100%);
+    --gradient-card: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%);
+    --gradient-surface: linear-gradient(180deg, #FBF8F2, #FBF8F2);
 
-    --shadow-gold: 0 8px 32px -8px hsl(43 72% 55% / 0.35);
-    --shadow-electric: 0 8px 32px -8px hsl(210 100% 60% / 0.35);
-    --shadow-card: 0 4px 24px -8px hsl(0 0% 0% / 0.6);
-    --glow-gold: 0 0 20px hsl(43 72% 55% / 0.4);
-    --glow-electric: 0 0 20px hsl(210 100% 60% / 0.45);
+    --shadow-gold: 0 12px 32px -14px rgba(140,106,42,0.35);
+    --shadow-electric: 0 12px 32px -14px rgba(140,106,42,0.35);
+    --shadow-card: 0 1px 2px rgba(26,22,15,0.06), 0 8px 24px -12px rgba(26,22,15,0.12);
+    --glow-gold: 0 0 0 3px hsl(40 50% 57% / 0.25);
+    --glow-electric: 0 0 0 3px hsl(39 54% 36% / 0.2);
   }
 }
 
@@ -94,7 +95,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Jost', sans-serif;
     background-attachment: fixed;
     transition: background-color 300ms ease, color 300ms ease;
     -webkit-font-smoothing: antialiased;
@@ -115,7 +116,7 @@
   }
 
   /* Surface por tema */
-  html[data-theme="preto_dourado"] body { background-image: radial-gradient(ellipse at top, hsl(0 0% 8%), hsl(0 0% 4%)); }
+  html[data-theme="preto_dourado"] body { background-image: none; }
   html[data-theme="rosa_branco"] body  { background-image: radial-gradient(ellipse at top, #FFE4EE, #FFF5F8); }
   html[data-theme="azul_marinho"] body { background-image: radial-gradient(ellipse at top, #E3EAFC, #F0F4FF); }
   html[data-theme="branco_preto"] body { background-image: linear-gradient(180deg, #FFFFFF, #F0F0F0); }
@@ -126,18 +127,20 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Marcellus', serif;
+    font-weight: 400;
+    letter-spacing: 0.02em;
   }
 
   /* Scrollbar tech */
   ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-track { background: hsl(0 0% 6%); }
+  ::-webkit-scrollbar-track { background: hsl(var(--muted)); }
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, hsl(43 72% 55% / 0.4), hsl(210 100% 60% / 0.4));
+    background: hsl(var(--input));
     border-radius: 6px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, hsl(43 72% 55% / 0.7), hsl(210 100% 60% / 0.7));
+    background: hsl(var(--primary) / 0.6);
   }
 
   /* Scroll horizontal suave em containers (kanban, tabelas) */
@@ -210,18 +213,21 @@
   .ms-fill .ms-glyph { font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
 
   /* Vitrine pública */
-  .sinho-site { font-family: 'Jost', sans-serif; }
+  .sinho-site { font-family: 'Jost', sans-serif; background: #FBF8F2; color: #1A160F; }
   .sinho-site h1, .sinho-site h2, .sinho-site h3, .sinho-site h4 { font-family: 'Marcellus', serif; font-weight: 400; }
   .sinho-site ::selection { background: #C9A45C; color: #0D0B08; }
 }
 
 @layer utilities {
-  /* Texto gradiente */
+  /* Marcellus tem um só peso: títulos marcados como negrito ficam no peso natural */
+  .font-serif.font-bold, .font-serif.font-semibold, .font-serif.font-medium,
+  .font-display.font-bold, .font-display.font-semibold {
+    font-weight: 400;
+  }
+
+  /* Texto "dourado": bronze sólido, legível sobre fundo claro */
   .text-gradient-gold {
-    background: var(--gradient-gold);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #8C6A2A;
   }
   .text-gradient-electric {
     background: var(--gradient-electric);
@@ -237,14 +243,15 @@
   }
 
   /* Backgrounds */
-  .bg-gradient-gold { background: var(--gradient-gold); }
+  .bg-gradient-gold { background: #C9A45C; }
+  .bg-gradient-gold.text-primary-foreground, .bg-gradient-gold.text-white { color: #0D0B08; }
   .bg-gradient-electric { background: var(--gradient-electric); }
   .bg-gradient-hybrid { background: var(--gradient-hybrid); }
   .bg-gradient-card { background: var(--gradient-card); }
 
   /* Bordas e sombras */
-  .border-gold { border-color: hsl(43 72% 55% / 0.3); }
-  .border-electric { border-color: hsl(210 100% 60% / 0.3); }
+  .border-gold { border-color: hsl(40 50% 57% / 0.45); }
+  .border-electric { border-color: hsl(39 54% 36% / 0.35); }
   .shadow-gold { box-shadow: var(--shadow-gold); }
   .shadow-electric { box-shadow: var(--shadow-electric); }
   .shadow-card { box-shadow: var(--shadow-card); }
@@ -254,38 +261,37 @@
   /* Card luxury com borda gradiente sutil */
   .card-luxury {
     background: var(--gradient-card);
-    border: 1px solid hsl(43 72% 55% / 0.15);
+    border: 1px solid hsl(var(--border));
     box-shadow: var(--shadow-card);
     transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
   }
   .card-luxury:hover {
-    border-color: hsl(43 72% 55% / 0.4);
+    border-color: hsl(40 50% 57% / 0.6);
     box-shadow: var(--shadow-gold);
   }
 
   .card-tech {
     background: var(--gradient-card);
-    border: 1px solid hsl(210 100% 60% / 0.18);
+    border: 1px solid hsl(var(--border));
     box-shadow: var(--shadow-card);
     transition: border-color 0.25s ease, box-shadow 0.25s ease;
   }
   .card-tech:hover {
-    border-color: hsl(210 100% 60% / 0.45);
+    border-color: hsl(39 54% 36% / 0.5);
     box-shadow: var(--shadow-electric);
   }
 
   /* Estado ativo da sidebar — glow azul elétrico */
   .nav-active {
-    background: linear-gradient(90deg, hsl(210 100% 60% / 0.12), hsl(43 72% 55% / 0.06));
-    border-left: 2px solid hsl(210 100% 60%);
-    box-shadow: inset 0 0 12px hsl(210 100% 60% / 0.15);
-    color: hsl(210 100% 70%);
+    background: hsl(40 50% 57% / 0.12);
+    border-left: 2px solid hsl(40 50% 57%);
+    color: hsl(40 50% 57%);
   }
 
   /* Animação de pulse para alertas */
   @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 0 0 hsl(210 100% 60% / 0.4); }
-    50% { box-shadow: 0 0 0 6px hsl(210 100% 60% / 0); }
+    0%, 100% { box-shadow: 0 0 0 0 hsl(40 50% 57% / 0.45); }
+    50% { box-shadow: 0 0 0 6px hsl(40 50% 57% / 0); }
   }
   .pulse-glow { animation: pulse-glow 2s ease-out infinite; }
 }
@@ -307,10 +313,9 @@ html {
     color: hsl(var(--sidebar-accent-foreground));
   }
   .sidebar-themed .nav-item.is-active {
-    background: linear-gradient(90deg, hsl(var(--sidebar-accent)) 0%, transparent 100%);
-    border-left: 3px solid hsl(var(--primary));
+    background-color: hsl(var(--sidebar-accent));
     color: hsl(var(--sidebar-accent-foreground));
-    box-shadow: inset 0 0 16px hsl(var(--primary) / 0.18);
+    opacity: 1;
   }
 
   /* Card de métrica usa gradient do tema */
@@ -342,27 +347,16 @@ html {
 
 /* ===== EFEITOS ESPECIAIS POR TEMA ===== */
 
-/* ⭐ BLACK GOLD — partículas douradas + shimmer */
-@keyframes gold-shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+/* SINHO SIGNATURE: sem brilhos animados; elevação discreta no hover */
+html[data-theme="preto_dourado"] .btn-themed { color: #0D0B08; }
+html[data-theme="preto_dourado"] .text-theme-gradient {
+  background-image: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: hsl(var(--foreground));
 }
-html[data-theme="preto_dourado"] .metric-card {
-  position: relative; overflow: hidden;
-}
-html[data-theme="preto_dourado"] .metric-card::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(110deg, transparent 30%, rgba(255,215,0,0.18) 50%, transparent 70%);
-  background-size: 200% 100%;
-  animation: gold-shimmer 3.2s linear infinite;
-  pointer-events: none;
-}
-html[data-theme="preto_dourado"] .sidebar-themed::before {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
-  background-image:
-    radial-gradient(circle at 18% 22%, rgba(255,215,0,0.10) 0, transparent 40%),
-    radial-gradient(circle at 82% 78%, rgba(212,175,55,0.08) 0, transparent 45%),
-    radial-gradient(circle at 50% 50%, rgba(255,215,0,0.05) 0, transparent 60%);
+html[data-theme="preto_dourado"] .metric-card:hover {
+  border-color: hsl(40 50% 57% / 0.6);
 }
 
 /* 🌸 ROSE GOLD — shimmer rosado nos botões */

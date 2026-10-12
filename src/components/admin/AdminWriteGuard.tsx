@@ -1,4 +1,4 @@
-import { LogIn, ShieldAlert } from 'lucide-react';
+import { LogIn, ShieldAlert } from '@/components/icons';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';

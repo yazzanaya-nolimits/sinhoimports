@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { X, MessageCircle } from '@/components/landing/Icon';
-import { Button } from '@/components/ui/button';
 import { WHATSAPP_NUMBER } from '@/data/products';
 
 interface PopupConfig {
@@ -38,26 +37,33 @@ const ExitIntentPopup = () => {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="relative bg-card border border-primary/30 rounded-2xl p-8 max-w-md mx-4 shadow-gold text-center space-y-4">
-        <button onClick={close} className="absolute top-3 right-3 text-muted-foreground hover:text-foreground">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in p-4" role="dialog" aria-modal="true" aria-label={config.text}>
+      <div className="sinho-site relative w-full max-w-md overflow-hidden rounded-3xl bg-white text-center shadow-2xl">
+        <button
+          type="button"
+          onClick={close}
+          aria-label="Fechar"
+          className="absolute top-3 right-3 w-11 h-11 rounded-full inline-flex items-center justify-center text-sinho-ivory hover:bg-white/10"
+        >
           <X className="w-5 h-5" />
         </button>
-        <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-          <MessageCircle className="w-8 h-8 text-primary" />
+        <div className="bg-sinho-ink px-8 pt-10 pb-8 flex flex-col items-center gap-4">
+          <span className="w-16 h-16 rounded-full bg-sinho-gold text-sinho-ink inline-flex items-center justify-center">
+            <MessageCircle className="w-8 h-8" />
+          </span>
+          <h3 className="font-display text-2xl tracking-[0.04em] uppercase text-sinho-ivory">{config.text}</h3>
         </div>
-        <h3 className="text-2xl font-serif font-bold">{config.text}</h3>
-        <p className="text-muted-foreground text-sm">
-          Fale conosco no WhatsApp e garanta seu desconto exclusivo!
-        </p>
-        <Button
-          className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
-          asChild
-        >
-          <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer">
-            <MessageCircle className="mr-2 h-5 w-5" /> Falar no WhatsApp
+        <div className="px-8 py-7 flex flex-col gap-5">
+          <p className="text-[15px] text-sinho-meta">Fale com a gente no WhatsApp e garanta seu desconto exclusivo.</p>
+          <a
+            href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="min-h-[52px] rounded-full bg-sinho-gold text-sinho-ink inline-flex items-center justify-center gap-2 text-[13px] font-semibold tracking-[0.16em] uppercase hover:bg-sinho-gold-hover"
+          >
+            <MessageCircle className="w-5 h-5" /> Falar no WhatsApp
           </a>
-        </Button>
+        </div>
       </div>
     </div>
   );

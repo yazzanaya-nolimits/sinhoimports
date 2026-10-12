@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Search, AlertTriangle, Check, MessageCircle } from 'lucide-react';
+import { Search, AlertTriangle, Check, MessageCircle } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

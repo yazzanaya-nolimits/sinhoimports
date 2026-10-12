@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        serif: ["Playfair Display", "serif"],
-        sans: ["Inter", "sans-serif"],
+        serif: ["Marcellus", "serif"],
+        sans: ["Jost", "sans-serif"],
         display: ["Marcellus", "serif"],
         body: ["Jost", "sans-serif"],
       },
@@ -40,6 +40,12 @@ export default {
           dark: "#1A160F",
           brown: "#6B5326",
           "paper-text": "#5A5246",
+          cream: "#FBF8F2",
+          soft: "#F6F1E8",
+          "card-line": "#ECE3D3",
+          body: "#3A332A",
+          meta: "#6E6453",
+          bronze: "#8C6A2A",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
