@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Loader2, MessageCircle, Search, LayoutGrid, CreditCard } from 'lucide-react';
+import { ArrowRight, Loader2, MessageCircle, Search, LayoutGrid, CreditCard } from '@/components/landing/Icon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -57,9 +57,9 @@ export default function CatalogoPage() {
   }, [products, categoria, search, sortBy]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="sinho-site min-h-screen bg-sinho-ink text-sinho-ivory">
       <Navbar />
-      <div className="h-16" />
+      <div className="h-[72px]" aria-hidden="true" />
       <PromoBanner />
 
       <main className="container mx-auto px-4 py-12">
