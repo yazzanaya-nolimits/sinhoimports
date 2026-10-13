@@ -72,6 +72,6 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ received: true }), { status: 200 })
   } catch (err) {
     console.error('Webhook error:', err)
-    return new Response(JSON.stringify({ error: err.message }), { status: 400 })
+    return new Response(JSON.stringify({ error: err instanceof Error ? err.message : 'Erro ao processar pagamento.' }), { status: 400 })
   }
 })
