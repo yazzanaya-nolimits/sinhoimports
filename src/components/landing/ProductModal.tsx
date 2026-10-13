@@ -10,6 +10,7 @@ import { type DatabaseProduct } from '@/lib/supabase';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
 
 
 
@@ -76,7 +77,14 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        const response = 'context' in error ? error.context : undefined;
+        if (response instanceof Response) {
+          const details = await response.clone().json().catch(() => null);
+          if (typeof details?.error === 'string') throw new Error(details.error);
+        }
+        throw new Error('Não foi possível conectar ao pagamento. Tente novamente.');
+      }
       if (data?.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       } else {
@@ -241,7 +249,7 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
                   <Icon name="progress_activity" className="w-5 h-5 animate-spin" /> Carregando...
                 </button>
               ) : config?.mercado_pago_enabled ? (
-                <button
+                <Button
                   type="button"
                   onClick={handleCheckout}
                   disabled={checkoutLoading}
@@ -252,7 +260,7 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
                   ) : (
                     <><Icon name="lock" className="w-5 h-5" /> Pagar agora (Pix ou cartão)</>
                   )}
-                </button>
+                </Button>
               ) : null}
 
               <a

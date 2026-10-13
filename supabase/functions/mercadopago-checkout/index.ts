@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
 import { z } from 'npm:zod@3'
+import { checkoutReturnOrigin } from './return-url.ts'
 
 const CheckoutSchema = z.object({
   product: z.object({ id: z.string().uuid() }).passthrough(),
@@ -15,8 +16,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    if (!supabaseUrl || !serviceKey) throw new Error('Pagamento temporariamente indisponível.')
     const supabaseClient = createClient(supabaseUrl, serviceKey)
 
     const parsed = CheckoutSchema.safeParse(await req.json())
@@ -60,8 +62,7 @@ Deno.serve(async (req) => {
     // 2. Prepare Preference data
     const variationPrice = storedVariation && typeof storedVariation.valor === 'number' ? storedVariation.valor : null
     const unitPrice = variationPrice && variationPrice > 0 ? variationPrice : Number(product.valor)
-    const originHeader = req.headers.get('origin')
-    const origin = originHeader?.startsWith('http') ? originHeader : 'https://sinhoimports.com.br'
+    const origin = checkoutReturnOrigin(req.headers.get('origin'))
     
     const preference = {
       items: [
