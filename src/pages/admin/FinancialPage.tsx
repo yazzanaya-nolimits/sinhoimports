@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Plus, TrendingUp, TrendingDown, DollarSign, Trash2 } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, DollarSign, Trash2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

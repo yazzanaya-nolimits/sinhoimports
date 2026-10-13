@@ -19,12 +19,12 @@ export type ThemeMeta = {
 
 export const THEME_META: Record<ThemeKey, ThemeMeta> = {
   preto_dourado: {
-    label: 'Black Gold Emperor',
+    label: 'Sinho Signature',
     emoji: '⭐',
-    tagline: 'Ultra luxo · poder · exclusividade',
+    tagline: 'Identidade da loja · marfim, preto e dourado',
     preview: {
-      bg: '#0A0A0A', sidebar: 'linear-gradient(160deg,#000 0%,#1A1A1A 60%,#0D0D0D 100%)',
-      primary: '#D4AF37', accent: '#FFD700', card: '#1A1A1A', text: '#F5E6C0',
+      bg: '#FBF8F2', sidebar: 'linear-gradient(180deg,#0D0B08 0%,#0D0B08 100%)',
+      primary: '#8C6A2A', accent: '#C9A45C', card: '#FFFFFF', text: '#1A160F',
     },
   },
   rosa_branco: {
@@ -77,25 +77,25 @@ const ThemeContext = createContext<ThemeContextType>({ theme: 'preto_dourado', s
  * que são consumidas em index.css (gradientes de sidebar, sombras, etc).
  */
 const THEMES: Record<ThemeKey, Record<string, string>> = {
-  // ⭐ BLACK GOLD EMPEROR — preto profundo + dourado metálico
+  // SINHO SIGNATURE: marfim, branco, preto e dourado (identidade da loja)
   preto_dourado: {
-    '--background': '0 0% 4%', '--foreground': '43 50% 86%',
-    '--card': '0 0% 10%', '--card-foreground': '43 50% 86%',
-    '--popover': '0 0% 10%', '--popover-foreground': '43 50% 86%',
-    '--primary': '46 65% 52%', '--primary-foreground': '0 0% 4%',
-    '--secondary': '0 0% 14%', '--secondary-foreground': '43 50% 86%',
-    '--muted': '0 0% 12%', '--muted-foreground': '43 30% 65%',
-    '--accent': '50 100% 50%', '--accent-foreground': '0 0% 4%',
-    '--border': '46 65% 30%', '--input': '0 0% 16%', '--ring': '46 65% 52%',
-    '--sidebar': '0 0% 0%', '--sidebar-foreground': '46 65% 52%',
-    '--sidebar-border': '46 65% 25%', '--sidebar-accent': '46 30% 12%',
-    '--sidebar-accent-foreground': '50 100% 60%',
-    '--sidebar-gradient': 'linear-gradient(160deg, #000000 0%, #1A1A1A 60%, #0D0D0D 100%)',
-    '--button-gradient': 'linear-gradient(135deg, #B8960C, #D4AF37, #FFD700)',
-    '--card-gradient': 'linear-gradient(135deg, #1A1600, #2A2200)',
-    '--theme-shadow': '0 8px 32px -8px rgba(212,175,55,0.35)',
-    '--theme-glow': '0 0 24px rgba(212,175,55,0.45)',
-    '--destructive': '0 70% 50%', '--destructive-foreground': '0 0% 98%',
+    '--background': '40 53% 97%', '--foreground': '38 27% 8%',
+    '--card': '0 0% 100%', '--card-foreground': '38 27% 8%',
+    '--popover': '0 0% 100%', '--popover-foreground': '38 27% 8%',
+    '--primary': '39 54% 36%', '--primary-foreground': '0 0% 100%',
+    '--secondary': '39 45% 91%', '--secondary-foreground': '38 27% 8%',
+    '--muted': '39 44% 94%', '--muted-foreground': '38 14% 38%',
+    '--accent': '40 50% 57%', '--accent-foreground': '36 24% 4%',
+    '--border': '39 32% 86%', '--input': '39 30% 81%', '--ring': '39 54% 36%',
+    '--sidebar': '36 24% 4%', '--sidebar-foreground': '39 45% 91%',
+    '--sidebar-border': '40 25% 14%', '--sidebar-accent': '40 25% 11%',
+    '--sidebar-accent-foreground': '40 50% 57%',
+    '--sidebar-gradient': 'linear-gradient(180deg, #0D0B08 0%, #0D0B08 100%)',
+    '--button-gradient': 'linear-gradient(135deg, #C9A45C, #C9A45C)',
+    '--card-gradient': 'linear-gradient(180deg, #FFFFFF, #FFFFFF)',
+    '--theme-shadow': '0 1px 2px rgba(26,22,15,0.06), 0 8px 24px -12px rgba(26,22,15,0.12)',
+    '--theme-glow': '0 12px 32px -14px rgba(140,106,42,0.35)',
+    '--destructive': '0 65% 45%', '--destructive-foreground': '0 0% 100%',
   },
   // 🌸 ROSE GOLD PREMIUM
   rosa_branco: {

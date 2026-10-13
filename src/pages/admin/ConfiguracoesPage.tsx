@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Trash2, Pencil, Power, Loader2, X, Eye, EyeOff, Languages, Users, Palette, Check, CreditCard, ExternalLink, HelpCircle, ShieldCheck, Copy } from 'lucide-react';
+import { Plus, Trash2, Pencil, Power, Loader2, X, Eye, EyeOff, Languages, Users, Palette, Check, CreditCard, ExternalLink, HelpCircle, ShieldCheck, Copy } from '@/components/icons';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

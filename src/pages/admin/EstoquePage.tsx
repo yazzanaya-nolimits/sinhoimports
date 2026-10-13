@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Search, Download, ArrowUp, ArrowDown, Edit2, History } from 'lucide-react';
+import { Search, Download, ArrowUp, ArrowDown, Edit2, History } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

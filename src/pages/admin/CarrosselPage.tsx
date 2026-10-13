@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Upload, Trash2, Save, GripVertical, Image as ImageIcon, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Upload, Trash2, Save, GripVertical, Image as ImageIcon, Loader2, Eye, EyeOff } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Eye, EyeOff, Lock, Loader2, Hash } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Lock, Loader2, Hash } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -60,34 +60,34 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden bg-background">
-      {/* Grid tech animado */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.18]"
-        style={{
-          backgroundImage:
-            'linear-gradient(hsl(210 100% 60% / 0.5) 1px, transparent 1px), linear-gradient(90deg, hsl(210 100% 60% / 0.5) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-          maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 75%)',
-        }}
-      />
-      {/* Glow dourado */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full blur-3xl opacity-25"
-        style={{ background: 'radial-gradient(circle, hsl(43 72% 55% / 0.6), transparent 60%)' }} />
-      <div className="pointer-events-none absolute -bottom-40 right-0 w-[500px] h-[500px] rounded-full blur-3xl opacity-20"
-        style={{ background: 'radial-gradient(circle, hsl(210 100% 60% / 0.7), transparent 60%)' }} />
+    <div className="min-h-screen grid lg:grid-cols-2 bg-background">
+      {/* Marca */}
+      <div className="hidden lg:flex flex-col justify-between p-12 bg-[#0D0B08] text-[#F3ECDF]">
+        <Link to="/" className="font-serif text-2xl tracking-[0.3em]">
+          SINHO <span className="text-[#C9A45C]">IMPORTS</span>
+        </Link>
+        <div className="flex flex-col gap-5 max-w-md">
+          <span className="text-xs tracking-[0.24em] uppercase text-[#C9A45C]">Painel de gestão</span>
+          <p className="font-serif text-4xl leading-tight tracking-[0.04em] uppercase">Vendas, estoque e loja em um só lugar</p>
+          <p className="text-base font-light leading-relaxed text-[#CFC5B3]">PDV, financeiro, CRM e a vitrine do site, com o acesso de cada membro da equipe.</p>
+        </div>
+        <span className="text-xs text-[#8C826F]">© {new Date().getFullYear()} Sinho Imports</span>
+      </div>
 
-      <div className="relative w-full max-w-md">
-        <div className="rounded-2xl border border-border/60 bg-card/70 backdrop-blur-xl p-8 shadow-2xl"
-          style={{ boxShadow: '0 20px 60px -10px hsl(43 72% 55% / 0.25), inset 0 1px 0 hsl(40 20% 92% / 0.05)' }}>
+      {/* Formulário */}
+      <div className="flex items-center justify-center p-4 sm:p-8">
+      <div className="w-full max-w-md">
+        <div className="rounded-3xl border border-border bg-card p-7 sm:p-10">
 
-          {/* Logo */}
-          <div className="text-center space-y-2 mb-8">
-            <div className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center"
-              style={{ background: 'var(--gradient-gold)', boxShadow: '0 10px 30px -8px hsl(43 72% 55% / 0.6)' }}>
-              <Lock className="w-8 h-8 text-primary-foreground" />
-            </div>
-            <h1 className="text-3xl font-serif font-bold text-gradient-gold">Sinho · PDV</h1>
-            <p className="text-xs tracking-[0.3em] uppercase text-electric">Admin Master</p>
+          <div className="space-y-3 mb-8">
+            <Link to="/" className="lg:hidden block font-serif text-xl tracking-[0.3em] mb-6">
+              SINHO <span className="text-primary">IMPORTS</span>
+            </Link>
+            <span className="w-14 h-14 rounded-full bg-foreground text-accent inline-flex items-center justify-center">
+              <Lock className="w-7 h-7" />
+            </span>
+            <h1 className="font-serif text-3xl tracking-[0.04em] uppercase">Entrar no painel</h1>
+            <p className="text-sm text-muted-foreground">Use o usuário e a senha cadastrados em Configurações.</p>
           </div>
 
           {!showPinFallback ? (
@@ -103,7 +103,7 @@ const AdminLogin = () => {
                   placeholder="Digite seu usuário"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="h-12 bg-background/60 border-border focus-visible:border-primary focus-visible:ring-primary/30"
+                  className="h-12 rounded-full px-5 bg-background"
                   required
                 />
               </div>
@@ -120,16 +120,16 @@ const AdminLogin = () => {
                     placeholder="••••••••"
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
-                    className="h-12 pr-11 bg-background/60 border-border focus-visible:border-primary focus-visible:ring-primary/30"
+                    className="h-12 rounded-full px-5 pr-12 bg-background"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPwd((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 w-11 h-11 inline-flex items-center justify-center rounded-full text-muted-foreground hover:text-primary transition-colors"
                     aria-label={showPwd ? 'Ocultar senha' : 'Mostrar senha'}
                   >
-                    {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPwd ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
@@ -137,22 +137,22 @@ const AdminLogin = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 font-semibold tracking-wide"
-                style={{ background: 'var(--gradient-gold)', color: 'hsl(0 0% 4%)' }}
+                variant="gold"
+                className="w-full h-12 font-semibold uppercase tracking-[0.16em] text-[13px]"
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Entrar'}
               </Button>
 
               <div className="flex items-center justify-between text-xs pt-2">
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
-                  ← Voltar ao site
+                <Link to="/" className="inline-flex items-center gap-1 min-h-[44px] text-muted-foreground hover:text-primary transition-colors">
+                  <ArrowLeft className="w-4 h-4" /> Voltar ao site
                 </Link>
                 <button
                   type="button"
                   onClick={() => setShowPinFallback(true)}
-                  className="text-muted-foreground hover:text-electric transition-colors flex items-center gap-1"
+                  className="min-h-[44px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
                 >
-                  <Hash className="w-3 h-3" /> Acessar com PIN
+                  <Hash className="w-4 h-4" /> Acessar com PIN
                 </button>
               </div>
             </form>
@@ -164,7 +164,7 @@ const AdminLogin = () => {
               <div className="flex gap-3 justify-center">
                 {[0, 1, 2, 3].map((i) => (
                   <div key={i}
-                    className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center text-2xl font-bold transition-all ${
+                    className={`w-12 h-12 rounded-full border-2 flex items-center justify-center text-2xl font-bold transition-all ${
                       pin.length > i ? 'border-primary bg-primary/10 text-primary' : 'border-border'
                     }`}>
                     {pin.length > i ? '●' : ''}
@@ -187,10 +187,11 @@ const AdminLogin = () => {
         </div>
 
         {!membro && !authLoading && (
-          <p className="mt-4 text-center text-[11px] text-muted-foreground">
+          <p className="mt-4 text-center text-xs text-muted-foreground">
             Primeiro acesso? Entre com PIN e cadastre o admin master em Configurações.
           </p>
         )}
+      </div>
       </div>
     </div>
   );

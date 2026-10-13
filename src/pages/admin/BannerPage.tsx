@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Zap, Save } from 'lucide-react';
+import { Zap, Save } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';

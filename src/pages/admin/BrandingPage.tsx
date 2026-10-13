@@ -1,4 +1,4 @@
-import { Download, FileImage, FileText, Palette } from 'lucide-react';
+import { Download, FileImage, FileText, Palette } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 

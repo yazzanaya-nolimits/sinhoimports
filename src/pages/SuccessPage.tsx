@@ -1,49 +1,39 @@
-import Navbar from '@/components/landing/Navbar';
-import Footer from '@/components/landing/Footer';
-import { CheckCircle2, ShoppingBag, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import StoreShell from '@/components/store/StoreShell';
+import { hasActiveOffer, useStore } from '@/components/store/useStore';
+import { btnDark, btnLine } from '@/components/store/ui';
+import { Icon } from '@/components/icons';
 
 export default function SuccessPage() {
-  const navigate = useNavigate();
+  const { ativos, categories } = useStore();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Navbar />
-      <main className="flex-1 flex items-center justify-center p-4">
-        <div className="max-w-md w-full text-center space-y-6 animate-fade-in">
-          <div className="relative">
-            <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
-            <div className="relative w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto border border-primary/20">
-              <CheckCircle2 className="w-12 h-12 text-primary animate-bounce" />
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <h1 className="text-3xl font-serif font-bold text-gradient-gold">Pedido Recebido!</h1>
-            <p className="text-muted-foreground">
-              Seu pagamento está sendo processado. Assim que for aprovado, você receberá uma notificação.
+    <StoreShell categories={categories} hasOffers={ativos.some(hasActiveOffer)}>
+      <div className="mx-auto w-full max-w-xl px-4 py-16 sm:py-24">
+        <div className="bg-white border border-sinho-card-line rounded-3xl p-8 sm:p-12 flex flex-col items-center text-center gap-6">
+          <span className="w-20 h-20 rounded-full bg-sinho-ink text-sinho-gold inline-flex items-center justify-center">
+            <Icon name="check_circle" className="w-10 h-10" />
+          </span>
+          <div className="flex flex-col gap-3">
+            <h1 className="font-display text-3xl sm:text-4xl tracking-[0.06em] uppercase text-sinho-dark">Pedido recebido</h1>
+            <p className="text-base leading-relaxed text-sinho-meta">
+              Seu pagamento está sendo processado. Assim que for aprovado, você recebe a confirmação.
             </p>
           </div>
-
-          <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
-            <p className="text-sm">
-              <strong>Próximos passos:</strong><br />
-              Entraremos em contato via WhatsApp para confirmar o envio e fornecer seu código de rastreio.
+          <div className="w-full rounded-2xl bg-sinho-cream border border-sinho-card-line p-5 text-left flex gap-3">
+            <Icon name="local_shipping" className="w-6 h-6 shrink-0 text-sinho-bronze" />
+            <p className="text-[15px] leading-relaxed text-sinho-body">
+              <strong className="font-medium text-sinho-dark">Próximos passos:</strong> entraremos em contato pelo WhatsApp para confirmar o envio e passar o código de rastreio.
             </p>
-            
-            <div className="flex flex-col gap-3">
-              <Button onClick={() => navigate('/catalogo')} className="w-full gap-2">
-                <ShoppingBag className="w-4 h-4" /> Continuar Comprando
-              </Button>
-              <Button variant="outline" onClick={() => navigate('/')} className="w-full gap-2">
-                Voltar ao Início <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
+          </div>
+          <div className="w-full flex flex-col sm:flex-row gap-3">
+            <Link to="/catalogo" className={`${btnDark} flex-1`}>
+              <Icon name="shopping_bag" className="w-5 h-5" /> Continuar comprando
+            </Link>
+            <Link to="/" className={`${btnLine} flex-1`}>Voltar ao início</Link>
           </div>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </StoreShell>
   );
 }

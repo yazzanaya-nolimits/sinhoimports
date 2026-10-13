@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldOff } from 'lucide-react';
+import { ShieldOff } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { useAuth, type Modulo } from '@/contexts/AuthContext';
 

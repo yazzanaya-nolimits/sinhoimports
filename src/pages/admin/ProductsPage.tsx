@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import {
   Plus, Edit2, Save, X, Upload, Search, Filter, Trash2, Eye, EyeOff,
   Tag, Loader2, CreditCard,
-} from 'lucide-react';
+} from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
