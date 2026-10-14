@@ -60,9 +60,9 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
   const valorParcela = finalValue / parcelas;
   const parcelaOptions = Array.from({ length: product.max_parcelas || 12 }, (_, i) => i + 1);
 
-  const waMessage = `Olá! Tenho interesse no produto: ${product.nome}${
-    variations.length ? ` — variação ${variations[selectedVariation]?.tamanho}` : ''
-  } (${formatBRL(finalValue)})`;
+  const waMessage = `Olá! Quero comprar o produto ${product.nome} (${
+    variations.length && variations[selectedVariation]?.tamanho ? `${variations[selectedVariation].tamanho} - ` : ''
+  }${formatBRL(finalValue)}). Pode me enviar o link de pagamento, por favor?`;
 
   const handleCheckout = async () => {
     if (!product) return;
@@ -244,34 +244,11 @@ export default function ProductModal({ product, discountedPrice, onClose }: Prop
             </div>
 
             <div className="flex flex-col gap-2.5">
-              {configLoading ? (
-                <button type="button" disabled className="min-h-[54px] rounded-full bg-sinho-ink/70 text-sinho-ivory inline-flex items-center justify-center gap-2 text-[13px] tracking-[0.16em] uppercase">
-                  <Icon name="progress_activity" className="w-5 h-5 animate-spin" /> Carregando...
-                </button>
-              ) : config?.mercado_pago_enabled ? (
-                <Button
-                  type="button"
-                  onClick={handleCheckout}
-                  disabled={checkoutLoading}
-                  className="min-h-[54px] rounded-full bg-sinho-gold text-sinho-ink inline-flex items-center justify-center gap-2 text-[13px] font-semibold tracking-[0.16em] uppercase hover:bg-sinho-gold-hover transition-colors disabled:opacity-70"
-                >
-                  {checkoutLoading ? (
-                    <><Icon name="progress_activity" className="w-5 h-5 animate-spin" /> Iniciando...</>
-                  ) : (
-                    <><Icon name="lock" className="w-5 h-5" /> Pagar agora (Pix ou cartão)</>
-                  )}
-                </Button>
-              ) : null}
-
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`min-h-[54px] rounded-full inline-flex items-center justify-center gap-2 text-[13px] font-medium tracking-[0.16em] uppercase transition-colors ${
-                  config?.mercado_pago_enabled
-                    ? 'border border-sinho-dark text-sinho-dark hover:bg-sinho-ink hover:text-sinho-ivory'
-                    : 'bg-sinho-gold text-sinho-ink hover:bg-sinho-gold-hover'
-                }`}
+                className="min-h-[54px] rounded-full inline-flex items-center justify-center gap-2 text-[13px] font-semibold tracking-[0.16em] uppercase transition-colors bg-sinho-gold text-sinho-ink hover:bg-sinho-gold-hover"
               >
                 <Icon name="forum" className="w-5 h-5" /> Comprar pelo WhatsApp
               </a>
