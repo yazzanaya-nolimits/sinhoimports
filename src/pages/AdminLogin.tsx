@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
-const PIN_FALLBACK = '5387';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -42,22 +41,7 @@ const AdminLogin = () => {
     navigate('/admin/dashboard');
   };
 
-  const handlePin = (d: string) => {
-    if (pin.length >= 4) return;
-    const np = pin + d;
-    setPin(np);
-    if (np.length === 4) {
-      if (np === PIN_FALLBACK) {
-        localStorage.setItem('sinho_admin', 'true');
-        navigate('/admin/dashboard');
-        // recarrega para que AuthContext leia o flag
-        setTimeout(() => window.location.reload(), 50);
-      } else {
-        toast({ title: 'PIN incorreto', variant: 'destructive' });
-        setTimeout(() => setPin(''), 250);
-      }
-    }
-  };
+  const handlePin = (_d: string) => {};
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-background">
@@ -147,13 +131,6 @@ const AdminLogin = () => {
                 <Link to="/" className="inline-flex items-center gap-1 min-h-[44px] text-muted-foreground hover:text-primary transition-colors">
                   <ArrowLeft className="w-4 h-4" /> Voltar ao site
                 </Link>
-                <button
-                  type="button"
-                  onClick={() => setShowPinFallback(true)}
-                  className="min-h-[44px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
-                >
-                  <Hash className="w-4 h-4" /> Acessar com PIN
-                </button>
               </div>
             </form>
           ) : (
@@ -188,7 +165,7 @@ const AdminLogin = () => {
 
         {!membro && !authLoading && (
           <p className="mt-4 text-center text-xs text-muted-foreground">
-            Primeiro acesso? Entre com PIN e cadastre o admin master em Configurações.
+            Esqueceu a senha? Peça ao administrador.
           </p>
         )}
       </div>

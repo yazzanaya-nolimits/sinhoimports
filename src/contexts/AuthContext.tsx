@@ -69,7 +69,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(sess?.user ?? null);
       if (sess?.user) loadMembro(sess.user.id);
       // PIN fallback
-      setIsPinFallback(localStorage.getItem(PIN_FLAG) === 'true' && !sess);
+      localStorage.removeItem(PIN_FLAG); // PIN legado desativado
+      setIsPinFallback(false);
       setLoading(false);
     });
 
@@ -92,8 +93,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const hasPermission: AuthCtx['hasPermission'] = (modulo, levels) => {
-    // PIN fallback = admin total
-    if (isPinFallback) return true;
     if (!membro || membro.status !== 'ativo') return false;
     const lvl = membro.permissoes?.[modulo] ?? 'sem_acesso';
     if (lvl === 'sem_acesso') return false;

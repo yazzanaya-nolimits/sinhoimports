@@ -54,8 +54,8 @@ Deno.serve(async (req) => {
     const syntheticEmail = `${username}@sinho.local`;
 
     // Verifica autorização: precisa estar logado e ter configuracoes=total OU ser o primeiro membro
-    const { data: countData } = await admin.from('membros').select('id', { count: 'exact', head: true });
-    const isFirst = (countData as unknown as { length: number })?.length === 0 || countData == null;
+    // Bootstrap público removido: sempre exige admin autenticado.
+    const isFirst = false;
 
     const { data: { user } } = await userClient.auth.getUser();
 
